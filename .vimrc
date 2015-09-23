@@ -31,21 +31,51 @@ filetype plugin indent on
 " this will conveniently prompt you to install them.
 NeoBundleCheck
 "End NeoBundle Scripts-------------------------
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+                    General
+"""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible
 syntax on
 set smartindent
 
+" tab
 set shiftwidth=4
 set tabstop=4
 set expandtab
 set smarttab
 
+" encoding
 set encoding=utf-8
 
-"Make vim faster
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" Good performance
 set lazyredraw
 set ttyfast
 
+"Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+"Fold
+set foldmethod=indent
+set nofoldenable
+
+set bs=2
+set wrapmargin=8
+set ruler
+set wildmenu
+set nobackup
+set noswapfile
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+                User Interface
+"""""""""""""""""""""""""""""""""""""""""""""""
+" colorscheme
 if has("gui_running")
     colorscheme gotham
 else
@@ -62,35 +92,21 @@ set guioptions=av
 set laststatus=2
 set statusline=#%-3.3n\%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\ %<%P
 
-set bs=2
-set wrapmargin=8
-set ruler
-set number
-set showcmd
-set showmode
-set showmatch
-set showbreak=>\ 
-set wildmenu
-
 "Cursor
 set guicursor+=a:blinkon0
 set scrolloff=3
 set cursorline
 set cursorcolumn
 
-set nobackup
-set noswapfile
+set number
+set showcmd
+set showmode
+set showmatch
+set showbreak=>\ 
 
-"Searching
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-
-"Fold
-set foldmethod=indent
-set nofoldenable
-
+"""""""""""""""""""""""""""""""""""""""""""""""
+                Key Mapping
+"""""""""""""""""""""""""""""""""""""""""""""""
 " set leader key
 let mapleader="\<space>"
 
