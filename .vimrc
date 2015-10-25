@@ -33,7 +33,7 @@ NeoBundleCheck
 "End NeoBundle Scripts-------------------------
 
 """""""""""""""""""""""""""""""""""""""""""""""
-                    General
+"                   General                   "
 """""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible
 syntax on
@@ -73,7 +73,7 @@ set nobackup
 set noswapfile
 
 """""""""""""""""""""""""""""""""""""""""""""""
-                User Interface
+"               User Interface                "
 """""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme
 if has("gui_running")
@@ -90,6 +90,7 @@ set guioptions=av
 
 "Statusline
 set laststatus=2
+hi statusline ctermbg=0
 set statusline=#%-3.3n\%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\ %<%P
 
 "Cursor
@@ -105,10 +106,14 @@ set showmatch
 set showbreak=>\ 
 
 """""""""""""""""""""""""""""""""""""""""""""""
-                Key Mapping
+"                Key Mapping                  "
 """""""""""""""""""""""""""""""""""""""""""""""
 " set leader key
 let mapleader="\<space>"
+
+" Treat long lines as break lines
+map j gj
+map k gk
 
 " To save, press <leader>w
 nmap <leader>w :w<CR>
