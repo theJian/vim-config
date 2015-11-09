@@ -83,7 +83,7 @@ else
 endif
 
 "Font
-set gfn=Fantasque\ Sans\ Mono\ 10
+set gfn=Hack\ 10
 
 "Simplify Gvim window
 set guioptions=av
