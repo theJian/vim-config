@@ -18,6 +18,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Add or remove your Bundles here:
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'whatyouhide/vim-gotham'
 
 " You can specify revision/branch/tag.
 
