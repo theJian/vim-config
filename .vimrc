@@ -19,7 +19,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'jiangmiao/auto-pairs'
 NeoBundle 'whatyouhide/vim-gotham'
-
+NeoBundle 'chriskempson/base16-vim'
 " You can specify revision/branch/tag.
 
 " Required:
