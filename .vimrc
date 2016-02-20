@@ -1,4 +1,4 @@
-"NeoBundle Scripts-----------------------------
+" NeoBundle Scripts-----------------------------
 if has('vim_starting')
   if &compatible
     set nocompatible               " Be iMproved
@@ -16,10 +16,20 @@ call neobundle#begin(expand('/home/jian/.vim/bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " Add or remove your Bundles here:
+
+" Comments
 NeoBundle 'tpope/vim-commentary'
+
+" Auto pairs
 NeoBundle 'jiangmiao/auto-pairs'
+
+" File navigation
+NeoBundle 'wincent/command-t'
+
+" Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
 NeoBundle 'chriskempson/base16-vim'
+NeoBundle 'atelierbram/vim-colors_duotones'
 " You can specify revision/branch/tag.
 
 " Required:
@@ -37,8 +47,9 @@ NeoBundleCheck
 "                   General                   "
 """""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible
-syntax on
-set smartindent
+syntax enable
+set autoindent
+set cindent
 
 " tab
 set shiftwidth=4
@@ -66,21 +77,26 @@ set smartcase
 set foldmethod=indent
 set nofoldenable
 
+" Enable All Python Syntax Highlight Features
+let python_highlight_all=1
+
 set bs=2
-set wrapmargin=8
+set wrap linebreak nolist
 set ruler
 set wildmenu
 set nobackup
 set noswapfile
+set virtualedit=onemore
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "               User Interface                "
 """""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme
+set background=dark
 if has("gui_running")
     colorscheme gotham
 else
-    colorscheme base16-greenscreen
+    colorscheme duotone-darksea
 endif
 
 "Font
@@ -98,13 +114,15 @@ set statusline=#%-3.3n\%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\ %<%P
 set guicursor+=a:blinkon0
 set scrolloff=3
 set cursorline
+hi cursorline cterm=NONE ctermbg=NONE ctermfg=NONE
 set cursorcolumn
+hi cursorcolumn cterm=NONE ctermbg=NONE ctermfg=NONE
 
 set number
 set showcmd
 set showmode
 set showmatch
-set showbreak=>\ 
+set showbreak=ʟ\ 
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "                Key Mapping                  "
@@ -136,14 +154,14 @@ noremap <leader>v :<C-u>vsplit<CR>
 " Tabs
 nnoremap <C-S-Tab> gT
 nnoremap <C-Tab> gt
-nnoremap <silent> <C-t> :tabnew<CR>
+nnoremap <C-t> :tabnew<CR>
 
 " Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
 
 " Copy/Paste/Cut
 noremap YY "+y<CR>
-noremap P "+gP<CR>
+noremap PP "+P<CR>
 noremap XX "+x<CR>
 
 " Buffer nav
