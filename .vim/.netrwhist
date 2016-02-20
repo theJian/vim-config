@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_1='/home/jian/.vim'
+let g:netrw_dirhist_2='/home/jian/0x00/learnX/learn-python'
+let g:netrw_dirhist_3='/home/jian/0x00/py-utils'
+let g:netrw_dirhist_4='/home/jian/0x00/learnX/learn-python'
+let g:netrw_dirhist_5='/home/jian'
