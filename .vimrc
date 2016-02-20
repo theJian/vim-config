@@ -57,7 +57,7 @@ set tabstop=4
 set expandtab
 set smarttab
 
-" encoding
+" Encoding
 set encoding=utf-8
 
 " Set to auto read when a file is changed from the outside
@@ -130,6 +130,9 @@ set showbreak=ʟ\
 " set leader key
 let mapleader="\<space>"
 
+" Folding
+noremap <leader><space> za
+
 " Treat long lines as break lines
 map j gj
 map k gk
@@ -179,6 +182,7 @@ noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 noremap <C-h> <C-w>h
+noremap <C-w> <C-w>q
 
 " shifting
 vmap < <gv
@@ -187,3 +191,23 @@ vmap > >gv
 " Move visual block
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+"              Files Specified                "
+"""""""""""""""""""""""""""""""""""""""""""""""
+" Flagging Unnecessary Whitespaces
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
+" Python
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set expandtab
+    \ set fileformat=unix
+
+" Javascript/CSS/HTML
+au BufNewFile,BufRead *.js, *.html, *.css
+    \ set tabstop=2
+    \ set softtabstop=2
+    \ set shiftwidth=2
