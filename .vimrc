@@ -29,6 +29,9 @@ NeoBundle 'jiangmiao/auto-pairs'
 " File navigation
 NeoBundle 'wincent/command-t'
 
+" Code Searching
+NeoBundle 'rking/ag.vim'
+
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
 NeoBundle 'chriskempson/base16-vim'
@@ -219,5 +222,21 @@ au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
-" Python3 Semantic Completion
+" netrw
+let g:netrw_liststyle=0
+let g:netrw_keepdir= 0
+
+" YouCompleteMe
+""  Python3 Semantic Completion
 let g:ycm_python_binary_path = '/usr/bin/python3'
+"" Go To Definition
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"" python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+  execfile(activate_this, dict(__file__=activate_this))
+EOF
