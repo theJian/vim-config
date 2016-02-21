@@ -34,7 +34,6 @@ NeoBundle 'rking/ag.vim'
 
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
-NeoBundle 'chriskempson/base16-vim'
 NeoBundle 'atelierbram/vim-colors_duotones'
 " You can specify revision/branch/tag.
 
@@ -231,6 +230,8 @@ let g:netrw_keepdir= 0
 let g:ycm_python_binary_path = '/usr/bin/python3'
 "" Go To Definition
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"" Autoclose Preview Window
+let g:ycm_autoclose_preview_window_after_completion=1
 "" python with virtualenv support
 py << EOF
 import os
