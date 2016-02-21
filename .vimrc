@@ -20,6 +20,9 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Comments
 NeoBundle 'tpope/vim-commentary'
 
+" Auto-complete
+NeoBundle 'Valloric/YouCompleteMe'
+
 " Auto pairs
 NeoBundle 'jiangmiao/auto-pairs'
 
@@ -66,6 +69,9 @@ set autoread
 " Good performance
 set lazyredraw
 set ttyfast
+
+" BadWhitespace
+highlight BadWhitespace ctermbg=red guibg=red
 
 "Searching
 set hlsearch
@@ -195,19 +201,23 @@ vnoremap K :m '<-2<CR>gv=gv
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Files Specified                "
 """""""""""""""""""""""""""""""""""""""""""""""
-" Flagging Unnecessary Whitespaces
+" Flagging Unnecessary Whitespace
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 " Python
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set expandtab
-    \ set fileformat=unix
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
+au BufNewFile,BufRead *.py set expandtab
+au BufNewFile,BufRead *.py set fileformat=unix
 
 " Javascript/CSS/HTML
-au BufNewFile,BufRead *.js, *.html, *.css
-    \ set tabstop=2
-    \ set softtabstop=2
-    \ set shiftwidth=2
+au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
+au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
+au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+"              Plugin Settings                "
+"""""""""""""""""""""""""""""""""""""""""""""""
+" Python3 Semantic Completion
+let g:ycm_python_binary_path = '/usr/bin/python3'
