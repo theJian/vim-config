@@ -212,6 +212,9 @@ au BufNewFile,BufRead *.py set softtabstop=4
 au BufNewFile,BufRead *.py set shiftwidth=4
 au BufNewFile,BufRead *.py set expandtab
 au BufNewFile,BufRead *.py set fileformat=unix
+au BufNewFile *.py
+\ 0put = '#!/usr/bin/python3' |
+\ 1put = '#-*- coding: utf-8 -*-' |
 
 " Javascript/CSS/HTML
 au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
