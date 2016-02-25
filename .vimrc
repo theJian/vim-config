@@ -96,6 +96,9 @@ set nobackup
 set noswapfile
 set virtualedit=onemore
 
+" Open Buffers on Their Own Tab
+au BufAdd,BufNewFile * nested tab sball
+
 """""""""""""""""""""""""""""""""""""""""""""""
 "               User Interface                "
 """""""""""""""""""""""""""""""""""""""""""""""
