@@ -32,6 +32,9 @@ NeoBundle 'wincent/command-t'
 " Code Searching
 NeoBundle 'rking/ag.vim'
 
+" Emmet
+NeoBundle 'mattn/emmet-vim'
+
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
 NeoBundle 'atelierbram/vim-colors_duotones'
@@ -55,6 +58,7 @@ set nocompatible
 syntax enable
 set autoindent
 set cindent
+set cinoptions=(s,m1
 
 " tab
 set shiftwidth=4
@@ -97,7 +101,7 @@ set noswapfile
 set virtualedit=onemore
 
 " Open Buffers on Their Own Tab
-au BufAdd,BufNewFile * nested tab sball
+" au BufAdd,BufNewFile * nested tab sball
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "               User Interface                "
@@ -109,6 +113,8 @@ if has("gui_running")
 else
     colorscheme duotone-darksea
 endif
+
+set guitablabel=%t\ %M
 
 "Font
 set gfn=Hack\ 10
@@ -161,6 +167,10 @@ noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 nmap <S-Enter> O<Esc>
 nmap <CR> o<Esc>
 
+" Add an empty line in insert mode
+imap <C-Enter> <Esc>o
+imap <C-S-Enter> <Esc>O
+
 " Split
 noremap <leader>h :<C-u>split<CR>
 noremap <leader>v :<C-u>vsplit<CR>
@@ -175,7 +185,7 @@ nnoremap <leader>. :lcd %:p:h<CR>
 
 " Copy/Paste/Cut
 noremap YY "+y<CR>
-noremap PP "+P<CR>
+noremap PP "+p<CR>
 noremap XX "+x<CR>
 
 " Buffer nav
@@ -227,11 +237,31 @@ au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
-" netrw
+" Command-T
+"" ignore node_modules
+set wildignore+=**/node_modules/*
+"" ignore .git
+set wildignore+=**/.git/*
+"" ignore python cache
+set wildignore+=**/__pycache__/*
+
+" Emmet
+"" Enable Only in Insert Mode
+let g:user_emmet_mode='i'
+"" Enable Just for HTML
+let g:user_emmet_install_global = 0
+autocmd FileType html EmmetInstall
+"" Redefine trigger key
+let g:user_emmet_leader_key=','
+
+" Netrw
 let g:netrw_liststyle=0
 let g:netrw_keepdir= 0
 
 " YouCompleteMe
+" Debug
+" let g:ycm_server_keep_logfiles = 1
+" let g:ycm_server_log_level = 'debug'
 ""  Python3 Semantic Completion
 let g:ycm_python_binary_path = '/usr/bin/python3'
 "" Go To Definition
