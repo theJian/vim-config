@@ -58,7 +58,7 @@ set nocompatible
 syntax enable
 set autoindent
 set cindent
-set cinoptions=(s,m1
+set cinoptions=J1
 
 " tab
 set shiftwidth=4
@@ -91,6 +91,9 @@ set nofoldenable
 
 " Enable All Python Syntax Highlight Features
 let python_highlight_all=1
+
+" Python indent
+let g:pyindent_open_paren = '&sw'
 
 set bs=2
 set wrap linebreak nolist
@@ -237,20 +240,19 @@ au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
+" ag
+" highlight
+let g:ag_highlight=1
+
 " Command-T
-"" ignore node_modules
-set wildignore+=**/node_modules/*
-"" ignore .git
-set wildignore+=**/.git/*
-"" ignore python cache
-set wildignore+=**/__pycache__/*
+"" ignore search
+let g:CommandTWildIgnore=&wildignore . ",**/bower_components/*,**/node_modules/*,**/.git/*,**/__pycache__/*"
 
 " Emmet
 "" Enable Only in Insert Mode
 let g:user_emmet_mode='i'
-"" Enable Just for HTML
-let g:user_emmet_install_global = 0
-autocmd FileType html EmmetInstall
+"" Enable for All Filetype
+let g:user_emmet_install_global = 1
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
 
