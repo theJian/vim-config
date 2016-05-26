@@ -4,7 +4,7 @@ Simple configuration file to make your vim a lightweight editor(Not a stupid IDE
 ## Current Plugin List
 - neobundle.vim (Plugin Manager)
 - ag.vim (Blazing Fast Code Searching)
-- auto-pairs (auto pair '()' '[]' '{}')
+- delimitMate (auto pair '()' '[]' '{}')
 - command-t (File searching)
 - vim-commentary (auto comment)
 - YouCompleteMe (the only auto-completion plugin you need)
