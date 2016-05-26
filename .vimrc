@@ -24,7 +24,8 @@ NeoBundle 'tpope/vim-commentary'
 NeoBundle 'Valloric/YouCompleteMe'
 
 " Auto pairs
-NeoBundle 'jiangmiao/auto-pairs'
+" NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'Raimondi/delimitMate'
 
 " File navigation
 NeoBundle 'wincent/command-t'
@@ -58,7 +59,7 @@ set nocompatible
 syntax enable
 set autoindent
 set cindent
-set cinoptions=J1
+set cinoptions=J1,(s,m1
 
 " tab
 set shiftwidth=4
@@ -71,6 +72,9 @@ set encoding=utf-8
 
 " Set to auto read when a file is changed from the outside
 set autoread
+
+" hide changed buffer instead close
+set hidden
 
 " Good performance
 set lazyredraw
@@ -96,7 +100,7 @@ let python_highlight_all=1
 let g:pyindent_open_paren = '&sw'
 
 set bs=2
-set wrap linebreak nolist
+set wrap linebreak
 set ruler
 set wildmenu
 set nobackup
@@ -119,6 +123,12 @@ endif
 
 set guitablabel=%t\ %M
 
+" show invisiable chars
+set list
+set listchars=tab:»•,trail:•,extends:#,nbsp:•
+hi NonText guifg=#2F3740
+hi SpecialKey guifg=#2F3740
+
 "Font
 set gfn=Hack\ 10
 
@@ -137,6 +147,9 @@ set cursorline
 hi cursorline cterm=NONE ctermbg=NONE ctermfg=NONE
 set cursorcolumn
 hi cursorcolumn cterm=NONE ctermbg=NONE ctermfg=NONE
+
+" Use relative number
+set relativenumber
 
 set number
 set showcmd
@@ -164,7 +177,7 @@ nmap <leader>w :w<CR>
 noremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 " To edit in a new tab, press <leader>te
-noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
+" noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " Add an empty line without insert mode
 nmap <S-Enter> O<Esc>
