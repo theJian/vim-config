@@ -129,6 +129,9 @@ set listchars=tab:»•,trail:•,extends:#,nbsp:•
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
+" matches highlight delay
+set matchtime=3
+
 "Font
 set gfn=Hack\ 10
 
@@ -138,7 +141,15 @@ set guioptions=av
 "Statusline
 set laststatus=2
 hi statusline ctermbg=0
-set statusline=#%-3.3n\%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\ %<%P
+set statusline=#%-3.3n " buffer id
+set statusline+=%F " file path
+set statusline+=%m%r%h%w "file info
+set statusline+=%= "switch to the right side
+set statusline+=(%{&ff}/%Y) " file type
+set statusline+=\  " separator
+set statusline+=(line\ %l\/%L,\ col\ %c) " cusor position
+set statusline+=\  " seperator
+set statusline+=%<%P " percentage
 
 "Cursor
 set guicursor+=a:blinkon0
@@ -164,32 +175,35 @@ set showbreak=ʟ\
 let mapleader="\<space>"
 
 " Folding
-noremap <leader><space> za
+nnoremap <leader><space> za
 
 " Treat long lines as break lines
-map j gj
-map k gk
+nnoremap j gj
+nnoremap k gk
 
 " To save, press <leader>w
-nmap <leader>w :w<CR>
+nnoremap <leader>w :w<CR>
 
 " To edit, press <leader>e
-noremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" To create a file
+nnoremap <leader>n :n <C-R>=expand("%:p:h") . "/" <CR>
 
 " To edit in a new tab, press <leader>te
 " noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " Add an empty line without insert mode
-nmap <S-Enter> O<Esc>
-nmap <CR> o<Esc>
+nnoremap <S-Enter> O<Esc>
+nnoremap <CR> o<Esc>
 
 " Add an empty line in insert mode
-imap <C-Enter> <Esc>o
-imap <C-S-Enter> <Esc>O
+inoremap <C-Enter> <Esc>o
+inoremap <C-S-Enter> <Esc>O
 
 " Split
-noremap <leader>h :<C-u>split<CR>
-noremap <leader>v :<C-u>vsplit<CR>
+nnoremap <leader>h :<C-u>split<CR>
+nnoremap <leader>v :<C-u>vsplit<CR>
 
 " Tabs
 nnoremap <C-S-Tab> gT
@@ -200,34 +214,40 @@ nnoremap <C-t> :tabnew<CR>
 nnoremap <leader>. :lcd %:p:h<CR>
 
 " Copy/Paste/Cut
-noremap YY "+y<CR>
-noremap PP "+p<CR>
-noremap XX "+x<CR>
+vnoremap YY "+y<CR>
+nnoremap PP "+p<CR>
+vnoremap XX "+x<CR>
 
 " Buffer nav
-noremap <leader>[ :bp<CR>
-noremap <leader>] :bn<CR>
+nnoremap <leader>[ :bp<CR>
+nnoremap <leader>] :bn<CR>
 
 " Close buffer
-noremap <leader>\ :bd<CR>
+nnoremap <leader>\ :bd<CR>
 
 " Clean search (highlight)
-nnoremap <silent> <leader><BS> :noh<CR>
+nnoremap <silent> <BS> :noh<CR>
 
 " Switching windows
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
-noremap <C-h> <C-w>h
-noremap <C-w> <C-w>q
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-w> <C-w>q
 
 " shifting
-vmap < <gv
-vmap > >gv
+vnoremap < <gv
+vnoremap > >gv
 
 " Move visual block
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
+
+" Uppercase word
+inoremap <C-j> <esc>gUiwea
+
+" delete word
+inoremap <C-BS> <C-w>
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Files Specified                "
@@ -236,19 +256,25 @@ vnoremap K :m '<-2<CR>gv=gv
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 " Python
-au BufNewFile,BufRead *.py set tabstop=4
-au BufNewFile,BufRead *.py set softtabstop=4
-au BufNewFile,BufRead *.py set shiftwidth=4
-au BufNewFile,BufRead *.py set expandtab
-au BufNewFile,BufRead *.py set fileformat=unix
-au BufNewFile *.py
-\ 0put = '#!/usr/bin/python3' |
-\ 1put = '#-*- coding: utf-8 -*-' |
+augroup file_python
+    au!
+    au BufNewFile,BufRead *.py set tabstop=4
+    au BufNewFile,BufRead *.py set softtabstop=4
+    au BufNewFile,BufRead *.py set shiftwidth=4
+    au BufNewFile,BufRead *.py set expandtab
+    au BufNewFile,BufRead *.py set fileformat=unix
+    au BufNewFile *.py
+    \ 0put = '#!/usr/bin/python3' |
+    \ 1put = '#-*- coding: utf-8 -*-' |
+augroup END
 
 " Javascript/CSS/HTML
-au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
-au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
-au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+augroup file_js_css_html
+    au!
+    au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
+    au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
+    au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
@@ -280,7 +306,7 @@ let g:netrw_keepdir= 0
 ""  Python3 Semantic Completion
 let g:ycm_python_binary_path = '/usr/bin/python3'
 "" Go To Definition
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+noremap <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 "" Autoclose Preview Window
 let g:ycm_autoclose_preview_window_after_completion=1
 "" python with virtualenv support
@@ -292,3 +318,20 @@ if 'VIRTUAL_ENV' in os.environ:
   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
   execfile(activate_this, dict(__file__=activate_this))
 EOF
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+"                Easy Snippets                "
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+augroup common_snippets
+    au!
+    au Filetype * :iabbrev <buffer> ret; return
+augroup END
+
+augroup javascript_snippets
+    au!
+    au Filetype javascript :iabbrev <buffer> func; function
+    au Filetype javascript :iabbrev <buffer> log; console.log
+augroup END
+
