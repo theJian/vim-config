@@ -62,8 +62,8 @@ set cindent
 set cinoptions=J1,(s,m1
 
 " tab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 set expandtab
 set smarttab
 
@@ -118,7 +118,8 @@ set background=dark
 if has("gui_running")
     colorscheme gotham
 else
-    colorscheme duotone-darksea
+    colorscheme gotham
+    " colorscheme duotone-darksea
 endif
 
 set guitablabel=%t\ %M
@@ -271,9 +272,9 @@ augroup END
 " Javascript/CSS/HTML
 augroup file_js_css_html
     au!
-    au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
-    au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
-    au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+    au BufNewFile,BufRead *.js,*.html,*.css set tabstop=4
+    au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=4
+    au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=4
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -318,7 +319,6 @@ if 'VIRTUAL_ENV' in os.environ:
   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
   execfile(activate_this, dict(__file__=activate_this))
 EOF
-
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "                Easy Snippets                "
