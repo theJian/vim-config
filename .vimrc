@@ -36,9 +36,17 @@ NeoBundle 'rking/ag.vim'
 " Emmet
 NeoBundle 'mattn/emmet-vim'
 
+" edit config
+NeoBundle 'editorconfig/editorconfig-vim'
+
+" expand region
+NeoBundle 'terryma/vim-expand-region'
+
+" surround
+NeoBundle 'tpope/vim-surround'
+
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
-NeoBundle 'atelierbram/vim-colors_duotones'
 " You can specify revision/branch/tag.
 
 " Required:
@@ -118,8 +126,7 @@ set background=dark
 if has("gui_running")
     colorscheme gotham
 else
-    colorscheme gotham
-    " colorscheme duotone-darksea
+    colorscheme gotham256
 endif
 
 set guitablabel=%t\ %M
@@ -234,7 +241,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap <C-h> <C-w>h
-nnoremap <C-w> <C-w>q
+nnoremap <C-q> <C-w>q
 
 " shifting
 vnoremap < <gv
@@ -245,7 +252,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase word
-inoremap <C-j> <esc>gUiwea
+inoremap <C-u> <esc>gUiwea
 
 " delete word
 inoremap <C-BS> <C-w>
@@ -272,9 +279,9 @@ augroup END
 " Javascript/CSS/HTML
 augroup file_js_css_html
     au!
-    au BufNewFile,BufRead *.js,*.html,*.css set tabstop=4
-    au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=4
-    au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=4
+    au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
+    au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
+    au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -291,8 +298,8 @@ let g:CommandTWildIgnore=&wildignore . ",**/bower_components/*,**/node_modules/*
 " Emmet
 "" Enable Only in Insert Mode
 let g:user_emmet_mode='i'
-"" Enable for All Filetype
-let g:user_emmet_install_global = 1
+"" Enable for Not All Filetype
+let g:user_emmet_install_global = 0
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
 
