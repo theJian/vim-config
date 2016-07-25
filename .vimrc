@@ -45,6 +45,9 @@ NeoBundle 'terryma/vim-expand-region'
 " surround
 NeoBundle 'tpope/vim-surround'
 
+" rust support
+NeoBundle 'rust-lang/rust.vim'
+
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
 " You can specify revision/branch/tag.
@@ -141,7 +144,7 @@ hi SpecialKey guifg=#2F3740
 set matchtime=3
 
 "Font
-set gfn=Hack\ 10
+set gfn=Hack\ 12
 
 "Simplify Gvim window
 set guioptions=av
@@ -298,8 +301,9 @@ let g:CommandTWildIgnore=&wildignore . ",**/bower_components/*,**/node_modules/*
 " Emmet
 "" Enable Only in Insert Mode
 let g:user_emmet_mode='i'
-"" Enable for Not All Filetype
+"" Enable only for html, css
 let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
 
@@ -313,10 +317,12 @@ let g:netrw_keepdir= 0
 " let g:ycm_server_log_level = 'debug'
 ""  Python3 Semantic Completion
 let g:ycm_python_binary_path = '/usr/bin/python3'
+""  Rust Semantic Completion
+let g:ycm_rust_src_path = '/usr/src/rust/src'
 "" Go To Definition
 noremap <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-"" Autoclose Preview Window
-let g:ycm_autoclose_preview_window_after_completion=1
+"" Autoclose Preview Window when leaves insert mode
+let g:ycm_autoclose_preview_window_after_insertion = 1
 "" python with virtualenv support
 py << EOF
 import os
