@@ -48,6 +48,9 @@ NeoBundle 'tpope/vim-surround'
 " rust support
 NeoBundle 'rust-lang/rust.vim'
 
+" elm support
+NeoBundle 'ElmCast/elm-vim'
+
 " Colorscheme
 NeoBundle 'whatyouhide/vim-gotham'
 " You can specify revision/branch/tag.
@@ -69,12 +72,15 @@ NeoBundleCheck
 set nocompatible
 syntax enable
 set autoindent
-set cindent
-set cinoptions=J1,(s,m1
+set smartindent
+" set cindent
+" set cinoptions=J1,(s,m1
+set mouse=nc
 
 " tab
 set shiftwidth=2
 set tabstop=2
+set softtabstop=2
 set expandtab
 set smarttab
 
@@ -100,9 +106,11 @@ set incsearch
 set ignorecase
 set smartcase
 
+" explore files caseinsensitively
+set wildignorecase
+
 "Fold
-set foldmethod=indent
-set nofoldenable
+set foldmethod=manual
 
 " Enable All Python Syntax Highlight Features
 let python_highlight_all=1
@@ -173,6 +181,9 @@ hi cursorcolumn cterm=NONE ctermbg=NONE ctermfg=NONE
 " Use relative number
 set relativenumber
 
+" Add a colored line at 81 column
+set colorcolumn=81
+
 set number
 set showcmd
 set showmode
@@ -229,10 +240,6 @@ vnoremap YY "+y<CR>
 nnoremap PP "+p<CR>
 vnoremap XX "+x<CR>
 
-" Buffer nav
-nnoremap <leader>[ :bp<CR>
-nnoremap <leader>] :bn<CR>
-
 " Close buffer
 nnoremap <leader>\ :bd<CR>
 
@@ -255,10 +262,13 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase word
-inoremap <C-u> <esc>gUiwea
+inoremap <C-l> <esc>g~iwea
 
 " delete word
 inoremap <C-BS> <C-w>
+
+" highlight last inserted text
+nnoremap gV `[v`]
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Files Specified                "
@@ -296,20 +306,23 @@ let g:ag_highlight=1
 
 " Command-T
 "" ignore search
-let g:CommandTWildIgnore=&wildignore . ",**/bower_components/*,**/node_modules/*,**/.git/*,**/__pycache__/*"
+let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git,*/__pycache__,*/elm-stuff"
 
 " Emmet
 "" Enable Only in Insert Mode
 let g:user_emmet_mode='i'
 "" Enable only for html, css
 let g:user_emmet_install_global = 0
-autocmd FileType html,css EmmetInstall
+autocmd FileType html,css,less,sass,scss EmmetInstall
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
 
 " Netrw
 let g:netrw_liststyle=0
 let g:netrw_keepdir= 0
+
+" elm-vim
+let g:elm_setup_keybindings = 0
 
 " YouCompleteMe
 " Debug
@@ -320,9 +333,14 @@ let g:ycm_python_binary_path = '/usr/bin/python3'
 ""  Rust Semantic Completion
 let g:ycm_rust_src_path = '/usr/src/rust/src'
 "" Go To Definition
-noremap <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>gd  :YcmCompleter GoTo<CR>
 "" Autoclose Preview Window when leaves insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
+" elm support
+let g:ycm_semantic_triggers = {
+     \ 'elm' : ['.'],
+     \}
+
 "" python with virtualenv support
 py << EOF
 import os
