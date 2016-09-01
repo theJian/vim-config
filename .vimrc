@@ -72,9 +72,8 @@ NeoBundleCheck
 set nocompatible
 syntax enable
 set autoindent
-set smartindent
-" set cindent
-" set cinoptions=J1,(s,m1
+set cindent
+set cinoptions+=J1
 set mouse=nc
 
 " tab
@@ -111,6 +110,9 @@ set wildignorecase
 
 "Fold
 set foldmethod=manual
+
+" file format
+set fileformat=unix
 
 " Enable All Python Syntax Highlight Features
 let python_highlight_all=1
@@ -181,8 +183,8 @@ hi cursorcolumn cterm=NONE ctermbg=NONE ctermfg=NONE
 " Use relative number
 set relativenumber
 
-" Add a colored line at 81 column
-set colorcolumn=81
+" Add a colored line at 121 column
+set colorcolumn=120
 
 set number
 set showcmd
@@ -216,12 +218,12 @@ nnoremap <leader>n :n <C-R>=expand("%:p:h") . "/" <CR>
 " noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 " Add an empty line without insert mode
+nnoremap <C-Enter> o<Esc>
 nnoremap <S-Enter> O<Esc>
-nnoremap <CR> o<Esc>
 
 " Add an empty line in insert mode
 inoremap <C-Enter> <Esc>o
-inoremap <C-S-Enter> <Esc>O
+inoremap <S-Enter> <Esc>O
 
 " Split
 nnoremap <leader>h :<C-u>split<CR>
@@ -241,7 +243,7 @@ nnoremap PP "+p<CR>
 vnoremap XX "+x<CR>
 
 " Close buffer
-nnoremap <leader>\ :bd<CR>
+nnoremap <leader>q :bd<CR>
 
 " Clean search (highlight)
 nnoremap <silent> <BS> :noh<CR>
@@ -282,8 +284,6 @@ augroup file_python
     au BufNewFile,BufRead *.py set tabstop=4
     au BufNewFile,BufRead *.py set softtabstop=4
     au BufNewFile,BufRead *.py set shiftwidth=4
-    au BufNewFile,BufRead *.py set expandtab
-    au BufNewFile,BufRead *.py set fileformat=unix
     au BufNewFile *.py
     \ 0put = '#!/usr/bin/python3' |
     \ 1put = '#-*- coding: utf-8 -*-' |
@@ -295,6 +295,14 @@ augroup file_js_css_html
     au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
     au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
     au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+augroup END
+
+" Elm
+augroup file_elm
+    au!
+    au BufNewFile,BufRead *.elm set tabstop=4
+    au BufNewFile,BufRead *.elm set softtabstop=4
+    au BufNewFile,BufRead *.elm set shiftwidth=4
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -320,6 +328,11 @@ let g:user_emmet_leader_key=','
 " Netrw
 let g:netrw_liststyle=0
 let g:netrw_keepdir= 0
+
+" delimitMate
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+let delimitMate_jump_expansion = 1
 
 " elm-vim
 let g:elm_setup_keybindings = 0
@@ -357,12 +370,37 @@ EOF
 
 augroup common_snippets
     au!
-    au Filetype * :iabbrev <buffer> ret; return
+    au Filetype * :iabbrev <buffer> ret. return
 augroup END
 
 augroup javascript_snippets
     au!
-    au Filetype javascript :iabbrev <buffer> func; function
-    au Filetype javascript :iabbrev <buffer> log; console.log
+    au Filetype javascript :iabbrev <buffer> fn.   function
+    au Filetype javascript :iabbrev <buffer> log.  console.log
+    au Filetype javascript :iabbrev <buffer> con.  constructor
+    " React Js
+    au Filetype javascript :iabbrev <buffer> Rr.   render
+    au Filetype javascript :iabbrev <buffer> Rgis. getInitialState
+    au Filetype javascript :iabbrev <buffer> Rgdp. getDefaultProps
+    au Filetype javascript :iabbrev <buffer> Rpt.  propTypes
+    au Filetype javascript :iabbrev <buffer> Rcwm. componentWillMount
+    au Filetype javascript :iabbrev <buffer> Rcdm. componentDidMount
+    au Filetype javascript :iabbrev <buffer> Rwrp. componentWillReceiveProps
+    au Filetype javascript :iabbrev <buffer> Rscu. shouldComponentUpdate
+    au Filetype javascript :iabbrev <buffer> Rcwu. componentWillUpdate
+    au Filetype javascript :iabbrev <buffer> Rcdu. componentDidUpdate
+    au Filetype javascript :iabbrev <buffer> Rwun. componentWillUnmount
+    au Filetype javascript :iabbrev <buffer> Rpa.  PropTypes.array
+    au Filetype javascript :iabbrev <buffer> Rpar. PropTypes.array.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpb.  PropTypes.bool
+    au Filetype javascript :iabbrev <buffer> Rpbr. PropTypes.bool.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpf.  PropTypes.func
+    au Filetype javascript :iabbrev <buffer> Rpfr. PropTypes.func.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpn.  PropTypes.number
+    au Filetype javascript :iabbrev <buffer> Rpnr. PropTypes.number.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpo.  PropTypes.object
+    au Filetype javascript :iabbrev <buffer> Rpor. PropTypes.object.isRequired
+    au Filetype javascript :iabbrev <buffer> Rps.  PropTypes.string
+    au Filetype javascript :iabbrev <buffer> Rpsr. PropTypes.string.isRequired
 augroup END
 
