@@ -13,4 +13,5 @@ Simple configuration file to make your vim a lightweight editor(Not a stupid IDE
 - vim-expand-region (expand visual region)
 - vim-surround (quoting/parenthesizing made simple)
 - rust.vim (rust plugin)
+- elm-vim (elm plugin)
 - vim-gotham (very dark color scheme)
