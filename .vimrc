@@ -311,6 +311,7 @@ augroup END
 " ag
 " highlight
 let g:ag_highlight=1
+let g:ag_working_path_mode="r"
 
 " Command-T
 "" ignore search
@@ -321,7 +322,8 @@ let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git
 let g:user_emmet_mode='i'
 "" Enable only for html, css
 let g:user_emmet_install_global = 0
-autocmd FileType html,css,less,sass,scss EmmetInstall
+autocmd BufNewFile,BufRead *.hbs set filetype=handlebars " enable emmet for handlebars
+autocmd FileType xhtml,html,handlebars,css,less,sass,scss EmmetInstall
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
 
@@ -370,37 +372,37 @@ EOF
 
 augroup common_snippets
     au!
-    au Filetype * :iabbrev <buffer> ret. return
+    au Filetype * :iabbrev <buffer> re; return
 augroup END
 
 augroup javascript_snippets
     au!
-    au Filetype javascript :iabbrev <buffer> fn.   function
-    au Filetype javascript :iabbrev <buffer> log.  console.log
-    au Filetype javascript :iabbrev <buffer> con.  constructor
+    au Filetype javascript :iabbrev <buffer> fn;   function
+    au Filetype javascript :iabbrev <buffer> log;  console.log(
+    au Filetype javascript :iabbrev <buffer> con;  constructor
     " React Js
-    au Filetype javascript :iabbrev <buffer> Rr.   render
-    au Filetype javascript :iabbrev <buffer> Rgis. getInitialState
-    au Filetype javascript :iabbrev <buffer> Rgdp. getDefaultProps
-    au Filetype javascript :iabbrev <buffer> Rpt.  propTypes
-    au Filetype javascript :iabbrev <buffer> Rcwm. componentWillMount
-    au Filetype javascript :iabbrev <buffer> Rcdm. componentDidMount
-    au Filetype javascript :iabbrev <buffer> Rwrp. componentWillReceiveProps
-    au Filetype javascript :iabbrev <buffer> Rscu. shouldComponentUpdate
-    au Filetype javascript :iabbrev <buffer> Rcwu. componentWillUpdate
-    au Filetype javascript :iabbrev <buffer> Rcdu. componentDidUpdate
-    au Filetype javascript :iabbrev <buffer> Rwun. componentWillUnmount
-    au Filetype javascript :iabbrev <buffer> Rpa.  PropTypes.array
-    au Filetype javascript :iabbrev <buffer> Rpar. PropTypes.array.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpb.  PropTypes.bool
-    au Filetype javascript :iabbrev <buffer> Rpbr. PropTypes.bool.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpf.  PropTypes.func
-    au Filetype javascript :iabbrev <buffer> Rpfr. PropTypes.func.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpn.  PropTypes.number
-    au Filetype javascript :iabbrev <buffer> Rpnr. PropTypes.number.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpo.  PropTypes.object
-    au Filetype javascript :iabbrev <buffer> Rpor. PropTypes.object.isRequired
-    au Filetype javascript :iabbrev <buffer> Rps.  PropTypes.string
-    au Filetype javascript :iabbrev <buffer> Rpsr. PropTypes.string.isRequired
+    au Filetype javascript :iabbrev <buffer> Rr;   render() {
+    au Filetype javascript :iabbrev <buffer> Rgis; getInitialState() {
+    au Filetype javascript :iabbrev <buffer> Rgdp; getDefaultProps() {
+    au Filetype javascript :iabbrev <buffer> Rpt;  propTypes
+    au Filetype javascript :iabbrev <buffer> Rcwm; componentWillMount() {
+    au Filetype javascript :iabbrev <buffer> Rcdm; componentDidMount() {
+    au Filetype javascript :iabbrev <buffer> Rwrp; componentWillReceiveProps( nextProps ) {
+    au Filetype javascript :iabbrev <buffer> Rscu; shouldComponentUpdate( nextProps, nextState ) {
+    au Filetype javascript :iabbrev <buffer> Rcwu; componentWillUpdate( nextProps, nextState ) {
+    au Filetype javascript :iabbrev <buffer> Rcdu; componentDidUpdate( prevProps, prevState ) {
+    au Filetype javascript :iabbrev <buffer> Rwun; componentWillUnmount() {
+    au Filetype javascript :iabbrev <buffer> Rpa;  PropTypes.array
+    au Filetype javascript :iabbrev <buffer> Rpar; PropTypes.array.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpb;  PropTypes.bool
+    au Filetype javascript :iabbrev <buffer> Rpbr; PropTypes.bool.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpf;  PropTypes.func
+    au Filetype javascript :iabbrev <buffer> Rpfr; PropTypes.func.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpn;  PropTypes.number
+    au Filetype javascript :iabbrev <buffer> Rpnr; PropTypes.number.isRequired
+    au Filetype javascript :iabbrev <buffer> Rpo;  PropTypes.object
+    au Filetype javascript :iabbrev <buffer> Rpor; PropTypes.object.isRequired
+    au Filetype javascript :iabbrev <buffer> Rps;  PropTypes.string
+    au Filetype javascript :iabbrev <buffer> Rpsr; PropTypes.string.isRequired
 augroup END
 
