@@ -198,9 +198,6 @@ set showbreak=ʟ\
 " set leader key
 let mapleader="\<space>"
 
-" Folding
-nnoremap <leader><space> za
-
 " Treat long lines as break lines
 nnoremap j gj
 nnoremap k gk
@@ -214,16 +211,13 @@ nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 " To create a file
 nnoremap <leader>n :n <C-R>=expand("%:p:h") . "/" <CR>
 
-" To edit in a new tab, press <leader>te
-" noremap <leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
 " Add an empty line without insert mode
-nnoremap <C-Enter> o<Esc>
-nnoremap <S-Enter> O<Esc>
+nnoremap <C-CR> o<Esc>
+nnoremap <S-CR> O<Esc>
 
 " Add an empty line in insert mode
-inoremap <C-Enter> <Esc>o
-inoremap <S-Enter> <Esc>O
+inoremap <C-CR> <Esc>o
+inoremap <S-CR> <Esc>O
 
 " Split
 nnoremap <leader>h :<C-u>split<CR>
@@ -275,6 +269,10 @@ nnoremap gV `[v`]
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Files Specified                "
 """""""""""""""""""""""""""""""""""""""""""""""
+
+" Filetype detect
+au BufRead,BufNewFile *.hbs set filetype=handlebars
+
 " Flagging Unnecessary Whitespace
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
@@ -322,7 +320,6 @@ let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git
 let g:user_emmet_mode='i'
 "" Enable only for html, css
 let g:user_emmet_install_global = 0
-autocmd BufNewFile,BufRead *.hbs set filetype=handlebars " enable emmet for handlebars
 autocmd FileType xhtml,html,handlebars,css,less,sass,scss EmmetInstall
 "" Redefine trigger key
 let g:user_emmet_leader_key=','
