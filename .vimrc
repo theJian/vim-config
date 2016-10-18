@@ -39,9 +39,6 @@ NeoBundle 'mattn/emmet-vim'
 " edit config
 NeoBundle 'editorconfig/editorconfig-vim'
 
-" expand region
-NeoBundle 'terryma/vim-expand-region'
-
 " surround
 NeoBundle 'tpope/vim-surround'
 
@@ -163,7 +160,7 @@ set guioptions=av
 set laststatus=2
 hi statusline ctermbg=0
 set statusline=#%-3.3n " buffer id
-set statusline+=%F " file path
+set statusline+=%f " file path
 set statusline+=%m%r%h%w "file info
 set statusline+=%= "switch to the right side
 set statusline+=(%{&ff}/%Y) " file type
@@ -175,10 +172,14 @@ set statusline+=%<%P " percentage
 "Cursor
 set guicursor+=a:blinkon0
 set scrolloff=3
-set cursorline
-hi cursorline cterm=NONE ctermbg=NONE ctermfg=NONE
 set cursorcolumn
-hi cursorcolumn cterm=NONE ctermbg=NONE ctermfg=NONE
+set cursorline
+
+"Only have cursorline in current window
+au WinLeave * set nocursorline
+au WinLeave * set nocursorcolumn
+au WinEnter * set cursorline
+au WinEnter * set cursorcolumn
 
 " Use relative number
 set relativenumber
@@ -206,10 +207,10 @@ nnoremap k gk
 nnoremap <leader>w :w<CR>
 
 " To edit, press <leader>e
-nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>e :e <C-R>=expand("%:h") . "/" <CR>
 
 " To create a file
-nnoremap <leader>n :n <C-R>=expand("%:p:h") . "/" <CR>
+nnoremap <leader>n :n <C-R>=expand("%:h") . "/" <CR>
 
 " Add an empty line without insert mode
 nnoremap <C-CR> o<Esc>
@@ -266,6 +267,10 @@ inoremap <C-BS> <C-w>
 " highlight last inserted text
 nnoremap gV `[v`]
 
+" Command line editing
+cnoremap <C-h> <Left>
+cnoremap <C-l> <Right>
+
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Files Specified                "
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -309,11 +314,13 @@ augroup END
 " ag
 " highlight
 let g:ag_highlight=1
-let g:ag_working_path_mode="r"
+" let g:ag_working_path_mode="r"
 
 " Command-T
 "" ignore search
 let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git,*/__pycache__,*/elm-stuff"
+"" use current working path as root for search files
+let g:CommandTTraverseSCM="pwd"
 
 " Emmet
 "" Enable Only in Insert Mode
@@ -326,7 +333,7 @@ let g:user_emmet_leader_key=','
 
 " Netrw
 let g:netrw_liststyle=0
-let g:netrw_keepdir= 0
+let g:netrw_keepdir=1
 
 " delimitMate
 let delimitMate_expand_cr = 1
@@ -378,6 +385,7 @@ augroup javascript_snippets
     au Filetype javascript :iabbrev <buffer> log;  console.log(
     au Filetype javascript :iabbrev <buffer> con;  constructor
     " React Js
+    au Filetype javascript :iabbrev <buffer> Rcon; constructor( props ) {
     au Filetype javascript :iabbrev <buffer> Rr;   render() {
     au Filetype javascript :iabbrev <buffer> Rgis; getInitialState() {
     au Filetype javascript :iabbrev <buffer> Rgdp; getDefaultProps() {
