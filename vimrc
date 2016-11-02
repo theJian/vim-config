@@ -1,73 +1,9 @@
-" NeoBundle Scripts-----------------------------
-if has('vim_starting')
-  if &compatible
-    set nocompatible               " Be iMproved
-  endif
-
-  " Required:
-  set runtimepath+=/home/jian/.vim/bundle/neobundle.vim/
-endif
-
-" Required:
-call neobundle#begin(expand('/home/jian/.vim/bundle'))
-
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
-
-" Add or remove your Bundles here:
-
-" Comments
-NeoBundle 'tpope/vim-commentary'
-
-" Auto-complete
-NeoBundle 'Valloric/YouCompleteMe'
-
-" Auto pairs
-" NeoBundle 'jiangmiao/auto-pairs'
-NeoBundle 'Raimondi/delimitMate'
-
-" File navigation
-NeoBundle 'wincent/command-t'
-
-" Code Searching
-NeoBundle 'rking/ag.vim'
-
-" Emmet
-NeoBundle 'mattn/emmet-vim'
-
-" edit config
-NeoBundle 'editorconfig/editorconfig-vim'
-
-" surround
-NeoBundle 'tpope/vim-surround'
-
-" rust support
-NeoBundle 'rust-lang/rust.vim'
-
-" elm support
-NeoBundle 'ElmCast/elm-vim'
-
-" Colorscheme
-NeoBundle 'whatyouhide/vim-gotham'
-" You can specify revision/branch/tag.
-
-" Required:
-call neobundle#end()
-
-" Required:
-filetype plugin indent on
-
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
-"End NeoBundle Scripts-------------------------
-
 """""""""""""""""""""""""""""""""""""""""""""""
 "                   General                   "
 """""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible
 syntax enable
+filetype plugin indent on
 set autoindent
 set cindent
 set cinoptions+=J1
@@ -133,11 +69,7 @@ set virtualedit=onemore
 """""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme
 set background=dark
-if has("gui_running")
-    colorscheme gotham
-else
-    colorscheme gotham256
-endif
+colorscheme gotham
 
 set guitablabel=%t\ %M
 
@@ -151,7 +83,7 @@ hi SpecialKey guifg=#2F3740
 set matchtime=3
 
 "Font
-set gfn=Hack\ 12
+set gfn=Hack\ 10
 
 "Simplify Gvim window
 set guioptions=av
@@ -170,6 +102,7 @@ set statusline+=\  " seperator
 set statusline+=%<%P " percentage
 
 "Cursor
+
 set guicursor+=a:blinkon0
 set scrolloff=3
 set cursorcolumn
@@ -184,8 +117,8 @@ au WinEnter * set cursorcolumn
 " Use relative number
 set relativenumber
 
-" Add a colored line at 121 column
-set colorcolumn=120
+" Add a colored line at 81 column
+set colorcolumn=81
 
 set number
 set showcmd
@@ -227,7 +160,7 @@ nnoremap <leader>v :<C-u>vsplit<CR>
 " Tabs
 nnoremap <C-S-Tab> gT
 nnoremap <C-Tab> gt
-nnoremap <C-t> :tabnew<CR>
+nnoremap <C-n> :tabnew<CR>
 
 " Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
@@ -258,11 +191,11 @@ vnoremap > >gv
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
-" Uppercase word
-inoremap <C-l> <esc>g~iwea
+" Uppercase/Lowercase word
+inoremap <M-u> <esc>g~iwea
 
 " delete word
-inoremap <C-BS> <C-w>
+inoremap <C-BS> <C-W>
 
 " highlight last inserted text
 nnoremap gV `[v`]
@@ -343,6 +276,13 @@ let delimitMate_jump_expansion = 1
 " elm-vim
 let g:elm_setup_keybindings = 0
 
+" ultisnips
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsListSnippets="<c-b>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsEditSplit="vertical"
+
 " YouCompleteMe
 " Debug
 " let g:ycm_server_keep_logfiles = 1
@@ -369,45 +309,3 @@ if 'VIRTUAL_ENV' in os.environ:
   activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
   execfile(activate_this, dict(__file__=activate_this))
 EOF
-
-"""""""""""""""""""""""""""""""""""""""""""""""
-"                Easy Snippets                "
-"""""""""""""""""""""""""""""""""""""""""""""""
-
-augroup common_snippets
-    au!
-    au Filetype * :iabbrev <buffer> re; return
-augroup END
-
-augroup javascript_snippets
-    au!
-    au Filetype javascript :iabbrev <buffer> fn;   function
-    au Filetype javascript :iabbrev <buffer> log;  console.log(
-    au Filetype javascript :iabbrev <buffer> con;  constructor
-    " React Js
-    au Filetype javascript :iabbrev <buffer> Rcon; constructor( props ) {
-    au Filetype javascript :iabbrev <buffer> Rr;   render() {
-    au Filetype javascript :iabbrev <buffer> Rgis; getInitialState() {
-    au Filetype javascript :iabbrev <buffer> Rgdp; getDefaultProps() {
-    au Filetype javascript :iabbrev <buffer> Rpt;  propTypes
-    au Filetype javascript :iabbrev <buffer> Rcwm; componentWillMount() {
-    au Filetype javascript :iabbrev <buffer> Rcdm; componentDidMount() {
-    au Filetype javascript :iabbrev <buffer> Rwrp; componentWillReceiveProps( nextProps ) {
-    au Filetype javascript :iabbrev <buffer> Rscu; shouldComponentUpdate( nextProps, nextState ) {
-    au Filetype javascript :iabbrev <buffer> Rcwu; componentWillUpdate( nextProps, nextState ) {
-    au Filetype javascript :iabbrev <buffer> Rcdu; componentDidUpdate( prevProps, prevState ) {
-    au Filetype javascript :iabbrev <buffer> Rwun; componentWillUnmount() {
-    au Filetype javascript :iabbrev <buffer> Rpa;  PropTypes.array
-    au Filetype javascript :iabbrev <buffer> Rpar; PropTypes.array.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpb;  PropTypes.bool
-    au Filetype javascript :iabbrev <buffer> Rpbr; PropTypes.bool.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpf;  PropTypes.func
-    au Filetype javascript :iabbrev <buffer> Rpfr; PropTypes.func.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpn;  PropTypes.number
-    au Filetype javascript :iabbrev <buffer> Rpnr; PropTypes.number.isRequired
-    au Filetype javascript :iabbrev <buffer> Rpo;  PropTypes.object
-    au Filetype javascript :iabbrev <buffer> Rpor; PropTypes.object.isRequired
-    au Filetype javascript :iabbrev <buffer> Rps;  PropTypes.string
-    au Filetype javascript :iabbrev <buffer> Rpsr; PropTypes.string.isRequired
-augroup END
-
