@@ -31,3 +31,6 @@
 [submodule "start/emmet-vim"]
 	path = start/emmet-vim
 	url = https://github.com/mattn/emmet-vim.git
+[submodule "start/command-t"]
+	path = start/command-t
+	url = https://github.com/wincent/command-t.git
