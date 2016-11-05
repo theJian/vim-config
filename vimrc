@@ -244,10 +244,15 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
-" ag
-" highlight
-let g:ag_highlight=1
-" let g:ag_working_path_mode="r"
+
+" nerdcommenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" ack
+let g:ackprg="ag --vimgrep"
 
 " Command-T
 "" ignore search
@@ -273,9 +278,6 @@ let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 
-" elm-vim
-let g:elm_setup_keybindings = 0
-
 " ultisnips
 let g:UltiSnipsExpandTrigger="<c-l>"
 let g:UltiSnipsListSnippets="<c-b>"
@@ -295,10 +297,6 @@ let g:ycm_rust_src_path = '/usr/src/rust/src'
 nnoremap <leader>gd  :YcmCompleter GoTo<CR>
 "" Autoclose Preview Window when leaves insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
-" elm support
-let g:ycm_semantic_triggers = {
-     \ 'elm' : ['.'],
-     \}
 
 "" python with virtualenv support
 py << EOF

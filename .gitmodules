@@ -1,0 +1,33 @@
+[submodule "start/vim-gotham"]
+	path = start/vim-gotham
+	url = https://github.com/whatyouhide/vim-gotham.git
+[submodule "start/editorconfig-vim"]
+	path = start/editorconfig-vim
+	url = https://github.com/editorconfig/editorconfig-vim.git
+[submodule "start/ack.vim"]
+	path = start/ack.vim
+	url = https://github.com/mileszs/ack.vim.git
+[submodule "start/delimitMate"]
+	path = start/delimitMate
+	url = https://github.com/Raimondi/delimitMate.git
+[submodule "start/rust.vim"]
+	path = start/rust.vim
+	url = https://github.com/rust-lang/rust.vim.git
+[submodule "start/vim-surround"]
+	path = start/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule "start/command-t"]
+	path = start/command-t
+	url = https://github.com/wincent/command-t.git
+[submodule "start/nerdcommenter"]
+	path = start/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "start/ultisnips"]
+	path = start/ultisnips
+	url = https://github.com/SirVer/ultisnips.git
+[submodule "start/vim-snippets"]
+	path = start/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
+[submodule "start/YouCompleteMe"]
+	path = start/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe.git
