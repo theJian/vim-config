@@ -16,9 +16,6 @@
 [submodule "start/vim-surround"]
 	path = start/vim-surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule "start/command-t"]
-	path = start/command-t
-	url = https://github.com/wincent/command-t.git
 [submodule "start/nerdcommenter"]
 	path = start/nerdcommenter
 	url = https://github.com/scrooloose/nerdcommenter.git
@@ -31,3 +28,6 @@
 [submodule "start/YouCompleteMe"]
 	path = start/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe.git
+[submodule "start/emmet-vim"]
+	path = start/emmet-vim
+	url = https://github.com/mattn/emmet-vim.git
