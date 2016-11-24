@@ -42,7 +42,10 @@ set smartcase
 set wildignorecase
 
 "Fold
-set foldmethod=manual
+set foldenable
+set foldmethod=indent
+set foldlevelstart=10
+set foldnestmax=10
 
 " file format
 set fileformat=unix
@@ -75,7 +78,7 @@ set guitablabel=%t\ %M
 
 " show invisiable chars
 set list
-set listchars=tab:»•,trail:•,extends:#,nbsp:•
+set listchars=tab:»»,trail:•,extends:§,nbsp:•
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
@@ -136,6 +139,9 @@ let mapleader="\<space>"
 nnoremap j gj
 nnoremap k gk
 
+" Toggle folding
+nnoremap <leader><space> za
+
 " To save, press <leader>w
 nnoremap <leader>w :w<CR>
 
@@ -150,6 +156,7 @@ nnoremap <C-CR> o<Esc>
 nnoremap <S-CR> O<Esc>
 
 " Add an empty line in insert mode
+inoremap <C-j>  <Esc>o
 inoremap <C-CR> <Esc>o
 inoremap <S-CR> <Esc>O
 
@@ -192,7 +199,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase/Lowercase word
-inoremap <M-u> <esc>g~iwea
+inoremap <C-k> <esc>g~iwea
 
 " delete word
 inoremap <C-BS> <C-W>
@@ -290,11 +297,12 @@ let g:UltiSnipsEditSplit="vertical"
 " let g:ycm_server_keep_logfiles = 1
 " let g:ycm_server_log_level = 'debug'
 ""  Python3 Semantic Completion
-let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_python_binary_path = 'python'
 ""  Rust Semantic Completion
 let g:ycm_rust_src_path = '/usr/src/rust/src'
 "" Go To Definition
 nnoremap <leader>gd  :YcmCompleter GoTo<CR>
+nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>
 "" Autoclose Preview Window when leaves insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
 
