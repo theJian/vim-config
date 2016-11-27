@@ -10,9 +10,6 @@ set cinoptions+=J1
 set mouse=nc
 
 " tab
-set shiftwidth=2
-set tabstop=2
-set softtabstop=2
 set expandtab
 set smarttab
 
@@ -289,9 +286,9 @@ let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 
 " ultisnips
-let g:UltiSnipsSnippetDirectories=$HOME.'/.vim/pack/theJian/snips'
-let g:UltiSnipsSnippetsDir=$HOME.'/.vim/pack/theJian/snips'
-let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/pack/theJian/UltiSnips']
+let g:UltiSnipsSnippetsDir=$HOME.'/.vim/pack/theJian/UltiSnips'
+let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-b>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
@@ -311,7 +308,7 @@ nnoremap <leader>gd  :YcmCompleter GoTo<CR>
 nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>
 "" Autoclose Preview Window when leaves insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
-
+ 
 "" python with virtualenv support
 py << EOF
 import os
