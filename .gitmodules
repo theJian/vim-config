@@ -22,9 +22,6 @@
 [submodule "start/ultisnips"]
 	path = start/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule "start/vim-snippets"]
-	path = start/vim-snippets
-	url = https://github.com/honza/vim-snippets.git
 [submodule "start/YouCompleteMe"]
 	path = start/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe.git

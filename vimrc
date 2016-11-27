@@ -85,13 +85,16 @@ hi SpecialKey guifg=#2F3740
 " matches highlight delay
 set matchtime=3
 
+" Matches highlighting colors
+hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guibg=NONE guifg=LightGreen
+
 "Font
 set gfn=Hack\ 10
 
-"Simplify Gvim window
+" Simplify Gvim window
 set guioptions=av
 
-"Statusline
+" Statusline
 set laststatus=2
 hi statusline ctermbg=0
 set statusline=#%-3.3n " buffer id
@@ -286,6 +289,8 @@ let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 
 " ultisnips
+let g:UltiSnipsSnippetDirectories=$HOME.'/.vim/pack/theJian/snips'
+let g:UltiSnipsSnippetsDir=$HOME.'/.vim/pack/theJian/snips'
 let g:UltiSnipsExpandTrigger="<c-l>"
 let g:UltiSnipsListSnippets="<c-b>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
@@ -296,6 +301,7 @@ let g:UltiSnipsEditSplit="vertical"
 " Debug
 " let g:ycm_server_keep_logfiles = 1
 " let g:ycm_server_log_level = 'debug'
+let g:ycm_server_python_interpreter = '/usr/bin/python2'
 ""  Python3 Semantic Completion
 let g:ycm_python_binary_path = 'python'
 ""  Rust Semantic Completion
