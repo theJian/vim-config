@@ -13,6 +13,10 @@ set mouse=nc
 set expandtab
 set smarttab
 
+" Open new splits on the right/bottom
+set splitbelow
+set splitright
+
 " Encoding
 set encoding=utf-8
 
@@ -38,10 +42,10 @@ set smartcase
 " explore files caseinsensitively
 set wildignorecase
 
-"Fold
+" Fold
 set foldenable
 set foldmethod=indent
-set foldlevelstart=10
+set foldlevelstart=4
 set foldnestmax=10
 
 " file format
@@ -75,34 +79,40 @@ set guitablabel=%t\ %M
 
 " show invisiable chars
 set list
-set listchars=tab:»»,trail:•,extends:§,nbsp:•
+set listchars=tab:»\ ,trail:•,extends:§,nbsp:•,eol:¬
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
 " matches highlight delay
 set matchtime=3
 
+" highlight font settings
+hi Comment gui=italic
+
 " Matches highlighting colors
 hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guibg=NONE guifg=LightGreen
 
+" Folded highlighting colors
+hi Folded ctermbg=none ctermfg=DarkCyan guibg=NONE guifg=DarkCyan
+
 "Font
-set gfn=Hack\ 10
+set gfn=Inconsolata\ 10
 
 " Simplify Gvim window
 set guioptions=av
 
 " Statusline
 set laststatus=2
-hi statusline ctermbg=0
-set statusline=#%-3.3n " buffer id
 set statusline+=%f " file path
-set statusline+=%m%r%h%w "file info
+set statusline+=%1*%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
 set statusline+=(%{&ff}/%Y) " file type
 set statusline+=\  " separator
 set statusline+=(line\ %l\/%L,\ col\ %c) " cusor position
 set statusline+=\  " seperator
 set statusline+=%<%P " percentage
+" highlight modified flag
+hi User1 ctermfg=red guifg=red
 
 "Cursor
 
@@ -123,11 +133,17 @@ set relativenumber
 " Add a colored line at 81 column
 set colorcolumn=81
 
+" Solid window split border
+set fillchars+=vert:│
+
+" dotted folded line
+set fillchars+=fold:┄
+
 set number
 set showcmd
 set showmode
 set showmatch
-set showbreak=ʟ\ 
+set showbreak=↳\ \ \ 
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "                Key Mapping                  "
@@ -205,7 +221,7 @@ inoremap <C-k> <esc>g~iwea
 inoremap <C-BS> <C-W>
 
 " highlight last inserted text
-nnoremap gV `[v`]
+" nnoremap gV `[v`]
 
 " Command line editing
 cnoremap <C-h> <Left>
@@ -262,6 +278,8 @@ let g:NERDCompactSexyComs = 1
 let g:ackprg="ag --vimgrep"
 
 " Command-T
+"" Mapping
+nmap <silent> <Leader>k <Plug>(CommandTMRU)
 "" ignore search
 let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git,*/__pycache__,*/elm-stuff"
 "" use current working path as root for search files
@@ -298,7 +316,6 @@ let g:UltiSnipsEditSplit="vertical"
 " Debug
 " let g:ycm_server_keep_logfiles = 1
 " let g:ycm_server_log_level = 'debug'
-let g:ycm_server_python_interpreter = '/usr/bin/python2'
 ""  Python3 Semantic Completion
 let g:ycm_python_binary_path = 'python'
 ""  Rust Semantic Completion
@@ -308,7 +325,11 @@ nnoremap <leader>gd  :YcmCompleter GoTo<CR>
 nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>
 "" Autoclose Preview Window when leaves insert mode
 let g:ycm_autoclose_preview_window_after_insertion = 1
- 
+if !exists("g:ycm_semantic_triggers")
+          let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
+
 "" python with virtualenv support
 py << EOF
 import os

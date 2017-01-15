@@ -22,12 +22,18 @@
 [submodule "start/ultisnips"]
 	path = start/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
-[submodule "start/YouCompleteMe"]
-	path = start/YouCompleteMe
-	url = https://github.com/Valloric/YouCompleteMe.git
 [submodule "start/emmet-vim"]
 	path = start/emmet-vim
 	url = https://github.com/mattn/emmet-vim.git
 [submodule "start/command-t"]
 	path = start/command-t
 	url = https://github.com/wincent/command-t.git
+[submodule "start/YouCompleteMe"]
+	path = start/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe.git
+[submodule "start/typescript-vim"]
+	path = start/typescript-vim
+	url = https://github.com/leafgarland/typescript-vim.git
+[submodule "start/vim-vinegar"]
+	path = start/vim-vinegar
+	url = https://github.com/tpope/vim-vinegar.git

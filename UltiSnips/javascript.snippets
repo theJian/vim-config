@@ -1,5 +1,31 @@
+global !p
+from snippet_helpers import *
+endglobal
+
+snippet if "if" b
+if (${1}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet el "else"
+else {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet eif "else if" !
+else if (${1}) {
+	${0:${VISUAL}}
+}
+endsnippet
+
 snippet cl "console.log(...)" b
-console.log(${1:'${2:value}'});
+console.log('$1');$0
+endsnippet
+
+snippet ca "console.assert(...)" b
+console.assert($1, '$2');$0
 endsnippet
 
 snippet '':f "object method string"
@@ -14,14 +40,194 @@ ${1:method_name}: function(${3:attribute}) {
 }${10:,}
 endsnippet
 
-snippet fun "function (fun)" w
+snippet fun "function (fun)" i
 function ${1:function_name}(${2:argument}) {
 	${VISUAL}$0
 }
 endsnippet
 
-snippet f "Anonymous Function" i
+snippet fn "Anonymous Function" i
 function($1) {
 	${VISUAL}$0
 }
+endsnippet
+
+snippet > "Arrow Function" w
+($1) => {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet ed "export default" b
+export default ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}$0
+endsnippet
+
+snippet im "import" b
+import `!p snip.rv = formatImportedName(t[1])` from '${1}';$0
+endsnippet
+
+snippet de "Debugger"
+debugger;
+endsnippet
+
+snippet for "for (...) {...} (counting down, faster)" b
+for (let ${2:i} = ${1:array}.length - 1; $2 >= 0; --$2) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet re "require" b
+const `!p snip.rv = formatImportedName(t[1])` = require('${1}');$0
+endsnippet
+
+###########
+#  JSDoc  #
+###########
+
+snippet func "function with dynamic docblock" b
+`!p
+# Currently Ultisnips does not support dynamic tabstops, so we cannot add
+# tabstops to the datatype for these param tags until that feature is added.
+def formatTag(argument):
+	return " * @param {{}} {0}".format(argument)
+
+arguments = t[2].split(',')
+arguments = [argument.strip() for argument in arguments if argument]
+
+if len(arguments):
+	tags = map(formatTag, arguments)
+	snip.rv = "/**"
+	for tag in tags:
+		snip += tag
+	snip += ' */'
+	snip += ''
+else:
+	snip.rv = ''
+`${1}(${2}) {
+	${0:${VISUAL}}
+},
+endsnippet
+
+##########
+#  Node  #
+##########
+
+snippet me "module.exports" b
+module.exports = ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`};$0
+endsnippet
+
+#########
+#  JSX  #
+#########
+
+snippet <> "<Component>" b
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}$2>
+	${0:${VISUAL}}
+</$1>
+endsnippet
+
+snippet < "<Component />" b
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} ${0}/>
+endsnippet
+
+snippet div "<div></div>" b
+<div>
+	${0:${VISUAL}}
+</div>
+endsnippet
+
+###########
+#  React  #
+###########
+
+snippet ir "React Import(Both React and Component)"
+import React, { Component, PropTypes } from 'react';
+endsnippet
+
+snippet rc "React:Class [skeleton]" b
+class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends Component {
+	render() {
+		return (
+			${VISUAL}$0
+		)
+	}
+}
+endsnippet
+
+snippet rcon "React:constructor"
+constructor(props) {
+	super(props)
+
+	this.state = {
+		${VISUAL}$0
+	}
+}
+endsnippet
+
+snippet pt "React:propTypes"
+static propTypes = {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet pts "PropTypes" w
+$1: PropTypes.$2`!p snip.rv=complete(t[2], ['array', 'bool', 'func', 'number', 'object', 'string', 'node', 'element', 'instanceOf', 'oneOf([])', 'oneOfType([])', 'arrayOf()', 'objectOf()', 'shape({})', 'any'])`,$0
+endsnippet
+
+snippet rdp "React:defaultProps"
+static defaultProps = {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cdm "React:componentDidMount"
+componentDidMount() {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cdup "React:componentDidUpdate"
+componentDidUpdate(prevProps, prevState) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cwm "React:componentWillMount"
+componentWillMount() {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cwr "React:componentWillReceiveProps"
+componentWillReceiveProps(nextProps) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cwun "React:componentWillUnmount"
+componentWillUnmount() {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet cwu "React:componentWillUpdate"
+componentWillUpdate(nextProps, nextState) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet scu "React:shouldComponentUpdate"
+shouldComponentUpdate(nextProps, nextState) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet rcc "React:createClass [skeleton]"
+const ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} = React.createClass({
+	render() {
+		return (
+			${VISUAL}$0
+		);
+	}
+});
 endsnippet
