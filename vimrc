@@ -134,7 +134,7 @@ set relativenumber
 set colorcolumn=81
 
 " Solid window split border
-set fillchars+=vert:│
+set fillchars+=vert:\ 
 
 " dotted folded line
 set fillchars+=fold:┄
