@@ -34,6 +34,6 @@
 [submodule "start/vim-vinegar"]
 	path = start/vim-vinegar
 	url = https://github.com/tpope/vim-vinegar.git
-[submodule "vim-commentary"]
-	path = vim-commentary
+[submodule "start/vim-commentary"]
+	path = start/vim-commentary
 	url = https://github.com/tpope/vim-commentary.git
