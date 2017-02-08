@@ -16,9 +16,6 @@
 [submodule "start/vim-surround"]
 	path = start/vim-surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule "start/nerdcommenter"]
-	path = start/nerdcommenter
-	url = https://github.com/scrooloose/nerdcommenter.git
 [submodule "start/ultisnips"]
 	path = start/ultisnips
 	url = https://github.com/SirVer/ultisnips.git
@@ -37,3 +34,6 @@
 [submodule "start/vim-vinegar"]
 	path = start/vim-vinegar
 	url = https://github.com/tpope/vim-vinegar.git
+[submodule "vim-commentary"]
+	path = vim-commentary
+	url = https://github.com/tpope/vim-commentary.git

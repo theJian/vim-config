@@ -96,7 +96,7 @@ hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guib
 hi Folded ctermbg=none ctermfg=DarkCyan guibg=NONE guifg=DarkCyan
 
 "Font
-set gfn=Inconsolata\ 10
+set gfn=Inconsolata\ 14
 
 " Simplify Gvim window
 set guioptions=av
@@ -267,12 +267,6 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
-
-" nerdcommenter
-" Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 1
-" Use compact syntax for prettified multi-line comments
-let g:NERDCompactSexyComs = 1
 
 " ack
 let g:ackprg="ag --vimgrep"
