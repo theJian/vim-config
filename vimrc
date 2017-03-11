@@ -10,7 +10,9 @@ set cinoptions+=J1
 set mouse=nc
 
 " tab
-set expandtab
+set tabstop=4
+set shiftwidth=4
+set noexpandtab
 set smarttab
 
 " Open new splits on the right/bottom
@@ -79,7 +81,7 @@ set guitablabel=%t\ %M
 
 " show invisiable chars
 set list
-set listchars=tab:»\ ,trail:•,extends:§,nbsp:•,eol:¬
+set listchars=tab:››,trail:•,extends:§,nbsp:•,eol:⤵️
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
@@ -96,7 +98,7 @@ hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guib
 hi Folded ctermbg=none ctermfg=DarkCyan guibg=NONE guifg=DarkCyan
 
 "Font
-set gfn=Inconsolata\ 14
+set gfn=Inconsolata\ 16
 
 " Simplify Gvim window
 set guioptions=av
@@ -115,6 +117,10 @@ set statusline+=%<%P " percentage
 hi User1 ctermfg=red guifg=red
 
 "Cursor
+"" Change cursor shape in different mode(for VTE compatible terminals)
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
 
 set guicursor+=a:blinkon0
 set scrolloff=3
@@ -139,17 +145,25 @@ set fillchars+=vert:\
 " dotted folded line
 set fillchars+=fold:┄
 
+" maximize window
+if has("gui_running")
+        set lines=999 columns=999
+endif
+
 set number
 set showcmd
 set showmode
 set showmatch
-set showbreak=↳\ \ \ 
+set showbreak=↪️\ \ \ 
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "                Key Mapping                  "
 """""""""""""""""""""""""""""""""""""""""""""""
 " set leader key
 let mapleader="\<space>"
+
+" exit insert mode without esc
+inoremap jj <ESC>
 
 " Treat long lines as break lines
 nnoremap j gj
@@ -215,7 +229,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase/Lowercase word
-inoremap <C-k> <esc>g~iwea
+" inoremap <C-k> <esc>g~iwea
 
 " delete word
 inoremap <C-BS> <C-W>
@@ -298,8 +312,8 @@ let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 
 " ultisnips
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/pack/theJian/UltiSnips']
-let g:UltiSnipsSnippetsDir=$HOME.'/.vim/pack/theJian/UltiSnips'
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+let g:UltiSnipsSnippetsDir=$HOME.'/.vim/UltiSnips'
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-b>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
