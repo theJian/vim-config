@@ -90,7 +90,7 @@ set guitablabel=%t\ %M
 
 " show invisiable chars
 set list
-set listchars=tab:›\ ,trail:•,extends:§,nbsp:•,eol:⤵️
+set listchars=tab:›\ ,trail:•,extends:§,nbsp:•
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
@@ -163,7 +163,7 @@ set number
 set showcmd
 set showmode
 set showmatch
-set showbreak=↪️\ \ \ 
+set showbreak=↪\ \ \ 
 
 """""""""""""""""""""""""""""""""""""""""""""""
 "                Key Mapping                  "
