@@ -70,6 +70,15 @@ set virtualedit=onemore
 " Open Buffers on Their Own Tab
 " au BufAdd,BufNewFile * nested tab sball
 
+" Automatic create directory when it doesn't exist
+augroup Mkdir
+	autocmd!
+	autocmd BufNewFile *
+		\ if !isdirectory(expand("<afile>:p:h")) |
+			\ call mkdir(expand("<afile>:p:h"), "p") |
+		\ endif
+augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""
 "               User Interface                "
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -81,7 +90,7 @@ set guitablabel=%t\ %M
 
 " show invisiable chars
 set list
-set listchars=tab:››,trail:•,extends:§,nbsp:•,eol:⤵️
+set listchars=tab:›\ ,trail:•,extends:§,nbsp:•,eol:⤵️
 hi NonText guifg=#2F3740
 hi SpecialKey guifg=#2F3740
 
