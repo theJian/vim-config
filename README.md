@@ -7,7 +7,7 @@ Simple configuration and plugin pack to make your vim a lightweight editor(Not a
 - editorconfig-vim (maintaining consistent coding styles)
 - delimitMate (auto pair '()' '[]' '{}')
 - command-t (File searching)
-- nerdcommenter (auto comment)
+- vim-commentary (auto comment)
 - YouCompleteMe (the only auto-completion plugin you need)
 - vim-surround (quoting/parenthesizing made simple)
 - rust.vim (rust plugin)
