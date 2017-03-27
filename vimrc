@@ -266,6 +266,7 @@ augroup file_python
     au BufNewFile,BufRead *.py set tabstop=4
     au BufNewFile,BufRead *.py set softtabstop=4
     au BufNewFile,BufRead *.py set shiftwidth=4
+    au BufNewFile,BufRead *.py set expandtab
     au BufNewFile *.py
     \ 0put = '#!/usr/bin/python3' |
     \ 1put = '#-*- coding: utf-8 -*-' |
@@ -277,6 +278,7 @@ augroup file_js_css_html
     au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
     au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
     au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+    au BufNewFile,BufRead *.js,*.html,*.css set expandtab
 augroup END
 
 " Elm
