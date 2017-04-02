@@ -289,6 +289,19 @@ augroup file_elm
     au BufNewFile,BufRead *.elm set shiftwidth=4
 augroup END
 
+augroup HelpInTabs
+	au!
+	au BufEnter *.txt call HelpInNewTab()
+augroup END
+
+" Only apply to help files
+function! HelpInNewTab()
+	if &buftype == 'help'
+		" convert help window to tab
+		execute "normal \<C-W>T"
+	endif
+endfunction
+
 """""""""""""""""""""""""""""""""""""""""""""""
 "              Plugin Settings                "
 """""""""""""""""""""""""""""""""""""""""""""""
