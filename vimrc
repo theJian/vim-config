@@ -258,7 +258,7 @@ cnoremap <C-l> <Right>
 au BufRead,BufNewFile *.hbs set filetype=handlebars
 
 " Flagging Unnecessary Whitespace
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*js,*jsx match BadWhitespace /\s\+$/
 
 " Python
 augroup file_python
