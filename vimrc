@@ -243,8 +243,8 @@ vnoremap K :m '<-2<CR>gv=gv
 " delete word
 inoremap <C-BS> <C-W>
 
-" highlight last inserted text
-" nnoremap gV `[v`]
+" select last changed text
+nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 " Command line editing
 cnoremap <C-h> <Left>
