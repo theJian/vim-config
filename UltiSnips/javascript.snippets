@@ -70,6 +70,10 @@ snippet imp "import" b
 import { ${2} } from '${1}';$0
 endsnippet
 
+snippet imf "import from" b
+import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
+endsnippet
+
 snippet de "Debugger"
 debugger;
 endsnippet
@@ -129,7 +133,7 @@ endsnippet
 #########
 
 snippet <> "<Component>" b
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}$2>
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} $2>
 	${0:${VISUAL}}
 </$1>
 endsnippet

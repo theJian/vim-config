@@ -10,9 +10,8 @@ set cinoptions+=J1
 set mouse=nc
 
 " tab
-set tabstop=4
+set softtabstop=4
 set shiftwidth=4
-set noexpandtab
 set smarttab
 
 " Open new splits on the right/bottom
@@ -106,6 +105,12 @@ hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guib
 " Folded highlighting colors
 hi Folded ctermbg=none ctermfg=DarkCyan guibg=NONE guifg=DarkCyan
 
+" Hightlight in diff
+hi DiffAdd    cterm=bold
+hi DiffDelete cterm=bold
+hi DiffChange cterm=bold
+hi DiffText   cterm=bold
+
 "Font
 set gfn=Inconsolata\ 16
 
@@ -114,7 +119,7 @@ set guioptions=av
 
 " Statusline
 set laststatus=2
-set statusline+=%f " file path
+set statusline=%f " file path
 set statusline+=%1*%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
 set statusline+=(%{&ff}/%Y) " file type
@@ -172,7 +177,7 @@ set showbreak=↪\ \ \
 let mapleader="\<space>"
 
 " exit insert mode without esc
-inoremap jj <ESC>
+inoremap jk <ESC>
 
 " Treat long lines as break lines
 nnoremap j gj

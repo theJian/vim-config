@@ -1,7 +1,7 @@
 import os
 import re
 
-def formatImportedName(path):
+def formatImportedName(path, title=True):
     lastPart = path.split('/')[-1].split('.')[0];
     if lastPart == 'lodash':
         return '_'
@@ -10,7 +10,7 @@ def formatImportedName(path):
     elif lastPart == 'immutable':
         return '$$'
     else:
-        return re.sub(r'[_\-]', '', lastPart.title())
+        return re.sub(r'[_\-]', '', lastPart.title() if title else lastPart)
 
 def pascal_case_basename(basename):
     return ''.join(x[0].upper() + x[1:] for x in basename.split('_'))
