@@ -153,7 +153,7 @@ endsnippet
 ###########
 
 snippet ir "React Import(Both React and Component)"
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 endsnippet
 
 snippet rc "React:Class [skeleton]" b
@@ -234,12 +234,18 @@ shouldComponentUpdate(nextProps, nextState) {
 }
 endsnippet
 
-snippet rcc "React:createClass [skeleton]"
-const ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} = React.createClass({
-	render() {
-		return (
-			${VISUAL}$0
-		);
-	}
-});
+##########
+#  Test  #
+##########
+
+snippet desc "describe('test', () => {})"
+describe('${1:test}', () => {
+	${VISUAL}$0
+})
+endsnippet
+
+snippet it "it('should do someting', () => {})"
+it('${1:should do something}', () => {
+	${VISUAL}$0
+})
 endsnippet

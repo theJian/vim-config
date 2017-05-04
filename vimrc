@@ -85,6 +85,9 @@ augroup END
 set background=dark
 colorscheme gotham
 
+" true color
+set termguicolors
+
 set guitablabel=%t\ %M
 
 " show invisiable chars
@@ -318,7 +321,7 @@ let g:ackprg="ag --vimgrep"
 "" Mapping
 nmap <silent> <Leader>k <Plug>(CommandTMRU)
 "" ignore search
-let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git,*/__pycache__,*/elm-stuff"
+let g:CommandTWildIgnore=&wildignore . "*/bower_components,*/node_modules,*/.git,*/__pycache__,*/elm-stuff,*/lib"
 "" use current working path as root for search files
 let g:CommandTTraverseSCM="pwd"
 
