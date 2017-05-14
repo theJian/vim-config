@@ -92,6 +92,16 @@ snippet todo "TODO task tag" b
 // TODO: $0
 endsnippet
 
+#############
+#  Methods  #
+#############
+
+snippet each "Array.forEach" b
+${1:Array}.forEach(function(${2:item}) {
+	${VISUAL}$0
+})
+endsnippet
+
 ###########
 #  JSDoc  #
 ###########
@@ -152,12 +162,12 @@ endsnippet
 #  React  #
 ###########
 
-snippet ir "React Import(Both React and Component)"
-import React, { Component } from 'react';
+snippet ir "React Import(Both React and PureComponent)"
+import React, { PureComponent } from 'react';
 endsnippet
 
 snippet rc "React:Class [skeleton]" b
-class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends Component {
+class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends PureComponent {
 	render() {
 		return (
 			${VISUAL}$0

@@ -9,6 +9,11 @@ set cindent
 set cinoptions+=J1
 set mouse=nc
 
+" compatible options
+set cpoptions+=n
+set cpoptions+=y
+set cpoptions-=;
+
 " tab
 set softtabstop=4
 set shiftwidth=4
@@ -296,6 +301,9 @@ augroup file_elm
     au BufNewFile,BufRead *.elm set softtabstop=4
     au BufNewFile,BufRead *.elm set shiftwidth=4
 augroup END
+
+" lisp
+au FileType lisp setlocal lisp autoindent showmatch cpoptions-=mp
 
 augroup HelpInTabs
 	au!
