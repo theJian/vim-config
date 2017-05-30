@@ -88,7 +88,7 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme
 set background=dark
-colorscheme gotham
+colorscheme fethoi
 
 " true color
 set termguicolors
@@ -230,7 +230,7 @@ nnoremap PP "+p<CR>
 vnoremap XX "+x<CR>
 
 " Close buffer
-nnoremap <leader>q :bd<CR>
+nnoremap <leader>q :bp\|bd #<CR>
 
 " Clean search (highlight)
 nnoremap <silent> <BS> :noh<CR>
@@ -368,6 +368,8 @@ let g:UltiSnipsEditSplit="vertical"
 let g:ycm_python_binary_path = 'python'
 ""  Rust Semantic Completion
 let g:ycm_rust_src_path = '/usr/src/rust/src'
+"" invoke completion key
+let g:ycm_key_invoke_completion = '<C-h>'
 "" Go To Definition
 nnoremap <leader>gd  :YcmCompleter GoTo<CR>
 nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>

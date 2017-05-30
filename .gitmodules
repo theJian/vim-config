@@ -50,3 +50,6 @@
 	path = start/vim-commentary
 	url = https://github.com/tpope/vim-commentary.git
         ignore = all
+[submodule "start/oceanic-next"]
+	path = start/oceanic-next
+	url = https://github.com/mhartington/oceanic-next.git
