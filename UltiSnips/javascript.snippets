@@ -78,7 +78,7 @@ snippet im "import from" b
 import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
 endsnippet
 
-snippet de "Debugger" i
+snippet de "Debugger" wi
 debugger;
 endsnippet
 
@@ -147,13 +147,13 @@ endsnippet
 #########
 
 snippet <> "<Component>" i
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} $2>
-	${0:${VISUAL}}
-</$1>
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}>
+	${2:${VISUAL}}
+</${1/(\w+).*/$1/}>$0
 endsnippet
 
 snippet < "<Component />" i
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} ${0}/>
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}/>$0
 endsnippet
 
 snippet div "<div></div>" i
