@@ -32,12 +32,6 @@ snippet ca "console.assert(...)" b
 console.assert($1, '$2');$0
 endsnippet
 
-snippet '':f "object method string"
-'${1:${2:#thing}:${3:click}}': function(element) {
-	${VISUAL}$0
-}${10:,}
-endsnippet
-
 snippet :f "Object Method"
 ${1:method_name}: function(${3:attribute}) {
 	${VISUAL}$0
@@ -66,16 +60,12 @@ snippet ed "export default" b
 export default ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}$0
 endsnippet
 
-# snippet im "import" b
-# import `!p snip.rv = formatImportedName(t[1])` from '${1}';$0
-# endsnippet
+snippet im "import" b
+import `!p snip.rv = formatImportedName(t[1])` from '${1}';$0
+endsnippet
 
 snippet imp "import" b
 import { ${2} } from '${1}';$0
-endsnippet
-
-snippet im "import from" b
-import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
 endsnippet
 
 snippet de "Debugger" wi
@@ -92,18 +82,16 @@ snippet re "require" b
 const `!p snip.rv = formatImportedName(t[1])` = require('${1}');$0
 endsnippet
 
-snippet todo "TODO task tag" b
+snippet todo "Tag TODO" b
 // TODO: $0
 endsnippet
 
-#############
-#  Methods  #
-#############
+snippet fixme "Tag FIXME" b
+// FIXME: $0
+endsnippet
 
-snippet each "Array.forEach" b
-${1:Array}.forEach(function(${2:item}) {
-	${VISUAL}$0
-})
+snippet xxx "Tag XXX" b
+// XXX: $0
 endsnippet
 
 ###########

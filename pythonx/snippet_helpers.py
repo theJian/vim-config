@@ -7,8 +7,6 @@ def formatImportedName(path, title=True):
         return '_'
     elif lastPart == 'jquery':
         return '$'
-    elif lastPart == 'immutable':
-        return '$$'
     else:
         return re.sub(r'[_\-]', '', lastPart.title() if title else lastPart)
 
@@ -54,13 +52,3 @@ def complete(text, opts):
     if len(opts) > 0:
         return '(' + '|'.join(opts) + ')'
     return ''
-
-'''
-Checks the current buffer to see whether React ES^ syntax should be use
-'''
-def react_es6():
-    buffer = vim.current.buffer
-    for line in buffer:
-        if re.search('React.createClass', line):
-            return False
-    return True
