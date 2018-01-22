@@ -74,9 +74,6 @@ set noswapfile
 " Allow cursor to move just past the end of the line
 set virtualedit=onemore
 
-" Always use system clipboard
-set clipboard+=unnamedplus
-
 " Format options
 "" 't': auto wrap text
 "" 'B': do insert a whitespace when joining lines
@@ -167,8 +164,8 @@ set fillchars+=fold:┄
 " Wrapped line mark
 set showbreak=↪\ \ \ 
 
-" Do not show last command
-set noshowcmd
+" Show last command
+set showcmd
 
 " Show message in insert
 set showmode
