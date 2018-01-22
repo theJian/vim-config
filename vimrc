@@ -272,6 +272,8 @@ onoremap an" :<c-u>normal! f"va"<CR>
 onoremap an' :<c-u>normal! f'va'<CR>
 onoremap an< :<c-u>normal! f<va<<CR>
 
+nnoremap <leader>f :Files<CR>
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Automatically equalize splits when Vim is resized
 augroup Resize
