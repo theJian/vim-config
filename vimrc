@@ -83,6 +83,9 @@ set clipboard+=unnamedplus
 "" 'j': remove comment leader when joining lines
 set formatoptions+=tBj
 
+" Make backspace work like most other programs
+set backspace=2
+
 "─── User Interface ────────────────────────────────────────────────────────────
 " Colorscheme
 set t_Co=256 " 256 colors
