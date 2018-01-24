@@ -5,8 +5,8 @@ def formatImportedName(path, title=True):
     lastPart = path.split('/')[-1].split('.')[0];
     if lastPart == 'lodash':
         return '_'
-    elif lastPart == 'jquery':
-        return '$'
+    elif lastPart == 'react':
+        return 'React'
     else:
         return re.sub(r'[_\-]', '', lastPart.title() if title else lastPart)
 
