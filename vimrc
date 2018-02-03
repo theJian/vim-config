@@ -206,9 +206,9 @@ nnoremap <leader>h :<C-u>split<CR>
 nnoremap <leader>v :<C-u>vsplit<CR>
 
 " Tabs
-nnoremap <C-S-Tab> gT
-nnoremap <C-Tab> gt
-nnoremap <C-n> :tabnew<CR>
+nnoremap <S-Tab> gT
+nnoremap <Tab> gt
+nnoremap <leader>t :tabnew<CR>
 
 " Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
@@ -329,6 +329,8 @@ if exists('*minpac#init')
     call minpac#add('tpope/vim-commentary')
     call minpac#add('Raimondi/delimitMate')
     call minpac#add('SirVer/ultisnips')
+    call minpac#add('vim-scripts/YankRing.vim')
+    call minpac#add('Valloric/YouCompleteMe')
 
     " opt
     function! AddOpt(url, ...)
