@@ -320,10 +320,29 @@ function! <SID>SynStack()
 endfunc
 
 "─── Plugin Settings ───────────────────────────────────────────────────────────
+
+if exists('*minpac#init')
+    call minpac#init({ 'package_name': 'x' })
+
+    " start
+    call minpac#add('editorconfig/editorconfig-vim')
+    call minpac#add('tpope/vim-commentary')
+    call minpac#add('Raimondi/delimitMate')
+    call minpac#add('SirVer/ultisnips')
+
+    " opt
+    function! AddOpt(url, ...)
+        let opt = get(a:, 1, {})
+        call minpac#add(a:url, extend({ 'type': 'opt' }, opt))
+    endfunction
+    call AddOpt('reasonml-editor/vim-reason-plus')
+endif
+
 " complete
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+" set completefunc=LanguageClient#complete
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 
 " Netrw
 let g:netrw_liststyle=0
@@ -341,3 +360,11 @@ let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
+
+" lsp
+" let g:LanguageClient_diagnosticsEnable = 0
+" let g:LanguageClient_serverCommands = {
+"     \ 'javascript': ['javascript-typescript-stdio'],
+"     \ 'reason': ['ocaml-language-server', '--stdio'],
+"     \ 'ocaml': ['ocaml-language-server', '--stdio'],
+"     \ }
