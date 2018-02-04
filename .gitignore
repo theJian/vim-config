@@ -2,3 +2,4 @@ tags
 .netrwhist
 *.pyc
 pack/x/
+__pycache__

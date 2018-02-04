@@ -311,7 +311,7 @@ function! HelpInNewTab()
 endfunction
 
 " Show syntax highlighting groups for word under cursor
-nnoremap <C-S-P> :call <SID>SynStack()<CR>
+nnoremap <leader><C-P> :call <SID>SynStack()<CR>
 function! <SID>SynStack()
     if !exists("*synstack")
         return
