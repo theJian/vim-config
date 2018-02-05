@@ -95,8 +95,6 @@ set termguicolors
 " Show invisiable chars
 set list
 set listchars=tab:›\ ,trail:•,extends:§,nbsp:•
-highlight NonText    ctermfg=12 guifg=#2F3740
-highlight SpecialKey ctermfg=12 guifg=#2F3740
 
 " Matches highlight delay
 set showmatch
@@ -104,9 +102,6 @@ set matchtime=3
 
 " Highlight font settings
 highlight Comment cterm=italic
-
-" Matches highlighting colors
-hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guibg=NONE guifg=LightGreen
 
 " Hightlight in diff
 hi DiffAdd    cterm=bold
@@ -131,7 +126,7 @@ set statusline+=(line\ %l\/%L,\ col\ %c) " cusor position
 set statusline+=\  " seperator
 set statusline+=%<%P " percentage
 " Highlight modified flag
-highlight User1 ctermfg=red guifg=red
+highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 
 " Change cursor shape in different mode(for VTE compatible terminals)
 let &t_SI = "\<Esc>[6 q"
