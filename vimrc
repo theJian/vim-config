@@ -108,9 +108,6 @@ highlight Comment cterm=italic
 " Matches highlighting colors
 hi MatchParen cterm=underline ctermbg=none ctermfg=LightGreen gui=underline guibg=NONE guifg=LightGreen
 
-" Folded highlighting colors
-hi Folded ctermbg=none ctermfg=DarkCyan guibg=NONE guifg=DarkCyan
-
 " Hightlight in diff
 hi DiffAdd    cterm=bold
 hi DiffDelete cterm=bold
