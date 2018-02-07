@@ -330,6 +330,7 @@ if exists('*minpac#init')
         call minpac#add(a:url, extend({ 'type': 'opt' }, opt))
     endfunction
     call AddOpt('reasonml-editor/vim-reason-plus')
+    call AddOpt('theJian/vim-fethoi')
 endif
 
 " complete
