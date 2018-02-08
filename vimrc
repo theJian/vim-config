@@ -247,20 +247,6 @@ cnoremap <C-l> <Right>
 cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 
-" Operator pending mappings
-onoremap in( :<c-u>normal! f(vi(<CR>
-onoremap in{ :<c-u>normal! f{vi{<CR>
-onoremap in[ :<c-u>normal! f[vi[<CR>
-onoremap in" :<c-u>normal! f"vi"<CR>
-onoremap in' :<c-u>normal! f'vi'<CR>
-onoremap in< :<c-u>normal! f<vi<<CR>
-onoremap an( :<c-u>normal! f(va(<CR>
-onoremap an{ :<c-u>normal! f{va{<CR>
-onoremap an[ :<c-u>normal! f[va[<CR>
-onoremap an" :<c-u>normal! f"va"<CR>
-onoremap an' :<c-u>normal! f'va'<CR>
-onoremap an< :<c-u>normal! f<va<<CR>
-
 nnoremap <leader>f :Files<CR>
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
@@ -323,6 +309,10 @@ if exists('*minpac#init')
     call minpac#add('SirVer/ultisnips')
     call minpac#add('vim-scripts/YankRing.vim')
     call minpac#add('Valloric/YouCompleteMe')
+    call minpac#add('vim-scripts/SearchComplete')
+    call minpac#add('wellle/targets.vim')
+    call minpac#add('terryma/vim-expand-region')
+    call minpac#add('theJian/fit')
 
     " opt
     function! AddOpt(url, ...)
