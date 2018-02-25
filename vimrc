@@ -247,7 +247,8 @@ cnoremap <C-l> <Right>
 cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 
-nnoremap <leader>f :Files<CR>
+" Open files fuzzyfinder
+nnoremap <leader>f :FFiles<CR>
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Automatically equalize splits when Vim is resized
@@ -345,6 +346,10 @@ let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
+
+" fit
+let g:FitFilesFindCommand = "rg --color never --files <dir>"
+let g:FitMatchCommand = "fzy --show-matches=<query>"
 
 " lsp
 " let g:LanguageClient_diagnosticsEnable = 0
