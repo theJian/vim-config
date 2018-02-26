@@ -144,8 +144,8 @@ set cursorline
 set number
 set relativenumber
 
-" Add a colored line at 81 column
-set colorcolumn=81
+" Clear highlight above 80 characters width
+set synmaxcol=80
 
 " Solid window split border
 set fillchars+=vert:\ 
