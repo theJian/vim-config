@@ -198,8 +198,6 @@ nnoremap <leader>h :<C-u>split<CR>
 nnoremap <leader>v :<C-u>vsplit<CR>
 
 " Tabs
-nnoremap <S-Tab> gT
-nnoremap <Tab> gt
 nnoremap <leader>t :tabnew<CR>
 
 " Set working directory
@@ -241,16 +239,25 @@ inoremap <C-u> <C-y><esc>g~iwea
 " Select last changed text
 nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
-" Command line editing
+" Command line cursor move
 cnoremap <C-h> <Left>
 cnoremap <C-l> <Right>
-cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+
+" Visual mode pressing * or # searches for the current selection
+vnoremap <silent> * :<C-u>call VisualSelection()<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection()<CR>?<C-R>=@/<CR><CR>
 
 " Open files fuzzyfinder
 nnoremap <leader>f :FFiles<CR>
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
+" Sudo save
+command W w !sudo tee % > /dev/null
+
 " Automatically equalize splits when Vim is resized
 augroup Resize
     autocmd!
@@ -298,6 +305,17 @@ function! <SID>SynStack()
     echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
 
+function! VisualSelection()
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
 "─── Plugin Settings ───────────────────────────────────────────────────────────
 
 if exists('*minpac#init')
@@ -308,7 +326,7 @@ if exists('*minpac#init')
     call minpac#add('tpope/vim-commentary')
     call minpac#add('Raimondi/delimitMate')
     call minpac#add('SirVer/ultisnips')
-    call minpac#add('vim-scripts/YankRing.vim')
+    call minpac#add('maxbrunsfeld/vim-yankstack')
     call minpac#add('Valloric/YouCompleteMe')
     call minpac#add('vim-scripts/SearchComplete')
     call minpac#add('wellle/targets.vim')
@@ -320,8 +338,12 @@ if exists('*minpac#init')
         let opt = get(a:, 1, {})
         call minpac#add(a:url, extend({ 'type': 'opt' }, opt))
     endfunction
-    call AddOpt('reasonml-editor/vim-reason-plus')
     call AddOpt('theJian/vim-fethoi')
+    call AddOpt('reasonml-editor/vim-reason-plus')
+    call AddOpt('kien/rainbow_parentheses.vim')
+    call AddOpt('bhurlow/vim-parinfer')
+    call AddOpt('guns/vim-sexp')
+    call AddOpt('tpope/vim-fireplace')
 endif
 
 " complete
@@ -350,6 +372,15 @@ let g:UltiSnipsEditSplit="vertical"
 " fit
 let g:FitFilesFindCommand = "rg --color never --files <dir>"
 let g:FitMatchCommand = "fzy --show-matches=<query>"
+
+" yankstack
+let g:yankstack_map_keys = 0
+let g:yankstack_yank_keys = ['y', 'd']
+nmap <leader>p <Plug>yankstack_substitute_older_paste
+nmap <leader>P <Plug>yankstack_substitute_newer_paste
+
+" vim-sexp
+let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
 " let g:LanguageClient_diagnosticsEnable = 0

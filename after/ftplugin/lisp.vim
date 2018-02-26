@@ -11,3 +11,6 @@ setlocal foldmethod=marker foldmarker=(,) foldminlines=1
 " this allows gf and :find to work. Fix path to your needs
 setlocal suffixesadd=.lisp
 
+packadd 'kien/rainbow_parentheses.vim'
+packadd 'bhurlow/vim-parinfer'
+packadd 'guns/vim-sexp'
