@@ -327,11 +327,12 @@ if exists('*minpac#init')
     call minpac#add('Raimondi/delimitMate')
     call minpac#add('SirVer/ultisnips')
     call minpac#add('maxbrunsfeld/vim-yankstack')
-    call minpac#add('Valloric/YouCompleteMe')
+    call minpac#add('Shougo/neocomplete.vim')
     call minpac#add('vim-scripts/SearchComplete')
     call minpac#add('wellle/targets.vim')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
+    call AddOpt('reasonml-editor/vim-reason-plus')
 
     " opt
     function! AddOpt(url, ...)
@@ -339,8 +340,7 @@ if exists('*minpac#init')
         call minpac#add(a:url, extend({ 'type': 'opt' }, opt))
     endfunction
     call AddOpt('theJian/vim-fethoi')
-    call AddOpt('reasonml-editor/vim-reason-plus')
-    call AddOpt('kien/rainbow_parentheses.vim')
+    call AddOpt('junegunn/rainbow_parentheses.vim')
     call AddOpt('bhurlow/vim-parinfer')
     call AddOpt('guns/vim-sexp')
     call AddOpt('tpope/vim-fireplace')
@@ -348,9 +348,11 @@ endif
 
 " complete
 " set completefunc=LanguageClient#complete
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
 
 " Netrw
 let g:netrw_liststyle=0
