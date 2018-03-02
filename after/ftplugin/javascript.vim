@@ -3,6 +3,10 @@ if exists("b:did_ftplugin_after")
 endif
 let b:did_ftplugin_after = 1
 
+" indentation rule
+set cindent
+set cinoptions+=J1
+
 " possible folding method
 setlocal foldmethod=indent
 

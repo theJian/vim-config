@@ -5,8 +5,7 @@ filetype plugin indent on
 
 " Indent
 set autoindent
-set cindent
-set cinoptions+=J1
+set smartindent
 
 " Mouse
 set mouse=nc
@@ -256,7 +255,7 @@ nnoremap <leader>f :FFiles<CR>
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
-command W w !sudo tee % > /dev/null
+command! W w !sudo tee % > /dev/null
 
 " Automatically equalize splits when Vim is resized
 augroup Resize
@@ -332,7 +331,7 @@ if exists('*minpac#init')
     call minpac#add('wellle/targets.vim')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
-    call AddOpt('reasonml-editor/vim-reason-plus')
+    call minpac#add('reasonml-editor/vim-reason-plus')
 
     " opt
     function! AddOpt(url, ...)
@@ -361,6 +360,7 @@ let g:netrw_keepdir=1
 " delimitMate
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
+let delimitMate_balance_matchpairs = 1
 let delimitMate_jump_expansion = 1
 
 " ultisnips
