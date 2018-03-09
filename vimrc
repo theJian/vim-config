@@ -332,6 +332,7 @@ if exists('*minpac#init')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
     call minpac#add('reasonml-editor/vim-reason-plus')
+    call minpac#add('mxw/vim-jsx')
 
     " opt
     function! AddOpt(url, ...)
