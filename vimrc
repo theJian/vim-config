@@ -233,7 +233,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase/Lowercase word
-inoremap <C-u> <C-y><esc>g~iwea
+inoremap <C-u> <esc>g~iwea
 
 " Select last changed text
 nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
@@ -327,7 +327,6 @@ if exists('*minpac#init')
     call minpac#add('SirVer/ultisnips')
     call minpac#add('maxbrunsfeld/vim-yankstack')
     call minpac#add('Shougo/neocomplete.vim')
-    call minpac#add('vim-scripts/SearchComplete')
     call minpac#add('wellle/targets.vim')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
@@ -350,7 +349,7 @@ endif
 " set completefunc=LanguageClient#complete
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+imap <expr> <cr> pumvisible() ? "\<C-y>\<Plug>delimitMateCR" : "\<Plug>delimitMateCR"
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 

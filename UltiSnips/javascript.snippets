@@ -25,11 +25,11 @@ else if (${1}) {
 endsnippet
 
 snippet cl "console.log(...)"
-console.log(${1:'${2:*** Hey ***}'});$0
+console.log(${1:'${2:*** Hey ***}'})$0
 endsnippet
 
 snippet ca "console.assert(...)" b
-console.assert($1, '$2');$0
+console.assert($1, '$2')$0
 endsnippet
 
 snippet :f "Object Method"
@@ -65,7 +65,7 @@ import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
 endsnippet
 
 snippet imp "import" b
-import { ${2} } from '${1}';$0
+import {${2}} from '${1}';$0
 endsnippet
 
 snippet de "Debugger" wi
@@ -135,9 +135,7 @@ endsnippet
 #########
 
 snippet <> "<Component>" i
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}>
-	${2:${VISUAL}}
-</${1/(\w+).*/$1/}>$0
+<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}>${2:${VISUAL}}</${1/(\w+).*/$1/}>$0
 endsnippet
 
 snippet < "<Component />" i
@@ -155,12 +153,13 @@ endsnippet
 ###########
 
 snippet ir "React Import(Both React and PureComponent)"
-import React, { PureComponent } from 'react';
+import React${1:, { $2 }} from 'react';
+${3:import PropTypes from 'prop-types';}$0
 endsnippet
 
-snippet rc "React:Class [skeleton]" b
-class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends PureComponent {
-	render() {
+snippet rc "React:Class [skeleton]"
+class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends ${2:Component} {
+	render = () => {
 		return (
 			${VISUAL}$0
 		)
