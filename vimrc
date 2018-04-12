@@ -39,7 +39,7 @@ set ttyfast
 
 " Hightlight BadWhitespace
 highlight BadWhitespace ctermbg=red guibg=red
-autocmd BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*js,*jsx match BadWhitespace /\s\+$/
+autocmd BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*js match BadWhitespace /\s\+$/
 
 "Searching
 set hlsearch
@@ -81,6 +81,12 @@ set formatoptions+=tBj
 
 " Make backspace work like most other programs
 set backspace=2
+
+" Yank text to system clipboard
+set clipboard^=unnamedplus
+
+" Ask confirmation for certain things like when quitting before saving
+set confirm
 
 "─── User Interface ────────────────────────────────────────────────────────────
 " Colorscheme
@@ -211,6 +217,9 @@ vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
+" Paste while in insert mode
+inoremap <silent><C-v> <Esc>:set paste<CR>a<C-r>+<Esc>:set nopaste<CR>a
+
 " Close buffer
 nnoremap <leader>q :<C-u>bp\|bd #<CR>
 
@@ -331,7 +340,7 @@ if exists('*minpac#init')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
     call minpac#add('reasonml-editor/vim-reason-plus')
-    call minpac#add('mxw/vim-jsx')
+    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' })
 
     " opt
     function! AddOpt(url, ...)
@@ -344,6 +353,8 @@ if exists('*minpac#init')
     call AddOpt('guns/vim-sexp')
     call AddOpt('tpope/vim-fireplace')
 endif
+
+command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 
 " complete
 " set completefunc=LanguageClient#complete
@@ -385,9 +396,8 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
-" let g:LanguageClient_diagnosticsEnable = 0
-" let g:LanguageClient_serverCommands = {
-"     \ 'javascript': ['javascript-typescript-stdio'],
-"     \ 'reason': ['ocaml-language-server', '--stdio'],
-"     \ 'ocaml': ['ocaml-language-server', '--stdio'],
-"     \ }
+let g:LanguageClient_serverCommands = {
+    \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'reason': ['ocaml-language-server', '--stdio'],
+    \ 'ocaml': ['ocaml-language-server', '--stdio'],
+    \ }
