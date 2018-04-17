@@ -83,7 +83,7 @@ set formatoptions+=tBj
 set backspace=2
 
 " Yank text to system clipboard
-set clipboard^=unnamedplus
+set clipboard^=unnamed,unnamedplus
 
 " Ask confirmation for certain things like when quitting before saving
 set confirm
