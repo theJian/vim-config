@@ -184,11 +184,8 @@ nnoremap <leader><space> za
 " To save, press <leader>w
 nnoremap <leader>w :w<CR>
 
-" To edit, press <leader>e
-nnoremap <leader>e :e <C-R>=expand("%:h") . "/" <CR>
-
 " To create a file
-nnoremap <leader>n :n <C-R>=expand("%:h") . "/" <CR>
+nnoremap <leader>n :n <C-R>=expand("%:h")<CR>
 
 " Add an empty line without insert mode(for GUI)
 nnoremap <C-CR> o<Esc>
@@ -262,6 +259,10 @@ vnoremap <silent> # :<C-u>call VisualSelection()<CR>?<C-R>=@/<CR><CR>
 " Open files fuzzyfinder
 nnoremap <leader>f :FFiles<CR>
 
+" Open files under current directory
+nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
+
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
 command! W w !sudo tee % > /dev/null
@@ -324,6 +325,14 @@ function! VisualSelection()
     let @" = l:saved_reg
 endfunction
 
+function! GetFileDir()
+    let dir = expand("%:h")
+    if dir == ""
+        let dir = getcwd()
+    endif
+    return dir
+endfunction
+
 "─── Plugin Settings ───────────────────────────────────────────────────────────
 
 if exists('*minpac#init')
@@ -340,6 +349,7 @@ if exists('*minpac#init')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
     call minpac#add('reasonml-editor/vim-reason-plus')
+    call minpac#add('tpope/vim-fugitive')
     call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' })
 
     " opt
