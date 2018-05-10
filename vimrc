@@ -122,13 +122,13 @@ set guioptions=av
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=%.42f " file path
+set statusline=%f " file path
 set statusline+=%1*%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
-set statusline+=(%{&ff}/%Y) " file type
-set statusline+=\  " separator
-set statusline+=(line\ %l\/%L,\ col\ %c) " cusor position
-set statusline+=\  " seperator
+set statusline+=Ξ\ %{&ff}/%Y " file type
+set statusline+=⎹\  " seperator
+set statusline+=%l:%c\/%L " cusor position
+set statusline+=⎹\  " seperator
 set statusline+=%<%P " percentage
 " Highlight modified flag
 highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
@@ -153,7 +153,7 @@ set relativenumber
 set synmaxcol=80
 
 " Solid window split border
-set fillchars+=vert:\ 
+set fillchars+=vert:⎹
 
 " Dotted folded line
 set fillchars+=fold:┄
