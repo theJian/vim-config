@@ -17,6 +17,7 @@ set cpoptions-=;
 
 " Tab
 set softtabstop=4
+set tabstop=4
 set shiftwidth=4
 set smarttab
 
@@ -150,7 +151,7 @@ set number
 set relativenumber
 
 " Clear highlight above 80 characters width
-set synmaxcol=80
+" set synmaxcol=80
 
 " Solid window split border
 set fillchars+=vert:⎹
