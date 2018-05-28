@@ -363,6 +363,7 @@ if exists('*minpac#init')
     call AddOpt('bhurlow/vim-parinfer')
     call AddOpt('guns/vim-sexp')
     call AddOpt('tpope/vim-fireplace')
+    call AddOpt('flowtype/vim-flow')
 endif
 
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
