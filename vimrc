@@ -349,9 +349,11 @@ if exists('*minpac#init')
     call minpac#add('wellle/targets.vim')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
-    call minpac#add('reasonml-editor/vim-reason-plus')
     call minpac#add('tpope/vim-fugitive')
-    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' })
+    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': {-> system('bash install.sh')} })
+    " language support
+    call minpac#add('reasonml-editor/vim-reason-plus')
+    call minpac#add('leafgarland/typescript-vim')
 
     " opt
     function! AddOpt(url, ...)
