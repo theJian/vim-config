@@ -371,12 +371,18 @@ endif
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
 
 " complete
-" set completefunc=LanguageClient#complete
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 imap <expr> <cr> pumvisible() ? "\<C-y>\<Plug>delimitMateCR" : "\<Plug>delimitMateCR"
 let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
+if ! exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
+let g:neocomplete#sources#omni#input_patterns.typescript = '[^. *\t]\.\w*\|\h\w*::'
+let g:neocomplete#sources#omni#input_patterns.rust = '[^.[:digit:] *\t]\%(\.\|\::\)\%(\h\w*\)\?'
+let g:neocomplete#sources#omni#input_patterns.python = '[^. *\t]\.\w*\|\h\w*'
+" let g:neocomplete#sources#omni#input_patterns.go = '[^.[:digit:] *\t]\.\w*'
 
 " Netrw
 let g:netrw_liststyle=0
@@ -412,7 +418,9 @@ let g:sexp_enable_insert_mode_mappings = 0
 " lsp
 let g:LanguageClient_serverCommands = {
     \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'typescript': ['javascript-typescript-stdio'],
     \ 'reason': ['ocaml-language-server', '--stdio'],
     \ 'ocaml': ['ocaml-language-server', '--stdio'],
-    \ 'python': ['pyls']
+    \ 'python': ['pyls'],
+    \ 'rust': ['rustup', 'run', 'stable', 'rls']
     \ }
