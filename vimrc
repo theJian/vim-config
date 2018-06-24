@@ -424,3 +424,7 @@ let g:LanguageClient_serverCommands = {
     \ 'python': ['pyls'],
     \ 'rust': ['rustup', 'run', 'stable', 'rls']
     \ }
+
+" flowtype
+let g:flow#omnifunc = 0
+let g:flow#autoclose = 1
