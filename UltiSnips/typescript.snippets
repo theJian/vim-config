@@ -1,0 +1,97 @@
+global !p
+from snippet_helpers import *
+endglobal
+
+snippet if "if" b
+if (${1}) {
+	${2:${VISUAL}}
+}$0
+endsnippet
+
+snippet el "else"
+else {
+	${1:${VISUAL}}
+}$0
+endsnippet
+
+snippet eif "else if"
+else if (${1}) {
+	${2:${VISUAL}}
+}$0
+endsnippet
+
+snippet cl "console.log(...)"
+console.log(${1:'${2:*** Hey ***}'})$0
+endsnippet
+
+snippet ca "console.assert(...)" b
+console.assert($1, '$2')$0
+endsnippet
+
+snippet fun "function (fun)" i
+function ${1:function_name}(${2:argument}) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet fn "Anonymous Function" i
+function($1) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet > "Arrow Function" w
+($1) => {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet ed "export default" b
+export default ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}$0
+endsnippet
+
+snippet im "import" b
+import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
+endsnippet
+
+snippet imp "import" b
+import {${2}} from '${1}';$0
+endsnippet
+
+snippet de "Debugger" wi
+debugger;
+endsnippet
+
+snippet for "for (...) {...} (counting down, faster)" b
+for (let ${2:i} = ${1:array}.length - 1; $2 >= 0; --$2) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet todo "Tag TODO" b
+// TODO: $0
+endsnippet
+
+snippet fixme "Tag FIXME" b
+// FIXME: $0
+endsnippet
+
+snippet xxx "Tag XXX" b
+// XXX: $0
+endsnippet
+
+##########
+#  Test  #
+##########
+
+snippet desc "describe('test', () => {})" b
+describe('${1:test}', () => {
+	${VISUAL}$2
+})$0
+endsnippet
+
+snippet it "it('should do someting', () => {})" b
+it('${1:should do something}', () => {
+	${VISUAL}$2
+})$0
+endsnippet

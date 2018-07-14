@@ -340,6 +340,12 @@ if exists('*minpac#init')
     call minpac#init({ 'package_name': 'x' })
 
     " start
+    " language support
+    call minpac#add('reasonml-editor/vim-reason-plus')
+    call minpac#add('leafgarland/typescript-vim')
+    " lsp
+    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': {-> system('bash install.sh')} })
+
     call minpac#add('editorconfig/editorconfig-vim')
     call minpac#add('tpope/vim-commentary')
     call minpac#add('Raimondi/delimitMate')
@@ -350,10 +356,6 @@ if exists('*minpac#init')
     call minpac#add('terryma/vim-expand-region')
     call minpac#add('theJian/fit')
     call minpac#add('tpope/vim-fugitive')
-    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': {-> system('bash install.sh')} })
-    " language support
-    call minpac#add('reasonml-editor/vim-reason-plus')
-    call minpac#add('leafgarland/typescript-vim')
 
     " opt
     function! AddOpt(url, ...)
@@ -416,6 +418,9 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
+" HACK: set filetype before lang server start
+autocmd BufNewFile,BufRead *.ts set filetype=typescript
+autocmd BufRead,BufNewFile *.re,*.rei set filetype=reason
 let g:LanguageClient_serverCommands = {
     \ 'javascript': ['javascript-typescript-stdio'],
     \ 'typescript': ['javascript-typescript-stdio'],
@@ -428,3 +433,9 @@ let g:LanguageClient_serverCommands = {
 " flowtype
 let g:flow#omnifunc = 0
 let g:flow#autoclose = 1
+
+" ctrla
+let g:ctrla#dict = [
+    \ ['+', '-', '*', '/'],
+    \ ['||', '&&']
+    \ ]
