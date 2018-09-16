@@ -75,10 +75,9 @@ set noswapfile
 set virtualedit=onemore
 
 " Format options
-"" 't': auto wrap text
 "" 'B': do insert a whitespace when joining lines
 "" 'j': remove comment leader when joining lines
-set formatoptions+=tBj
+set formatoptions+=Bj
 
 " Make backspace work like most other programs
 set backspace=2
@@ -90,13 +89,14 @@ set clipboard^=unnamed,unnamedplus
 set confirm
 
 "─── User Interface ────────────────────────────────────────────────────────────
-" Colorscheme
+
 set t_Co=256 " 256 colors
-set background=dark
-colorscheme fethoi
 
 " True color
 set termguicolors
+
+" Colorscheme
+colorscheme Mogao
 
 " Show invisiable chars
 set list
@@ -186,7 +186,7 @@ nnoremap <leader><space> za
 nnoremap <leader>w :w<CR>
 
 " To create a file
-nnoremap <leader>n :n <C-R>=expand("%:h")<CR>
+nnoremap <expr> <leader>n ':n ' . GetRelDir()
 
 " Add an empty line without insert mode(for GUI)
 nnoremap <C-CR> o<Esc>
@@ -268,6 +268,11 @@ nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
 " Sudo save
 command! W w !sudo tee % > /dev/null
 
+augroup Debug
+    autocmd!
+    autocmd BufWritePost Mogao.vim colorscheme Mogao
+augroup END
+
 " Automatically equalize splits when Vim is resized
 augroup Resize
     autocmd!
@@ -329,7 +334,18 @@ endfunction
 function! GetFileDir()
     let dir = expand("%:h")
     if dir == ""
-        let dir = getcwd()
+        let dir = "."
+    endif
+    return dir
+endfunction
+
+function! GetRelDir()
+    let dir = GetFileDir()
+    if dir == "."
+        let dir = ""
+    endif
+    if dir != ""
+        let dir = dir . '/'
     endif
     return dir
 endfunction
