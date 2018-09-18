@@ -352,55 +352,10 @@ endfunction
 
 "─── Plugin Settings ───────────────────────────────────────────────────────────
 
-if exists('*minpac#init')
-    call minpac#init({ 'package_name': 'x' })
-
-    " start
-    " language support
-    call minpac#add('reasonml-editor/vim-reason-plus')
-    call minpac#add('leafgarland/typescript-vim')
-    " lsp
-    call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': {-> system('bash install.sh')} })
-
-    call minpac#add('editorconfig/editorconfig-vim')
-    call minpac#add('tpope/vim-commentary')
-    call minpac#add('Raimondi/delimitMate')
-    call minpac#add('SirVer/ultisnips')
-    call minpac#add('maxbrunsfeld/vim-yankstack')
-    call minpac#add('Shougo/neocomplete.vim')
-    call minpac#add('wellle/targets.vim')
-    call minpac#add('terryma/vim-expand-region')
-    call minpac#add('theJian/fit')
-    call minpac#add('tpope/vim-fugitive')
-
-    " opt
-    function! AddOpt(url, ...)
-        let opt = get(a:, 1, {})
-        call minpac#add(a:url, extend({ 'type': 'opt' }, opt))
-    endfunction
-    call AddOpt('theJian/vim-fethoi')
-    call AddOpt('junegunn/rainbow_parentheses.vim')
-    call AddOpt('bhurlow/vim-parinfer')
-    call AddOpt('guns/vim-sexp')
-    call AddOpt('tpope/vim-fireplace')
-    call AddOpt('flowtype/vim-flow')
-endif
-
-command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
-
 " complete
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-imap <expr> <cr> pumvisible() ? "\<C-y>\<Plug>delimitMateCR" : "\<Plug>delimitMateCR"
-let g:neocomplete#enable_at_startup = 1
-if ! exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-endif
-let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
-let g:neocomplete#sources#omni#input_patterns.typescript = '[^. *\t]\.\w*\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.rust = '[^.[:digit:] *\t]\%(\.\|\::\)\%(\h\w*\)\?'
-let g:neocomplete#sources#omni#input_patterns.python = '[^. *\t]\.\w*\|\h\w*'
-" let g:neocomplete#sources#omni#input_patterns.go = '[^.[:digit:] *\t]\.\w*'
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" imap <expr> <cr> pumvisible() ? "\<C-y>\<Plug>delimitMateCR" : "\<Plug>delimitMateCR"
 
 " Netrw
 let g:netrw_liststyle=0
