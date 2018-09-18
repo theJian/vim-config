@@ -353,9 +353,8 @@ endfunction
 "─── Plugin Settings ───────────────────────────────────────────────────────────
 
 " complete
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" imap <expr> <cr> pumvisible() ? "\<C-y>\<Plug>delimitMateCR" : "\<Plug>delimitMateCR"
+set completeopt+=menuone,noselect
+let g:mucomplete#enable_auto_at_startup = 1
 
 " Netrw
 let g:netrw_liststyle=0
