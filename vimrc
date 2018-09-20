@@ -409,3 +409,6 @@ let g:ctrla#dict = [
     \ ['+', '-', '*', '/'],
     \ ['||', '&&']
     \ ]
+
+" far.vim
+let g:far#source='ag'
