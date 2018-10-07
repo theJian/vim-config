@@ -355,6 +355,12 @@ endfunction
 " complete
 set completeopt+=menuone,noselect
 let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#completion_delay = 50
+let g:mucomplete#chains = {
+    \ 'default'    : ['path', 'omni', 'keyp', 'dict'],
+    \ 'vim'        : ['path', 'cmd', 'keyp'],
+    \ 'javascript' : ['path', 'omni'],
+    \ }
 
 " Netrw
 let g:netrw_liststyle=0
@@ -391,12 +397,12 @@ let g:sexp_enable_insert_mode_mappings = 0
 autocmd BufNewFile,BufRead *.ts set filetype=typescript
 autocmd BufRead,BufNewFile *.re,*.rei set filetype=reason
 let g:LanguageClient_serverCommands = {
-    \ 'javascript': ['javascript-typescript-stdio'],
-    \ 'typescript': ['javascript-typescript-stdio'],
-    \ 'reason': ['ocaml-language-server', '--stdio'],
-    \ 'ocaml': ['ocaml-language-server', '--stdio'],
-    \ 'python': ['pyls'],
-    \ 'rust': ['rustup', 'run', 'stable', 'rls']
+    \ 'javascript' : ['javascript-typescript-stdio'],
+    \ 'typescript' : ['javascript-typescript-stdio'],
+    \ 'reason'     : ['ocaml-language-server', '--stdio'],
+    \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
+    \ 'python'     : ['pyls'],
+    \ 'rust'       : ['rustup', 'run', 'stable', 'rls'],
     \ }
 
 " flowtype
