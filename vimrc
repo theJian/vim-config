@@ -355,11 +355,12 @@ endfunction
 " complete
 set completeopt+=menuone,noselect
 let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 50
+let g:mucomplete#completion_delay = 80
+let g:mucomplete#buffer_relative_paths = 1
 let g:mucomplete#chains = {
-    \ 'default'    : ['path', 'omni', 'keyp', 'dict'],
-    \ 'vim'        : ['path', 'cmd', 'keyp'],
-    \ 'javascript' : ['path', 'omni'],
+    \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
+    \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
+    \ 'javascript' : ['omni', 'c-n', 'ulti', 'path'],
     \ }
 
 " Netrw
