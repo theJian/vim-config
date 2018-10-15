@@ -134,18 +134,20 @@ endsnippet
 #  JSX  #
 #########
 
-snippet <> "<Component>" i
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}>${2:${VISUAL}}</${1/(\w+).*/$1/}>$0
+snippet "(\w+)>" "<Component>" ir
+<`!p snip.rv = match.group(1)`$1>
+	${2:${VISUAL}}
+</`!p snip.rv = match.group(1)`>$0
 endsnippet
 
-snippet < "<Component />" i
-<${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`}/>$0
+snippet "(\w+)/>" "<Component />" ir
+<`!p snip.rv = match.group(1)`$1/>$0
 endsnippet
 
-snippet div "<div></div>" i
-<div>
-	${0:${VISUAL}}
-</div>
+snippet <> "React.Fragment" b
+<>
+	${VISUAL}$0
+</>
 endsnippet
 
 ###########
@@ -159,7 +161,7 @@ endsnippet
 
 snippet rc "React:Class [skeleton]"
 class ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basename)`} extends ${2:Component} {
-	render = () => {
+	render() {
 		return (
 			${VISUAL}$0
 		)
