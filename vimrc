@@ -360,7 +360,7 @@ let g:mucomplete#buffer_relative_paths = 1
 let g:mucomplete#chains = {
     \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
     \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
-    \ 'javascript' : ['omni', 'c-n', 'ulti', 'path'],
+    \ 'javascript' : ['omni', 'incl', 'ulti', 'path'],
     \ }
 
 " Netrw
