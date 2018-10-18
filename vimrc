@@ -38,10 +38,6 @@ set hidden
 set lazyredraw
 set ttyfast
 
-" Hightlight BadWhitespace
-highlight BadWhitespace ctermbg=red guibg=red
-autocmd BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*js match BadWhitespace /\s\+$/
-
 "Searching
 set hlsearch
 set incsearch
