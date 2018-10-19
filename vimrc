@@ -164,6 +164,9 @@ set showcmd
 " Show message in insert
 set showmode
 
+" Always show sign column
+set signcolumn=yes
+
 "─── Key Mapping ───────────────────────────────────────────────────────────────
 " Set leader key
 let mapleader="\<space>"
@@ -398,25 +401,25 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
     \   "name": "Error",
     \   "texthl": "ALEError",
-    \   "signText": "×",
+    \   "signText": " ×",
     \   "signTexthl": "ALEErrorSign",
     \ },
     \ 2: {
     \   "name": "Warning",
     \   "texthl": "ALEWarning",
-    \   "signText": "!",
+    \   "signText": " !",
     \   "signTexthl": "ALEWarningSign",
     \ },
     \ 3: {
     \   "name": "Information",
     \   "texthl": "ALEInfo",
-    \   "signText": "¿",
+    \   "signText": " ¿",
     \   "signTexthl": "ALEInfoSign",
     \ },
     \ 4: {
     \   "name": "Hint",
     \   "texthl": "ALEInfo",
-    \   "signText": "◊",
+    \   "signText": " ◊",
     \   "signTexthl": "ALEInfoSign",
     \ },
     \ }
