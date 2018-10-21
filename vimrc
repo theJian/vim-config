@@ -360,7 +360,11 @@ let g:mucomplete#chains = {
     \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
     \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
     \ 'javascript' : ['omni', 'incl', 'ulti', 'path'],
+    \ 'cpp'        : ['clangd'],
     \ }
+let s:cpp_cond = { t -> t =~# '\%(->\|::\|\.\)$' }
+let g:mucomplete#can_complete = {}
+let g:mucomplete#can_complete.cpp = { 'omni': s:cpp_cond }
 
 " Netrw
 let g:netrw_liststyle=0
