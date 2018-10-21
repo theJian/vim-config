@@ -360,7 +360,7 @@ let g:mucomplete#chains = {
     \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
     \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
     \ 'javascript' : ['omni', 'incl', 'ulti', 'path'],
-    \ 'cpp'        : ['clangd'],
+    \ 'cpp'        : ['omni', 'incl', 'ulti', 'path', 'tags'],
     \ }
 let s:cpp_cond = { t -> t =~# '\%(->\|::\|\.\)$' }
 let g:mucomplete#can_complete = {}
@@ -434,6 +434,7 @@ let g:LanguageClient_serverCommands = {
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
     \ 'rust'       : ['rustup', 'run', 'nightly', 'rls'],
+    \ 'cpp'        : ['clangd'],
     \ }
 
 " flowtype
