@@ -359,12 +359,14 @@ let g:mucomplete#buffer_relative_paths = 1
 let g:mucomplete#chains = {
     \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
     \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
-    \ 'javascript' : ['omni', 'incl', 'ulti', 'path'],
+    \ 'javascript' : ['omni', 'c-n', 'ulti', 'path'],
     \ 'cpp'        : ['omni', 'incl', 'ulti', 'path', 'tags'],
     \ }
 let s:cpp_cond = { t -> t =~# '\%(->\|::\|\.\)$' }
+let s:js_cond  = { t -> t =~# '\%(\.\)$' }
 let g:mucomplete#can_complete = {}
-let g:mucomplete#can_complete.cpp = { 'omni': s:cpp_cond }
+let g:mucomplete#can_complete.cpp        = { 'omni': s:cpp_cond }
+let g:mucomplete#can_complete.javascript = { 'omni': s:js_cond }
 
 " Netrw
 let g:netrw_liststyle=0

@@ -200,6 +200,18 @@ snippet pts "PropTypes" w
 $1: PropTypes.$2`!p snip.rv=complete(t[2], ['array', 'bool', 'func', 'number', 'object', 'string', 'node', 'element', 'instanceOf', 'oneOf([])', 'oneOfType([])', 'arrayOf()', 'objectOf()', 'shape({})', 'any'])`,$0
 endsnippet
 
+snippet state "React Component state"
+const {
+	$1
+} = this.state;$0
+endsnippet
+
+snippet props "React Component props"
+const {
+	$1
+} = this.props;$0
+endsnippet
+
 snippet rdp "React:defaultProps"
 static defaultProps = {
 	${VISUAL}$0
