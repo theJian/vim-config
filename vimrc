@@ -84,6 +84,10 @@ set clipboard^=unnamed,unnamedplus
 " Ask confirmation for certain things like when quitting before saving
 set confirm
 
+" Turn off bell
+set novisualbell
+set noerrorbells
+
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set t_Co=256 " 256 colors
