@@ -218,28 +218,40 @@ static defaultProps = {
 }
 endsnippet
 
+snippet gds "React:getDerivedStateFromProps"
+static getDerivedStateFromProps(props, state) {
+	${VISUAL}$1
+}$0
+endsnippet
+
+snippet gss "React:getSnapshotBeforeUpdate"
+getSnapshotBeforeUpdate(prevProps, prevState) {
+	${VISUAL}$1
+}$0
+endsnippet
+
 snippet cdm "React:componentDidMount"
 componentDidMount() {
-	${VISUAL}$0
-}
+	${VISUAL}$1
+}$0
 endsnippet
 
-snippet cdup "React:componentDidUpdate"
+snippet cdu "React:componentDidUpdate"
 componentDidUpdate(prevProps, prevState) {
-	${VISUAL}$0
-}
+	${VISUAL}$1
+}$0
 endsnippet
 
-snippet cwun "React:componentWillUnmount"
+snippet cwu "React:componentWillUnmount"
 componentWillUnmount() {
-	${VISUAL}$0
-}
+	${VISUAL}$1
+}$0
 endsnippet
 
 snippet scu "React:shouldComponentUpdate"
 shouldComponentUpdate(nextProps, nextState) {
-	${VISUAL}$0
-}
+	${VISUAL}$1
+}$0
 endsnippet
 
 #############
