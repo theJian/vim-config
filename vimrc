@@ -453,5 +453,8 @@ let g:ctrla#dict = [
     \ ['||', '&&']
     \ ]
 
+" rainbow pairs
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+
 " far.vim
 " let g:far#source='rg'
