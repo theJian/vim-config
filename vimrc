@@ -405,7 +405,6 @@ let g:sexp_enable_insert_mode_mappings = 0
 " lsp
 " HACK: set filetype before lang server start
 autocmd BufNewFile,BufRead *.ts set filetype=typescript
-autocmd BufRead,BufNewFile *.re,*.rei set filetype=reason
 nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
 let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
@@ -436,7 +435,6 @@ let g:LanguageClient_diagnosticsDisplay = {
 let g:LanguageClient_serverCommands = {
     \ 'javascript' : ['javascript-typescript-stdio'],
     \ 'typescript' : ['javascript-typescript-stdio'],
-    \ 'reason'     : ['ocaml-language-server', '--stdio'],
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
     \ 'rust'       : ['rustup', 'run', 'nightly', 'rls'],
