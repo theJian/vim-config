@@ -403,8 +403,8 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
-" HACK: set filetype before lang server start
-autocmd BufNewFile,BufRead *.ts set filetype=typescript
+autocmd BufNewFile,BufRead *.ts  set filetype=typescript
+autocmd BufNewFile,BufRead *.asd set filetype=lisp
 nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
 let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
