@@ -3,7 +3,8 @@ if exists("b:did_ftplugin_after")
 endif
 let b:did_ftplugin_after = 1
 
-setlocal lisp autoindent showmatch cpoptions-=mp
+setlocal expandtab
+setlocal autoindent lisp showmatch cpoptions-=mp
 
 " possible folding method
 setlocal foldmethod=marker foldmarker=(,) foldminlines=1
