@@ -266,6 +266,9 @@ nnoremap <leader>f :FFiles<CR>
 " Open files under current directory
 nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
 
+" Swap ;/: for normal mode
+nnoremap ; :
+nnoremap : ;
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
