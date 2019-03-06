@@ -365,12 +365,15 @@ let g:mucomplete#chains = {
     \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
     \ 'javascript' : ['omni', 'c-n', 'ulti', 'path'],
     \ 'cpp'        : ['omni', 'incl', 'ulti', 'path', 'tags'],
+    \ 'rust'       : ['omni', 'incl', 'ulti', 'path', 'tags'],
     \ }
 let s:cpp_cond = { t -> t =~# '\%(->\|::\|\.\)$' }
 let s:js_cond  = { t -> t =~# '\%(\.\)$' }
+let s:rs_cond  = { t -> t =~# '\%(\.\|::\)$' }
 let g:mucomplete#can_complete = {}
 let g:mucomplete#can_complete.cpp        = { 'omni': s:cpp_cond }
 let g:mucomplete#can_complete.javascript = { 'omni': s:js_cond }
+let g:mucomplete#can_complete.rust       = { 'omni': s:rs_cond }
 
 " Netrw
 let g:netrw_liststyle=0
