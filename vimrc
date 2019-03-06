@@ -357,6 +357,8 @@ endfunction
 
 " complete
 set completeopt+=menuone,noselect
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#completion_delay = 80
 let g:mucomplete#buffer_relative_paths = 1
