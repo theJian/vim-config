@@ -437,7 +437,7 @@ let g:LanguageClient_serverCommands = {
     \ 'typescript' : ['javascript-typescript-stdio'],
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
-    \ 'rust'       : ['rustup', 'run', 'nightly', 'rls'],
+    \ 'rust'       : ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
     \ 'cpp'        : ['clangd'],
     \ }
 
