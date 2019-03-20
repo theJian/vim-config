@@ -270,6 +270,9 @@ nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
 nnoremap ; :
 nnoremap : ;
 
+" Autocomplete trigger
+inoremap <C-@> <C-x><C-o>
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
 command! W w !sudo tee % > /dev/null
