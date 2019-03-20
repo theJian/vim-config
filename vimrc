@@ -130,7 +130,7 @@ set statusline+=Ξ\ %{&ff}/%Y " file type
 set statusline+=⎹\  " seperator
 set statusline+=%l:%c\/%L " cusor position
 set statusline+=⎹\  " seperator
-set statusline+=%<%P " percentage
+set statusline+=%<%p%% " percentage
 " Highlight modified flag
 highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 
