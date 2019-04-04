@@ -445,7 +445,7 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ }
 let g:LanguageClient_serverCommands = {
     \ 'javascript' : ['javascript-typescript-stdio'],
-    \ 'typescript' : ['javascript-typescript-stdio'],
+    \ 'typescript' : ['typescript-language-server', '--stdio'],
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
     \ 'rust'       : ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
