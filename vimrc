@@ -444,7 +444,7 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ },
     \ }
 let g:LanguageClient_serverCommands = {
-    \ 'javascript' : ['javascript-typescript-stdio'],
+    \ 'javascript' : ['typescript-language-server', '--stdio'],
     \ 'typescript' : ['typescript-language-server', '--stdio'],
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
