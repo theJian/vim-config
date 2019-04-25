@@ -100,7 +100,7 @@ colorscheme Mogao
 
 " Show invisiable chars
 set list
-set listchars=tab:›\ ,trail:•,extends:§,nbsp:•
+set listchars=tab:┊\ ,trail:•,extends:§,nbsp:•
 
 " Matches highlight delay
 set showmatch
@@ -123,14 +123,14 @@ set guioptions=av
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=%f " file path
+set statusline=\ %f " file path
 set statusline+=%1*%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
-set statusline+=Ξ\ %{&ff}/%Y " file type
-set statusline+=⎹\  " seperator
-set statusline+=%l:%c\/%L " cusor position
-set statusline+=⎹\  " seperator
-set statusline+=%<%p%% " percentage
+set statusline+=Ln\ %l\/%L\ [%<%p%%]\ \ Col\ %c " cusor position
+" set statusline+=\ \  " seperator
+" set statusline+=%<%p%% " percentage
+set statusline+=\ \  " seperator
+set statusline+=%{&ff}/%Y\  " file type
 " Highlight modified flag
 highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 
