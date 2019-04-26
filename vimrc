@@ -154,7 +154,7 @@ set relativenumber
 " set synmaxcol=80
 
 " Solid window split border
-set fillchars+=vert:⎹
+set fillchars+=vert:⎸
 
 " Dotted folded line
 set fillchars+=fold:┄
