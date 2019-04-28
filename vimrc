@@ -150,14 +150,11 @@ set cursorline
 set number
 set relativenumber
 
-" Clear highlight above 80 characters width
-" set synmaxcol=80
+" Clear highlight above 120 characters width
+set synmaxcol=120
 
 " Solid window split border
 set fillchars+=vert:⎸
-
-" Dotted folded line
-set fillchars+=fold:┄
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
