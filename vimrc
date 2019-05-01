@@ -116,7 +116,7 @@ hi DiffChange cterm=bold
 hi DiffText   cterm=bold
 
 " Font
-set guifont=Inconsolata:h16
+set guifont=FantasqueSansMono:h11
 
 " Simplify Gvim window
 set guioptions=av
