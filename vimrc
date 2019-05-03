@@ -100,7 +100,7 @@ colorscheme Mogao
 
 " Show invisiable chars
 set list
-set listchars=tab:┊\ ,trail:•,extends:§,nbsp:•
+set listchars=tab:┆\ ,trail:•,extends:§,nbsp:•
 
 " Matches highlight delay
 set showmatch
@@ -116,7 +116,7 @@ hi DiffChange cterm=bold
 hi DiffText   cterm=bold
 
 " Font
-set guifont=FantasqueSansMono:h11
+set guifont=GoMono:h11
 
 " Simplify Gvim window
 set guioptions=av
@@ -464,3 +464,6 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " far.vim
 " let g:far#source='rg'
+
+" invert number row
+let g:invertmode = 'ic'
