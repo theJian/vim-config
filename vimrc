@@ -57,7 +57,7 @@ set foldopen-=block
 set fileformat=unix
 
 " Wrap long lines
-set wrap 
+set wrap
 set linebreak
 
 " Better command line completion
@@ -116,7 +116,7 @@ hi DiffChange cterm=bold
 hi DiffText   cterm=bold
 
 " Font
-set guifont=GoMono:h11
+set guifont=Hack:h11
 
 " Simplify Gvim window
 set guioptions=av
@@ -466,4 +466,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " let g:far#source='rg'
 
 " invert number row
-let g:invertmode = 'ic'
+let g:invertmode = 'i'
