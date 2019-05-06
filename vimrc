@@ -270,6 +270,10 @@ nnoremap : ;
 " Autocomplete trigger
 inoremap <C-@> <C-x><C-o>
 
+" Scroll
+nnoremap <C-n> <C-e>
+nnoremap <C-p> <C-y>
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
 command! W w !sudo tee % > /dev/null
