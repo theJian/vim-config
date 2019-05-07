@@ -268,6 +268,7 @@ nnoremap ; :
 nnoremap : ;
 
 " Autocomplete trigger
+inoremap <C-Space> <C-x><C-o>
 inoremap <C-@> <C-x><C-o>
 
 " Scroll
