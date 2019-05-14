@@ -368,25 +368,9 @@ set completeopt+=menuone,noselect
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 80
+let g:mucomplete#completion_delay = 100
 let g:mucomplete#reopen_immediately = 0
 let g:mucomplete#buffer_relative_paths = 1
-let g:mucomplete#chains = {
-    \ 'default'    : ['path', 'omni', 'c-n', 'dict'],
-    \ 'vim'        : ['path', 'cmd', 'c-n', 'ulti'],
-    \ 'javascript' : ['omni', 'c-n', 'ulti', 'path'],
-    \ 'typescript' : ['omni', 'c-n', 'ulti', 'path'],
-    \ 'cpp'        : ['omni', 'incl', 'ulti', 'path', 'tags'],
-    \ 'rust'       : ['omni', 'incl', 'ulti', 'path', 'tags'],
-    \ }
-let s:cpp_cond = { t -> t =~# '\%(->\|::\|\.\)$' }
-let s:js_cond  = { t -> t =~# '\%(\.\)$' }
-let s:rs_cond  = { t -> t =~# '\%(\.\|::\)$' }
-let g:mucomplete#can_complete = {}
-let g:mucomplete#can_complete.cpp        = { 'omni': s:cpp_cond }
-let g:mucomplete#can_complete.javascript = { 'omni': s:js_cond }
-let g:mucomplete#can_complete.typescript = { 'omni': s:js_cond }
-let g:mucomplete#can_complete.rust       = { 'omni': s:rs_cond }
 
 " Netrw
 let g:netrw_liststyle=0
@@ -425,27 +409,19 @@ nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
 let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
     \   "name": "Error",
-    \   "texthl": "ALEError",
     \   "signText": "× ",
-    \   "signTexthl": "ALEErrorSign",
     \ },
     \ 2: {
     \   "name": "Warning",
-    \   "texthl": "ALEWarning",
     \   "signText": "! ",
-    \   "signTexthl": "ALEWarningSign",
     \ },
     \ 3: {
     \   "name": "Information",
-    \   "texthl": "ALEInfo",
-    \   "signText": "¿ ",
-    \   "signTexthl": "ALEInfoSign",
+    \   "signText": "і ",
     \ },
     \ 4: {
     \   "name": "Hint",
-    \   "texthl": "ALEInfo",
-    \   "signText": "◊ ",
-    \   "signTexthl": "ALEInfoSign",
+    \   "signText": "¿ ",
     \ },
     \ }
 let g:LanguageClient_serverCommands = {
