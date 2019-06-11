@@ -280,6 +280,11 @@ inoremap <C-@> <C-x><C-o>
 nnoremap <C-n> <C-e>
 nnoremap <C-p> <C-y>
 
+" Edit without clobbering register
+nnoremap s "_c
+nnoremap ss "_cc
+nnoremap S "_C
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 " Sudo save
 command! W w !sudo tee % > /dev/null
