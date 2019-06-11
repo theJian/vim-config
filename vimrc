@@ -88,9 +88,6 @@ set confirm
 set novisualbell
 set noerrorbells
 
-" Persistent undo
-set undofile
-
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set t_Co=256 " 256 colors
