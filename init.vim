@@ -1,11 +1,4 @@
 "─── General ───────────────────────────────────────────────────────────────────
-set nocompatible
-syntax enable
-filetype plugin indent on
-
-" Indent
-set autoindent
-set smartindent
 
 " Mouse
 set mouse=nc
@@ -19,28 +12,18 @@ set cpoptions-=;
 set softtabstop=4
 set tabstop=4
 set shiftwidth=4
-set smarttab
 
 " Open new splits on the right/bottom
 set splitbelow
 set splitright
-
-" Encoding
-set encoding=utf-8
-
-" Set to auto read when a file is changed from the outside
-set autoread
 
 " Hide changed buffer instead close
 set hidden
 
 " Good performance
 set lazyredraw
-set ttyfast
 
 "Searching
-set hlsearch
-set incsearch
 set ignorecase
 set smartcase
 
@@ -60,26 +43,12 @@ set fileformat=unix
 set wrap
 set linebreak
 
-" Better command line completion
-set wildmenu
-
 " No backup files, no swap files
 set nobackup
 set noswapfile
 
 " Allow cursor to move just past the end of the line
 set virtualedit=onemore
-
-" Format options
-"" 'B': do insert a whitespace when joining lines
-"" 'j': remove comment leader when joining lines
-set formatoptions+=Bj
-
-" Make backspace work like most other programs
-set backspace=2
-
-" Yank text to system clipboard
-set clipboard^=unnamed,unnamedplus
 
 " Ask confirmation for certain things like when quitting before saving
 set confirm
@@ -90,9 +59,6 @@ set noerrorbells
 
 "─── User Interface ────────────────────────────────────────────────────────────
 
-set t_Co=256 " 256 colors
-
-" True color
 set termguicolors
 
 " Colorscheme
@@ -109,17 +75,8 @@ set matchtime=3
 " Highlight font settings
 highlight Comment cterm=italic
 
-" Hightlight in diff
-hi DiffAdd    cterm=bold
-hi DiffDelete cterm=bold
-hi DiffChange cterm=bold
-hi DiffText   cterm=bold
-
 " Font
 set guifont=IBM\ Plex\ Mono:h11
-
-" Simplify Gvim window
-set guioptions=av
 
 " Statusline
 set laststatus=2 " always show statusline
@@ -127,24 +84,17 @@ set statusline=\ %f " file path
 set statusline+=%1*%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
 set statusline+=Ln\ %l\/%L\ [%<%p%%]\ \ Col\ %c " cusor position
-" set statusline+=\ \  " seperator
-" set statusline+=%<%p%% " percentage
 set statusline+=\ \  " seperator
 set statusline+=%{&ff}/%Y\  " file type
 " Highlight modified flag
 highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 
-" Change cursor shape in different mode(for VTE compatible terminals)
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
-
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=2
 
 " Highlight cursor position
-set cursorcolumn
-set cursorline
+" set cursorcolumn
+" set cursorline
 
 " Use relative number
 set number
@@ -159,9 +109,6 @@ set fillchars+=vert:⎸
 " Wrapped line mark
 set showbreak=↪\ \ \ 
 
-" Show last command
-set showcmd
-
 " Show message in insert
 set showmode
 
@@ -169,6 +116,7 @@ set showmode
 set signcolumn=yes
 
 "─── Key Mapping ───────────────────────────────────────────────────────────────
+
 " Set leader key
 let mapleader="\<space>"
 
@@ -188,35 +136,12 @@ nnoremap <leader>w :w<CR>
 " To create a file
 nnoremap <expr> <leader>n ':n ' . GetRelDir()
 
-" Add an empty line without insert mode(for GUI)
-nnoremap <C-CR> o<Esc>
-nnoremap <S-CR> O<Esc>
-
-" Add an empty line in insert mode(for GUI)
-inoremap <C-CR> <Esc>o
-inoremap <S-CR> <Esc>O
-
 " Split
 nnoremap <leader>h :<C-u>split<CR>
 nnoremap <leader>v :<C-u>vsplit<CR>
 
 " Tabs
 nnoremap <leader>t :tabnew<CR>
-
-" Set working directory
-nnoremap <leader>. :lcd %:p:h<CR>
-
-" Copy/Paste/Cut
-vnoremap <leader>y "+y
-nnoremap <leader>p "+p
-vnoremap <leader>p "+p
-vnoremap <leader>x "+x
-vnoremap <silent> y y`]
-vnoremap <silent> p p`]
-nnoremap <silent> p p`]
-
-" Paste while in insert mode
-inoremap <silent><C-v> <Esc>:set paste<CR>a<C-r>+<Esc>:set nopaste<CR>a
 
 " Close buffer
 nnoremap <leader>q :<C-u>bp\|bd #<CR>
@@ -283,10 +208,11 @@ nnoremap ss "_cc
 nnoremap S "_C
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
+
 " Sudo save
 command! W w !sudo tee % > /dev/null
 
-augroup Debug
+augroup Theme
     autocmd!
     autocmd BufWritePost Mogao.vim colorscheme Mogao
 augroup END
@@ -379,7 +305,6 @@ let g:mucomplete#buffer_relative_paths = 1
 
 " Netrw
 let g:netrw_liststyle=0
-let g:netrw_keepdir=1
 
 " delimitMate
 let delimitMate_expand_cr = 1
@@ -387,7 +312,7 @@ let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 
 " ultisnips
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips']
+let g:UltiSnipsSnippetDirectories=[fnamemodify($MYVIMRC, ":h") .'/UltiSnips']
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
@@ -408,8 +333,6 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
-autocmd BufNewFile,BufRead *.ts  set filetype=typescript
-autocmd BufNewFile,BufRead *.asd set filetype=lisp
 nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
 let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
