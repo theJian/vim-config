@@ -84,6 +84,12 @@ snippet ig "@ts-ignore" b
 // @ts-ignore$0
 endsnippet
 
+snippet "(\w+)>>" "Function Variable" br
+const `!p snip.rv = match.group(1)` = ($1) => {
+	${VISUAL}$0
+}
+endsnippet
+
 ##########
 #  Test  #
 ##########
