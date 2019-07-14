@@ -376,6 +376,3 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " far.vim
 " let g:far#source='rg'
-
-" invert number row
-let g:invertmode = 'i'
