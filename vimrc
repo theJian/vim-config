@@ -88,6 +88,9 @@ set confirm
 set novisualbell
 set noerrorbells
 
+" Search stop at the end of file
+set nowrapscan
+
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set t_Co=256 " 256 colors
