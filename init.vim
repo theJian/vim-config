@@ -96,8 +96,8 @@ highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 set scrolloff=2
 
 " Highlight cursor position
-" set cursorcolumn
-" set cursorline
+set cursorcolumn
+set cursorline
 
 " Use relative number
 set number
