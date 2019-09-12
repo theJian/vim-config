@@ -360,7 +360,7 @@ let g:LanguageClient_serverCommands = {
     \ 'typescript' : ['typescript-language-server', '--stdio'],
     \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
     \ 'python'     : ['pyls'],
-    \ 'rust'       : ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'rust'       : ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
     \ 'cpp'        : ['clangd'],
     \ }
 
