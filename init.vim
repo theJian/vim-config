@@ -60,6 +60,9 @@ set noerrorbells
 " Search stop at the end of file
 set nowrapscan
 
+" Yank text to system clipboard
+set clipboard+=unnamedplus
+
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set termguicolors
@@ -379,3 +382,5 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " far.vim
 " let g:far#source='rg'
+
+" lua require('packman').init()
