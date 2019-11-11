@@ -72,7 +72,7 @@ colorscheme Mogao
 
 " Show invisiable chars
 set list
-set listchars=tab:┆\ ,trail:•,extends:§,nbsp:•
+set listchars=tab:┊\ ,trail:•,extends:§,nbsp:·
 
 " Matches highlight delay
 set showmatch
@@ -110,7 +110,7 @@ set relativenumber
 set synmaxcol=120
 
 " Solid window split border
-set fillchars+=vert:⎸
+set fillchars+=vert:¦
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
@@ -347,11 +347,11 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ },
     \ 2: {
     \   "name": "Warning",
-    \   "signText": "! ",
+    \   "signText": "¡ ",
     \ },
     \ 3: {
     \   "name": "Information",
-    \   "signText": "і ",
+    \   "signText": "‸ ",
     \ },
     \ 4: {
     \   "name": "Hint",
