@@ -383,4 +383,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " far.vim
 " let g:far#source='rg'
 
-" lua require('packman').init()
+lua require 'packman'
