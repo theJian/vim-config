@@ -371,12 +371,6 @@ let g:LanguageClient_serverCommands = {
 let g:flow#omnifunc = 0
 let g:flow#autoclose = 1
 
-" ctrla
-let g:ctrla#dict = [
-    \ ['+', '-', '*', '/'],
-    \ ['||', '&&']
-    \ ]
-
 " rainbow pairs
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
