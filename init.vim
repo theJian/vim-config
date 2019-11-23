@@ -310,7 +310,10 @@ let g:mucomplete#reopen_immediately = 0
 let g:mucomplete#buffer_relative_paths = 1
 
 " Netrw
-let g:netrw_liststyle=0
+let g:netrw_liststyle=3
+let g:netrw_altfile=1
+let g:netrw_banner=0
+let g:netrw_special_syntax=1
 
 " delimitMate
 let delimitMate_expand_cr = 1
