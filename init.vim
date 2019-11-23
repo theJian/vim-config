@@ -250,7 +250,7 @@ augroup END
 " Open help file in new tab
 augroup HelpInTabs
     autocmd!
-    autocmd BufEnter *.txt call HelpInNewTab()
+    autocmd BufWinEnter *.txt call HelpInNewTab()
 augroup END
 
 " Only apply to help files
