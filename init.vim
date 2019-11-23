@@ -86,14 +86,12 @@ set guifont=IBM\ Plex\ Mono:h11
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=\ %f " file path
-set statusline+=%1*%m%*%r%h%w "file info
+set statusline=\ %t " file path
+set statusline+=%#ErrorMsg#%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
-set statusline+=Ln\ %l\/%L\ [%<%p%%]\ \ Col\ %c " cusor position
+set statusline+=%l\/%L‚%c\ [%<%p%%] " cusor position
 set statusline+=\ \  " seperator
 set statusline+=%{&ff}/%Y\  " file type
-" Highlight modified flag
-highlight User1 ctermbg=1 guibg=#7c0615 guifg=White
 
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=2
