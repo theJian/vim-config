@@ -198,10 +198,6 @@ nnoremap : ;
 vnoremap ; :
 vnoremap : ;
 
-" Autocomplete trigger
-inoremap <C-Space> <C-x><C-o>
-inoremap <C-@> <C-x><C-o>
-
 " Scroll
 nnoremap <C-n> <C-e>
 nnoremap <C-p> <C-y>
@@ -379,3 +375,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " let g:far#source='rg'
 
 lua require 'packman'
+
