@@ -1,6 +1,7 @@
 https://github.com/Raimondi/delimitMate.git
 git@github.com:editorconfig/editorconfig-vim.git
 git://github.com/autozimu/LanguageClient-neovim.git
+git@github.com:theJian/ntc.git
 git@github.com:kovisoft/slimv.git
 https://github.com/wellle/targets.vim.git
 https://github.com/leafgarland/typescript-vim.git
@@ -9,8 +10,6 @@ https://github.com/tpope/vim-commentary.git
 https://github.com/elixir-editors/vim-elixir.git
 https://github.com/terryma/vim-expand-region.git
 https://github.com/tpope/vim-fugitive.git
-git@github.com:theJian/vim-packman.git
-https://github.com/reasonml-editor/vim-reason-plus.git
 https://github.com/maxbrunsfeld/vim-yankstack.git
 * https://github.com/theJian/Mogao.git
 * https://github.com/junegunn/rainbow_parentheses.vim.git
