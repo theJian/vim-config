@@ -376,3 +376,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 lua require 'packman'
 
+lua ntc_options={ auto_popup = 1 }
