@@ -1,5 +1,6 @@
 https://github.com/Raimondi/delimitMate.git
 git@github.com:editorconfig/editorconfig-vim.git
+git@github.com:theJian/fit.git
 git://github.com/autozimu/LanguageClient-neovim.git
 git@github.com:theJian/ntc.git
 git@github.com:kovisoft/slimv.git
