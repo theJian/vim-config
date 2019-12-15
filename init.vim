@@ -310,9 +310,10 @@ let g:netrw_banner=0
 let g:netrw_special_syntax=1
 
 " delimitMate
-let delimitMate_expand_cr = 1
+let delimitMate_expand_cr = 2
 let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
+let delimitMate_excluded_regions = "Comment,String"
 
 " ultisnips
 let g:UltiSnipsSnippetDirectories=[fnamemodify($MYVIMRC, ":h") .'/UltiSnips']
@@ -375,5 +376,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " let g:far#source='rg'
 
 lua require 'packman'
-
 lua ntc_options={ auto_popup = 1 }
