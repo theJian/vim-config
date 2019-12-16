@@ -357,12 +357,13 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ },
     \ }
 let g:LanguageClient_serverCommands = {
-    \ 'javascript' : ['typescript-language-server', '--stdio'],
-    \ 'typescript' : ['typescript-language-server', '--stdio'],
-    \ 'ocaml'      : ['ocaml-language-server', '--stdio'],
-    \ 'python'     : ['pyls'],
-    \ 'rust'       : ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
-    \ 'cpp'        : ['clangd'],
+    \ 'javascript'      : ['typescript-language-server', '--stdio'],
+    \ 'typescript'      : ['typescript-language-server', '--stdio'],
+    \ 'typescriptreact' : ['typescript-language-server', '--stdio'],
+    \ 'ocaml'           : ['ocaml-language-server', '--stdio'],
+    \ 'python'          : ['pyls'],
+    \ 'rust'            : ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
+    \ 'cpp'             : ['clangd'],
     \ }
 
 " flowtype

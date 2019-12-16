@@ -1,0 +1,21 @@
+extends typescript
+
+global !p
+from snippet_helpers import *
+endglobal
+
+snippet "(\w+)>" "<Component>" ir
+<`!p snip.rv = match.group(1)`$1>
+	${2:${VISUAL}}
+</`!p snip.rv = match.group(1)`>$0
+endsnippet
+
+snippet "(\w+)/>" "<Component />" ir
+<`!p snip.rv = match.group(1)`$1/>$0
+endsnippet
+
+snippet <> "React.Fragment" b
+<>
+	${VISUAL}$0
+</>
+endsnippet
