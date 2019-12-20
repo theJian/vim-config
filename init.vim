@@ -207,6 +207,10 @@ nnoremap s "_c
 nnoremap ss "_cc
 nnoremap S "_C
 
+" Insert empty line
+nnoremap <CR> o<ESC>
+
+
 "─── User Scripts ──────────────────────────────────────────────────────────────
 
 " Sudo save
