@@ -105,7 +105,7 @@ set number
 set relativenumber
 
 " Clear highlight above 120 characters width
-set synmaxcol=120
+set synmaxcol=200
 
 " Solid window split border
 set fillchars+=vert:¦
@@ -362,6 +362,7 @@ let g:LanguageClient_diagnosticsDisplay = {
     \ }
 let g:LanguageClient_serverCommands = {
     \ 'javascript'      : ['typescript-language-server', '--stdio'],
+    \ 'javascriptreact' : ['typescript-language-server', '--stdio'],
     \ 'typescript'      : ['typescript-language-server', '--stdio'],
     \ 'typescriptreact' : ['typescript-language-server', '--stdio'],
     \ 'ocaml'           : ['ocaml-language-server', '--stdio'],
