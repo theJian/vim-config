@@ -126,6 +126,7 @@ let mapleader="\<space>"
 
 " Exit insert mode without esc
 inoremap jk <ESC>
+tnoremap jk <C-\><C-n>
 
 " Treat long lines as break lines
 nnoremap <silent> j :<C-u>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'j'<CR>
@@ -251,6 +252,11 @@ augroup HelpInTabs
     autocmd BufWinEnter *.txt call HelpInNewTab()
 augroup END
 
+augroup Terminal
+    autocmd!
+    autocmd TermOpen * setlocal nonumber norelativenumber | startinsert
+augroup End
+
 " Only apply to help files
 function! HelpInNewTab()
     if &buftype == 'help'
@@ -300,12 +306,6 @@ endfunction
 
 " complete
 set completeopt+=menuone,noselect
-autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-let g:mucomplete#enable_auto_at_startup = 1
-let g:mucomplete#completion_delay = 100
-let g:mucomplete#reopen_immediately = 0
-let g:mucomplete#buffer_relative_paths = 1
 
 " Netrw
 let g:netrw_liststyle=3
