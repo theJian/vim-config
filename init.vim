@@ -254,7 +254,7 @@ augroup END
 
 augroup Terminal
     autocmd!
-    autocmd TermOpen * setlocal nonumber norelativenumber | startinsert
+    autocmd TermOpen * setlocal nonumber norelativenumber scrolloff=0 | startinsert
 augroup End
 
 " Only apply to help files
