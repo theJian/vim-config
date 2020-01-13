@@ -317,7 +317,7 @@ let g:netrw_special_syntax=1
 let delimitMate_expand_cr = 2
 let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
-let delimitMate_excluded_regions = "Comment,String"
+let delimitMate_excluded_regions = "Comment"
 
 " ultisnips
 let g:UltiSnipsSnippetDirectories=[fnamemodify($MYVIMRC, ":h") .'/UltiSnips']
