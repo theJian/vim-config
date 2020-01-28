@@ -382,4 +382,4 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " let g:far#source='rg'
 
 lua require 'packman'
-lua ntc_options={ auto_popup = 1 }
+lua ntc_options={ auto_popup = 1, popup_delay = 80, chain = {'incl', 'file', 'line'} }
