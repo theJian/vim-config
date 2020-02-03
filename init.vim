@@ -126,7 +126,6 @@ let mapleader="\<space>"
 
 " Exit insert mode without esc
 inoremap jk <ESC>
-tnoremap jk <C-\><C-n>
 
 " Treat long lines as break lines
 nnoremap <silent> j :<C-u>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'j'<CR>
@@ -160,6 +159,10 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap <C-h> <C-w>h
 nnoremap <C-q> <C-w>q
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
+tnoremap <C-h> <C-\><C-n><C-w>h
 
 " shifting
 vnoremap < <gv
