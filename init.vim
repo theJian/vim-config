@@ -96,6 +96,9 @@ set statusline+=%{&ff}/%Y\  " file type
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=2
 
+" Scroll faster by scrolling more lines at a time
+set scrolljump=3
+
 " Highlight cursor position
 set cursorcolumn
 set cursorline
@@ -257,7 +260,7 @@ augroup END
 
 augroup Terminal
     autocmd!
-    autocmd TermOpen * setlocal nonumber norelativenumber scrolloff=0 | startinsert
+    autocmd TermOpen * setlocal nonumber norelativenumber noruler noshowcmd scrolloff=0 statusline=%{b:term_title} | startinsert
 augroup End
 
 " Only apply to help files
@@ -344,7 +347,8 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
-nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> K  :call LanguageClient#textDocument_hover<CR>
 let g:LanguageClient_diagnosticsDisplay = {
     \ 1: {
     \   "name": "Error",
