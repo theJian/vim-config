@@ -1,0 +1,78 @@
+Pack {
+  "https://github.com/Raimondi/delimitMate.git",
+}
+
+Pack {
+  "git@github.com:editorconfig/editorconfig-vim.git",
+}
+
+Pack {
+  "git@github.com:theJian/fit.git",
+}
+
+Pack {
+  "git://github.com/autozimu/LanguageClient-neovim.git",
+}
+
+Pack {
+  "git@github.com:theJian/ntc.git",
+}
+
+Pack {
+  "git@github.com:kovisoft/slimv.git",
+}
+
+Pack {
+  "https://github.com/wellle/targets.vim.git",
+}
+
+Pack {
+  "https://github.com/leafgarland/typescript-vim.git",
+}
+
+Pack {
+  "https://github.com/SirVer/ultisnips",
+}
+
+Pack {
+  "https://github.com/tpope/vim-commentary.git",
+}
+
+Pack {
+  "https://github.com/tpope/vim-fugitive.git",
+}
+
+Pack {
+  "https://github.com/maxbrunsfeld/vim-yankstack.git",
+}
+
+Pack {
+  "https://github.com/theJian/Mogao.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/junegunn/rainbow_parentheses.vim.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/tpope/vim-fireplace.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/flowtype/vim-flow.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/bhurlow/vim-parinfer.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/guns/vim-sexp.git",
+  opt,
+}
+
