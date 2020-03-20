@@ -27,7 +27,7 @@ Pack {
 }
 
 Pack {
-  "https://github.com/leafgarland/typescript-vim.git",
+  "https://github.com/HerringtonDarkholme/yats.vim",
 }
 
 Pack {
