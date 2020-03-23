@@ -194,10 +194,10 @@ vnoremap <silent> * :<C-u>call VisualSelection()<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection()<CR>?<C-R>=@/<CR><CR>
 
 " Open files fuzzyfinder
-nnoremap <leader>f :FFiles<CR>
+nnoremap <leader>f :lua fit.finder 'files'<CR>
 
 " Open files under current directory
-nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
+" nnoremap <expr> <leader>e printf(":FFiles %s<CR>", GetFileDir())
 
 " Swap ;/:
 nnoremap ; :
