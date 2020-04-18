@@ -11,11 +11,11 @@ Pack {
 }
 
 Pack {
-  "git://github.com/autozimu/LanguageClient-neovim.git",
+  "git@github.com:theJian/ntc.git",
 }
 
 Pack {
-  "git@github.com:theJian/ntc.git",
+  "https://github.com/neovim/nvim-lsp",
 }
 
 Pack {
@@ -24,10 +24,6 @@ Pack {
 
 Pack {
   "https://github.com/wellle/targets.vim.git",
-}
-
-Pack {
-  "https://github.com/HerringtonDarkholme/yats.vim",
 }
 
 Pack {
@@ -44,6 +40,10 @@ Pack {
 
 Pack {
   "https://github.com/maxbrunsfeld/vim-yankstack.git",
+}
+
+Pack {
+  "https://github.com/HerringtonDarkholme/yats.vim",
 }
 
 Pack {

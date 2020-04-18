@@ -348,36 +348,16 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 let g:sexp_enable_insert_mode_mappings = 0
 
 " lsp
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> K  :call LanguageClient#textDocument_hover<CR>
-let g:LanguageClient_diagnosticsDisplay = {
-    \ 1: {
-    \   "name": "Error",
-    \   "signText": "× ",
-    \ },
-    \ 2: {
-    \   "name": "Warning",
-    \   "signText": "¡ ",
-    \ },
-    \ 3: {
-    \   "name": "Information",
-    \   "signText": "‸ ",
-    \ },
-    \ 4: {
-    \   "name": "Hint",
-    \   "signText": "¿ ",
-    \ },
-    \ }
-let g:LanguageClient_serverCommands = {
-    \ 'javascript'      : ['typescript-language-server', '--stdio'],
-    \ 'javascriptreact' : ['typescript-language-server', '--stdio'],
-    \ 'typescript'      : ['typescript-language-server', '--stdio'],
-    \ 'typescriptreact' : ['typescript-language-server', '--stdio'],
-    \ 'ocaml'           : ['ocaml-language-server', '--stdio'],
-    \ 'python'          : ['pyls'],
-    \ 'rust'            : ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
-    \ 'cpp'             : ['clangd'],
-    \ }
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> gk    <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+command! LspClients     lua print(vim.inspect(vim.lsp.buf_get_clients()))
+set omnifunc=v:lua.vim.lsp.omnifunc
 
 " flowtype
 let g:flow#omnifunc = 0
@@ -390,4 +370,8 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " let g:far#source='rg'
 
 lua require 'packman'
+augroup LspConfig
+    autocmd!
+    autocmd VimEnter * lua require'nvim_lsp'.tsserver.setup{}
+augroup End
 lua ntc_options={ auto_popup = 1, popup_delay = 80, chain = {'omni', 'incl', 'file', 'line'} }
