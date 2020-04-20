@@ -372,6 +372,9 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 lua require 'packman'
 augroup LspConfig
     autocmd!
-    autocmd VimEnter * lua require'nvim_lsp'.tsserver.setup{}
+    autocmd VimEnter *
+                \ if &loadplugins |
+                \ exec "lua require'nvim_lsp'.tsserver.setup{}" |
+                \ endif
 augroup End
 lua ntc_options={ auto_popup = 1, popup_delay = 80, chain = {'omni', 'incl', 'file', 'line'} }
