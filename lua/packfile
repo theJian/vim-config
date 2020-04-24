@@ -39,6 +39,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/jparise/vim-graphql.git",
+}
+
+Pack {
   "https://github.com/maxbrunsfeld/vim-yankstack.git",
 }
 
