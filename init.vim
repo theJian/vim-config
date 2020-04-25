@@ -369,12 +369,8 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 " far.vim
 " let g:far#source='rg'
 
-lua require 'packman'
 augroup LspConfig
     autocmd!
-    autocmd VimEnter *
-                \ if &loadplugins |
-                \ exec "lua require'nvim_lsp'.tsserver.setup{}" |
-                \ endif
+    autocmd VimEnter * lua require 'init'
 augroup End
 lua ntc_options={ auto_popup = 1, popup_delay = 80, chain = {'omni', 'incl', 'file', 'line'} }
