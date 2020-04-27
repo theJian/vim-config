@@ -51,7 +51,7 @@ export default ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basena
 endsnippet
 
 snippet im "import" b
-import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
+import `!p snip.rv = formatImportedName(t[1], False) or "module"` from '${1}';$0
 endsnippet
 
 snippet imp "import" b
