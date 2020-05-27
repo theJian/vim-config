@@ -121,6 +121,7 @@ set showmode
 
 " Always show sign column
 set signcolumn=yes
+set inccommand=split
 
 "─── Key Mapping ───────────────────────────────────────────────────────────────
 
