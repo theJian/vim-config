@@ -121,7 +121,7 @@ set showmode
 
 " Always show sign column
 set signcolumn=yes
-set inccommand=split
+set inccommand=nosplit
 
 "─── Key Mapping ───────────────────────────────────────────────────────────────
 
@@ -348,15 +348,6 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 " vim-sexp
 let g:sexp_enable_insert_mode_mappings = 0
 
-" lsp
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> gk    <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 command! LspClients     lua print(vim.inspect(vim.lsp.buf_get_clients()))
 set omnifunc=v:lua.vim.lsp.omnifunc
 
@@ -372,6 +363,5 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 augroup LspConfig
     autocmd!
-    autocmd VimEnter * lua require 'init'
+    autocmd VimEnter * lua require 'plugins'
 augroup End
-lua ntc_options={ auto_popup = 1, popup_delay = 80, chain = {'omni', 'incl', 'file', 'line'} }
