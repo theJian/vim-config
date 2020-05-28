@@ -4,8 +4,6 @@ local fn = vim.fn
 if api.nvim_get_option('loadplugins') then
 	require 'packman'
 
-	ntc_options={ auto_popup = 1, chain = {'omni', 'incl', 'file', 'line'} }
-
 	local homedir = vim.loop.os_homedir()
 	local lsp = require 'nvim_lsp'
 	lsp.vimls.setup{}
@@ -28,7 +26,7 @@ if api.nvim_get_option('loadplugins') then
 			string.format(
 				'<cmd>lua '..
 				'if vim.tbl_isempty(vim.lsp.buf_get_clients()) then '..
-					'vim.api.nvim_command("normal! %s") '..
+					'vim.api.nvim_feedkeys("%s", "n", true) '..
 				'else '..
 					'vim.lsp.buf.%s() '..
 				'end<CR>',
@@ -46,4 +44,8 @@ if api.nvim_get_option('loadplugins') then
 	lsp_keymap('gh',    'type_definition')
 	lsp_keymap('gr',    'references')
 	lsp_keymap('g0',    'document_symbol')
+
+	local ntc = require 'ntc'
+	ntc.config({ auto_popup = 1, chain = {'omni', 'incl', 'file', 'line'} })
+	ntc.init()
 end
