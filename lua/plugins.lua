@@ -19,7 +19,7 @@ if api.nvim_get_option('loadplugins') then
 		cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 	}
 
-	function lsp_keymap(lhs, methodName)
+	local function lsp_keymap(lhs, methodName)
 		vim.api.nvim_set_keymap(
 			'n',
 			lhs,
@@ -48,4 +48,23 @@ if api.nvim_get_option('loadplugins') then
 	local ntc = require 'ntc'
 	ntc.config({ auto_popup = 1, chain = {'omni', 'incl', 'file', 'line'} })
 	ntc.init()
+
+	local function fit_keymap(lhs, find_command, accept_command)
+		local find_command_with_query = find_command .. '|fzy --show-matches=<query>|head -n 30'
+		vim.api.nvim_set_keymap(
+			'n',
+			lhs,
+			string.format(
+				'<cmd>lua require("fit").find(%q, %q)<CR>',
+				find_command_with_query, accept_command or 'e'
+			),
+			{ unique = true, silent = true }
+		)
+	end
+	local fit_files = 'rg --color never --files <cwd>'
+	local fit_current_dir_files = 'rg --color never --files <dir>'
+	local fit_repos = 'fd "\\.git$" ~ -H -d 4 -x dirname {}'
+	fit_keymap('<leader>f', fit_files)
+	fit_keymap('<leader>e', fit_current_dir_files)
+	fit_keymap('<leader>d', fit_repos, 'lcd')
 end
