@@ -63,7 +63,7 @@ if api.nvim_get_option('loadplugins') then
 	end
 	local fit_files = 'rg --color never --files <cwd>'
 	local fit_current_dir_files = 'rg --color never --files <dir>'
-	local fit_repos = 'fd "\\.git$" ~ -H -d 4 -x dirname {}'
+	local fit_repos = 'find ~ -maxdepth 2 -type d -execdir test -d {}/.git \\; -print -prune'
 	fit_keymap('<leader>f', fit_files)
 	fit_keymap('<leader>e', fit_current_dir_files)
 	fit_keymap('<leader>d', fit_repos, 'lcd')
