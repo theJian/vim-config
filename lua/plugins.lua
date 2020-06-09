@@ -49,7 +49,7 @@ if api.nvim_get_option('loadplugins') then
 	ntc.config({ auto_popup = 1, chain = {'omni', 'incl', 'file', 'line'} })
 	ntc.init()
 
-	local function fit_keymap(lhs, find_command, accept_command)
+	local function fit_find(lhs, find_command, accept_command)
 		local find_command_with_query = find_command .. '|fzy --show-matches=<query>|head -n 30'
 		vim.api.nvim_set_keymap(
 			'n',
@@ -61,10 +61,21 @@ if api.nvim_get_option('loadplugins') then
 			{ unique = true, silent = true }
 		)
 	end
+
+	local function fit_buffers(lhs)
+		vim.api.nvim_set_keymap(
+			'n',
+			lhs,
+			'<cmd>lua require("fit").buffers("fzy --show-matches=<query>")<CR>',
+			{ unique = true, silent = true }
+		)
+	end
+
 	local fit_files = 'rg --color never --files <cwd>'
 	local fit_current_dir_files = 'rg --color never --files <dir>'
 	local fit_repos = 'find ~ -maxdepth 2 -type d -execdir test -d {}/.git \\; -print -prune'
-	fit_keymap('<leader>f', fit_files)
-	fit_keymap('<leader>e', fit_current_dir_files)
-	fit_keymap('<leader>d', fit_repos, 'lcd')
+	fit_find('<leader>f', fit_files)
+	fit_find('<leader>e', fit_current_dir_files)
+	fit_find('<leader>d', fit_repos, 'lcd')
+	fit_buffers('<leader>b')
 end
