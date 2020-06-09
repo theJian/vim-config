@@ -63,6 +63,9 @@ set nowrapscan
 " Yank text to system clipboard
 set clipboard+=unnamedplus
 
+" Persistent undo
+set undofile
+
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set termguicolors
