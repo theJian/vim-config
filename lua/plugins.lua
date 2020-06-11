@@ -45,10 +45,6 @@ if api.nvim_get_option('loadplugins') then
 	lsp_keymap('gr',    'references')
 	lsp_keymap('g0',    'document_symbol')
 
-	local ntc = require 'ntc'
-	ntc.config({ auto_popup = 1, chain = {'omni', 'incl', 'file', 'line'} })
-	ntc.init()
-
 	local function fit_find(lhs, find_command, accept_command)
 		local find_command_with_query = find_command .. '|fzy --show-matches=<query>|head -n 30'
 		vim.api.nvim_set_keymap(
