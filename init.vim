@@ -92,7 +92,7 @@ set laststatus=2 " always show statusline
 set statusline=\ %t " file path
 set statusline+=%#ErrorMsg#%m%*%r%h%w "file info
 set statusline+=%= "switch to the right side
-set statusline+=%l\/%L‚%c\ [%<%p%%] " cusor position
+set statusline+=%l\/%L᛬%c\ [%<%p٪] " cusor position
 set statusline+=\ \  " seperator
 set statusline+=%{&ff}/%Y\  " file type
 
