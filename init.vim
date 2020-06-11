@@ -313,6 +313,10 @@ endfunction
 set completeopt-=preview
 set completeopt+=menuone,noselect
 
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
 " Netrw
 let g:netrw_liststyle=3
 let g:netrw_altfile=1
@@ -332,10 +336,6 @@ let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
-
-" fit
-let g:FitFilesFindCommand = "rg --color never --files <dir>"
-let g:FitMatchCommand = "fzy --show-matches=<query>"
 
 " yankstack
 let g:yankstack_map_keys = 0

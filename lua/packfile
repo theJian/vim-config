@@ -1,4 +1,12 @@
 Pack {
+  "https://github.com/haorenW1025/completion-nvim.git",
+}
+
+Pack {
+  "https://github.com/Raimondi/delimitMate.git",
+}
+
+Pack {
   "git@github.com:editorconfig/editorconfig-vim.git",
 }
 
@@ -7,15 +15,7 @@ Pack {
 }
 
 Pack {
-  "https://github.com/cohama/lexima.vim",
-}
-
-Pack {
-  "git@github.com:theJian/ntc.git",
-}
-
-Pack {
-  "https://github.com/neovim/nvim-lsp.git",
+  "git://github.com/neovim/nvim-lsp.git",
 }
 
 Pack {

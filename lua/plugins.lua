@@ -6,18 +6,25 @@ if api.nvim_get_option('loadplugins') then
 
 	local homedir = vim.loop.os_homedir()
 	local lsp = require 'nvim_lsp'
-	lsp.vimls.setup{}
-	lsp.rust_analyzer.setup{}
-	lsp.pyls_ms.setup{
+	local function lsp_setup(target, options)
+		options = options or {}
+		options.on_attach = require'completion'.on_attach
+		lsp[target].setup(options)
+	end
+	lsp_setup('vimls')
+	lsp_setup('rust_analyzer')
+	lsp_setup('pyls_ms', {
 		cmd = { "dotnet", "exec", homedir .. "/bin/languageServer/pyls_ms/Microsoft.Python.LanguageServer.dll" };
-	}
-	lsp.bashls.setup{}
-	lsp.tsserver.setup{}
-	lsp.jsonls.setup{}
-	lsp.cssls.setup{}
-	lsp.gopls.setup{
+	})
+	lsp_setup('bashls', {})
+	lsp_setup('tsserver', {})
+	lsp_setup('jsonls', {})
+	lsp_setup('cssls', {})
+	lsp_setup('gopls', {
 		cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
-	}
+	})
+
+	vim.g.completion_enable_snippet = 'UltiSnips'
 
 	local function lsp_keymap(lhs, methodName)
 		vim.api.nvim_set_keymap(
