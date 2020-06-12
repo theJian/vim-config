@@ -8,7 +8,12 @@ if api.nvim_get_option('loadplugins') then
 	local lsp = require 'nvim_lsp'
 	local function lsp_setup(target, options)
 		options = options or {}
-		options.on_attach = require'completion'.on_attach
+		options.on_attach = function()
+			require'ntc'.setup{
+				auto_popup = true,
+				chain = { 'omni', 'curt' }
+			}
+		end
 		lsp[target].setup(options)
 	end
 	lsp_setup('vimls')
@@ -24,7 +29,7 @@ if api.nvim_get_option('loadplugins') then
 		cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 	})
 
-	vim.g.completion_enable_snippet = 'UltiSnips'
+	-- vim.g.completion_enable_snippet = 'UltiSnips'
 
 	local function lsp_keymap(lhs, methodName)
 		vim.api.nvim_set_keymap(
