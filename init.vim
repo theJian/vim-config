@@ -353,6 +353,9 @@ let g:flow#autoclose = 1
 " rainbow pairs
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
+" markdown preview
+let g:markdown_composer_autostart = 0
+
 " far.vim
 " let g:far#source='rg'
 
