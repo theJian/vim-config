@@ -1,9 +1,4 @@
 Pack {
-  "https://github.com/haorenW1025/completion-nvim",
-  opt,
-}
-
-Pack {
   "https://github.com/Raimondi/delimitMate.git",
 }
 
@@ -16,6 +11,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/iamcco/markdown-preview.nvim",
+}
+
+Pack {
   "https://github.com/thejian/ntc",
 }
 
@@ -25,6 +24,10 @@ Pack {
 
 Pack {
   "https://github.com/neovim/nvim-lsp.git",
+}
+
+Pack {
+  "https://github.com/nvim-treesitter/nvim-treesitter",
 }
 
 Pack {
@@ -61,6 +64,11 @@ Pack {
 
 Pack {
   "https://github.com/theJian/Mogao.git",
+  opt,
+}
+
+Pack {
+  "https://github.com/haorenW1025/completion-nvim",
   opt,
 }
 
