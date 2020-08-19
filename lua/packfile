@@ -11,10 +11,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/iamcco/markdown-preview.nvim",
-}
-
-Pack {
   "https://github.com/thejian/ntc",
 }
 
@@ -52,6 +48,10 @@ Pack {
 
 Pack {
   "https://github.com/jparise/vim-graphql.git",
+}
+
+Pack {
+  "https://github.com/euclio/vim-markdown-composer",
 }
 
 Pack {
