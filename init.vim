@@ -220,12 +220,6 @@ augroup Theme
     autocmd BufWritePost Mogao.vim colorscheme Mogao
 augroup END
 
-" Automatically equalize splits when Vim is resized
-augroup Resize
-    autocmd!
-    autocmd VimResized * wincmd =
-augroup END
-
 " Only have cursorline in current window
 augroup CursorLine
     autocmd!
