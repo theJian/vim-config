@@ -71,7 +71,7 @@ set undofile
 set termguicolors
 
 " Colorscheme
-colorscheme Mogao
+" colorscheme pura
 
 " Show invisiable chars
 set list
@@ -217,7 +217,7 @@ command! W w !sudo tee % > /dev/null
 
 augroup Theme
     autocmd!
-    autocmd BufWritePost Mogao.vim colorscheme Mogao
+    autocmd BufWritePost pura.vim colorscheme pura
 augroup END
 
 " Only have cursorline in current window
