@@ -66,6 +66,9 @@ set clipboard+=unnamedplus
 " Persistent undo
 set undofile
 
+" Browser like jumplist
+set jumpoptions=stack
+
 "─── User Interface ────────────────────────────────────────────────────────────
 
 set termguicolors
@@ -114,7 +117,7 @@ set relativenumber
 set synmaxcol=200
 
 " Solid window split border
-set fillchars+=vert:│
+set fillchars+=vert:│,foldopen:▾,foldclose:▸,foldsep:│
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
