@@ -35,6 +35,7 @@ set foldenable
 set foldlevelstart=4
 set foldnestmax=10
 set foldopen-=block
+set foldcolumn=auto:9
 
 " File format
 set fileformat=unix
@@ -74,7 +75,8 @@ set jumpoptions=stack
 set termguicolors
 
 " Colorscheme
-" colorscheme pura
+set background=light
+colorscheme pura
 
 " Show invisiable chars
 set list
