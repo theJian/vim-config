@@ -84,6 +84,6 @@ if api.nvim_get_option('loadplugins') then
 	local fit_repos = 'find ~ -maxdepth 2 -type d -execdir test -d {}/.git \\; -print -prune'
 	fit_find('<leader>f', fit_files)
 	fit_find('<leader>e', fit_current_dir_files)
-	fit_find('<leader>d', fit_repos, 'lcd')
+	fit_find('<leader>d', fit_repos, 'tcd')
 	fit_buffers('<leader>b')
 end
