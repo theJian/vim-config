@@ -128,7 +128,7 @@ set showbreak=↪\ \ \
 set showmode
 
 " Always show sign column
-set signcolumn=yes
+set signcolumn=number
 set inccommand=nosplit
 
 "─── Key Mapping ───────────────────────────────────────────────────────────────
