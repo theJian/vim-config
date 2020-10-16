@@ -17,6 +17,7 @@ if api.nvim_get_option('loadplugins') then
 		lsp[target].setup(options)
 	end
 	lsp_setup('vimls')
+	-- lsp_setup('vimscript-language-server')
 	lsp_setup('rust_analyzer')
 	lsp_setup('pyls_ms', {
 		cmd = { "dotnet", "exec", homedir .. "/bin/languageServer/pyls_ms/Microsoft.Python.LanguageServer.dll" };

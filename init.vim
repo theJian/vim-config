@@ -35,7 +35,6 @@ set foldenable
 set foldlevelstart=4
 set foldnestmax=10
 set foldopen-=block
-set foldcolumn=auto:9
 
 " File format
 set fileformat=unix
