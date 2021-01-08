@@ -315,10 +315,11 @@ let g:netrw_banner=0
 let g:netrw_special_syntax=1
 
 " delimitMate
-let delimitMate_expand_cr = 2
+let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
 let delimitMate_excluded_regions = "Comment"
+let delimitMate_excluded_ft = "md,lisp"
 
 " ultisnips
 let g:UltiSnipsSnippetDirectories=[fnamemodify($MYVIMRC, ":h") .'/UltiSnips']
@@ -349,6 +350,11 @@ let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " markdown preview
 let g:markdown_composer_autostart = 0
+
+" slimv
+let g:slimv_impl = 'sbcl'
+let g:slimv_unmap_cr = 1
+let g:paredit_electric_return = 0
 
 " far.vim
 " let g:far#source='rg'
