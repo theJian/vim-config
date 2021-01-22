@@ -65,11 +65,7 @@ export default ${1:`!p snip.rv = path_to_component_name(path, pascal_case_basena
 endsnippet
 
 snippet im "import" b
-import `!p snip.rv = formatImportedName(t[1], False)` from '${1}';$0
-endsnippet
-
-snippet imp "import" b
-import {${2}} from '${1}';$0
+import ${2:`!p snip.rv = formatImportedName(t[1], False)`} from '${1}';
 endsnippet
 
 snippet de "Debugger" wi
@@ -138,17 +134,13 @@ endsnippet
 #  JSX  #
 #########
 
-snippet "(\w+)>" "<Component>" ir
+snippet "<(\w+)>" "<Component>" rA
 <`!p snip.rv = match.group(1)`$1>
 	${2:${VISUAL}}
 </`!p snip.rv = match.group(1)`>$0
 endsnippet
 
-snippet "(\w+)/>" "<Component />" ir
-<`!p snip.rv = match.group(1)`$1/>$0
-endsnippet
-
-snippet <> "React.Fragment" b
+snippet <> "React.Fragment" bA
 <>
 	${VISUAL}$0
 </>

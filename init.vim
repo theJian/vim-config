@@ -355,6 +355,7 @@ let g:markdown_composer_autostart = 0
 let g:slimv_impl = 'sbcl'
 let g:slimv_unmap_cr = 1
 let g:paredit_electric_return = 0
+let g:slimv_keybindings=2
 
 " far.vim
 " let g:far#source='rg'
