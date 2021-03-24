@@ -85,9 +85,6 @@ set listchars=tab:┊\ ,trail:•,extends:§,nbsp:·
 set showmatch
 set matchtime=3
 
-" Highlight font settings
-highlight Comment cterm=italic
-
 " Font
 set guifont=IBM\ Plex\ Mono:h11
 
