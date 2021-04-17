@@ -104,8 +104,8 @@ set scrolloff=2
 set scrolljump=3
 
 " Highlight cursor position
-set cursorcolumn
-set cursorline
+" set cursorcolumn
+" set cursorline
 
 " Use relative number
 set number
@@ -222,13 +222,13 @@ augroup Theme
 augroup END
 
 " Only have cursorline in current window
-augroup CursorLine
-    autocmd!
-    autocmd winleave * set nocursorline
-    autocmd winleave * set nocursorcolumn
-    autocmd winenter * set cursorline
-    autocmd winenter * set cursorcolumn
-augroup END
+" augroup CursorLine
+"     autocmd!
+"     autocmd winleave * set nocursorline
+"     autocmd winleave * set nocursorcolumn
+"     autocmd winenter * set cursorline
+"     autocmd winenter * set cursorcolumn
+" augroup END
 
 " Automatic create directory when it doesn't exist
 augroup Mkdir
