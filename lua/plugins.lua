@@ -5,7 +5,8 @@ if api.nvim_get_option('loadplugins') then
 	require 'packman'
 
 	local homedir = vim.loop.os_homedir()
-	local lsp = require 'nvim_lsp'
+	local lsp = require 'lspconfig'
+
 	local function lsp_setup(target, options)
 		options = options or {}
 		options.on_attach = function()
