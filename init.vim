@@ -86,7 +86,7 @@ set showmatch
 set matchtime=3
 
 " Font
-set guifont=IBM\ Plex\ Mono:h11
+set guifont=JetBrains\ Mono:h12
 
 " Statusline
 set laststatus=2 " always show statusline
