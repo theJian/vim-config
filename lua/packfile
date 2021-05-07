@@ -1,4 +1,8 @@
 Pack {
+  "https://github.com/Raimondi/delimitMate.git",
+}
+
+Pack {
   "git@github.com:editorconfig/editorconfig-vim.git",
 }
 
@@ -69,11 +73,6 @@ Pack {
 
 Pack {
   "https://github.com/haorenW1025/completion-nvim",
-  opt,
-}
-
-Pack {
-  "https://github.com/Raimondi/delimitMate.git",
   opt,
 }
 
