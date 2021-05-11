@@ -210,6 +210,9 @@ nnoremap s "_c
 nnoremap ss "_cc
 nnoremap S "_C
 
+" Switch tabs
+nnoremap <Tab> gt
+
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
 
