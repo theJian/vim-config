@@ -85,9 +85,6 @@ set listchars=tab:┊\ ,trail:•,extends:§,nbsp:·
 set showmatch
 set matchtime=3
 
-" Font
-set guifont=JetBrains\ Mono:h12
-
 " Statusline
 set laststatus=2 " always show statusline
 set statusline=\ %t " file path
