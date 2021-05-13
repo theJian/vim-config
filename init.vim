@@ -79,7 +79,7 @@ colorscheme pura
 
 " Show invisiable chars
 set list
-set listchars=tab:┊\ ,trail:•,extends:§,nbsp:·
+set listchars=tab:┊\ ,trail:∙,extends:…,nbsp:∙,precedes:…
 
 " Matches highlight delay
 set showmatch
@@ -87,12 +87,12 @@ set matchtime=3
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=\ %t " file path
-set statusline+=%#ErrorMsg#%m%*%r%h%w "file info
+set statusline=%f〉 " file path
+set statusline+=%(%M%R%H%W〉%) "file info
 set statusline+=%= "switch to the right side
-set statusline+=%l\/%L᛬%c\ [%<%p٪] " cusor position
-set statusline+=\ \  " seperator
-set statusline+=%{&ff}/%Y\  " file type
+set statusline+=〈%l\/%L᛬%c〈%<%p٪ " cusor position
+set statusline+=〈 " seperator
+set statusline+=%{&ff}∕%Y " file type
 
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=2
@@ -112,7 +112,7 @@ set relativenumber
 set synmaxcol=200
 
 " Solid window split border
-set fillchars+=vert:│,foldopen:▾,foldclose:▸,foldsep:│
+set fillchars+=vert:▕,foldopen:▼,foldclose:▶,foldsep:▏
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
