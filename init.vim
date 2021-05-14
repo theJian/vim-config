@@ -79,7 +79,7 @@ colorscheme pura
 
 " Show invisiable chars
 set list
-set listchars=tab:┊\ ,trail:∙,extends:…,nbsp:∙,precedes:…
+set listchars=tab:⋮\ ,trail:∙,extends:…,nbsp:∙,precedes:…
 
 " Matches highlight delay
 set showmatch
@@ -87,18 +87,19 @@ set matchtime=3
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=%2*%f╱%* " file path
-set statusline+=%(%R%H%W╱%) "file info
-set statusline+=%1*%{&modified?\"＊\":\"\"}%* " Modified flag
+set statusline=%1*%{&modified?\"●\":\"\"}%* " Modified flag
+set statusline+=%2*%f⧹%* " file path
+set statusline+=%(%R%H%W⧹%) "file info
 set statusline+=%= "switch to the right side
-set statusline+=%5*╲%4l,%-3c%* " cursor position
-set statusline+=%4*╲%<%3p%%%* " scroll position
-set statusline+=%(%3*╲%Y%*%) " file type
-hi User1 gui=bold guifg=#e14747 guibg=#dddde1
-hi User2 gui=underline,bold guifg=#000000 guibg=#dddde1
-hi User3 gui=underline guifg=#000000 guibg=#dddde1
-hi User4 gui=underline guifg=#5f5f5f guibg=#dddde1
-hi User5 gui=underline guifg=#707070 guibg=#dddde1
+set statusline+=%5*∕%4l,%-3c%* " cursor position
+set statusline+=%4*∕%<%3p%%%* " scroll position
+set statusline+=%(%3*∕%Y%*%) " file type
+autocmd ColorScheme *
+    \ hi User1 gui=bold guifg=#9f6809 guibg=#d2b583           |
+    \ hi User2 gui=underline,bold guifg=#000000 guibg=#dddde1 |
+    \ hi User3 gui=underline guifg=#000000 guibg=#dddde1      |
+    \ hi User4 gui=underline guifg=#5f5f5f guibg=#dddde1      |
+    \ hi User5 gui=underline guifg=#707070 guibg=#dddde1
 
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=2
