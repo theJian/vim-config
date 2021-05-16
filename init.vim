@@ -103,7 +103,7 @@ autocmd ColorScheme *
     \ hi User6 gui=underline guifg=#083244 guibg=#dddde1
 
 " Mimium number of screen lines to keep above or below the cursor
-set scrolloff=2
+set scrolloff=3
 
 " Scroll faster by scrolling more lines at a time
 set scrolljump=3
