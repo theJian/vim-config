@@ -20,9 +20,7 @@ if api.nvim_get_option('loadplugins') then
 	lsp_setup('vimls')
 	-- lsp_setup('vimscript-language-server')
 	lsp_setup('rust_analyzer')
-	lsp_setup('pyls_ms', {
-		cmd = { "dotnet", "exec", homedir .. "/bin/languageServer/pyls_ms/Microsoft.Python.LanguageServer.dll" };
-	})
+	lsp_setup('pyright', {})
 	lsp_setup('bashls', {})
 	lsp_setup('tsserver', {})
 	lsp_setup('jsonls', {})

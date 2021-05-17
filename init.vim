@@ -343,7 +343,6 @@ nmap <leader>P <Plug>yankstack_substitute_newer_paste
 " vim-sexp
 let g:sexp_enable_insert_mode_mappings = 0
 
-command! LspClients     lua print(vim.inspect(vim.lsp.buf_get_clients()))
 set omnifunc=v:lua.vim.lsp.omnifunc
 
 " flowtype
