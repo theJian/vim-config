@@ -35,6 +35,7 @@ set foldenable
 set foldlevelstart=4
 set foldnestmax=10
 set foldopen-=block
+set foldcolumn=auto:3
 
 " File format
 set fileformat=unix
@@ -120,7 +121,7 @@ set relativenumber
 set synmaxcol=200
 
 " Solid window split border
-set fillchars+=vert:▕,foldopen:▼,foldclose:▶,foldsep:▏
+set fillchars+=vert:▕
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
@@ -217,6 +218,7 @@ nnoremap S "_C
 
 " Switch tabs
 nnoremap <Tab> gt
+nnoremap <S-Tab> gT
 
 
 "─── User Scripts ──────────────────────────────────────────────────────────────
@@ -228,15 +230,6 @@ augroup Theme
     autocmd!
     autocmd BufWritePost pura.vim colorscheme pura
 augroup END
-
-" Only have cursorline in current window
-" augroup CursorLine
-"     autocmd!
-"     autocmd winleave * set nocursorline
-"     autocmd winleave * set nocursorcolumn
-"     autocmd winenter * set cursorline
-"     autocmd winenter * set cursorcolumn
-" augroup END
 
 " Automatic create directory when it doesn't exist
 augroup Mkdir
