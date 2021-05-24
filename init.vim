@@ -49,7 +49,7 @@ set nobackup
 set noswapfile
 
 " Allow cursor to move just past the end of the line
-set virtualedit=onemore
+set virtualedit=block,onemore
 
 " Ask confirmation for certain things like when quitting before saving
 set confirm
