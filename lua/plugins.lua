@@ -86,4 +86,6 @@ if api.nvim_get_option('loadplugins') then
 	fit_find('<leader>e', fit_current_dir_files)
 	fit_find('<leader>d', fit_repos, 'tcd')
 	fit_buffers('<leader>b')
+
+	vim.g.pura_color_test = 1
 end
