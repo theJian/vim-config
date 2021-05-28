@@ -228,7 +228,7 @@ command! W w !sudo tee % > /dev/null
 
 augroup Theme
     autocmd!
-    autocmd BufWritePost */colors/schemes/*.lua colorscheme pura
+    autocmd BufWritePost */colors/schemes/*.lua,*/colors/colorscheme.lua colorscheme pura
 augroup END
 
 " Automatic create directory when it doesn't exist
