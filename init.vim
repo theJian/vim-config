@@ -32,7 +32,7 @@ set wildignorecase
 
 " Folding
 set foldenable
-set foldlevelstart=4
+set foldlevelstart=6
 set foldnestmax=10
 set foldopen-=block
 " set foldcolumn=auto:3
@@ -96,12 +96,12 @@ set statusline+=%5*∕%4l,%-3c%* " cursor position
 set statusline+=%4*∕%<%3p%%%* " scroll position
 set statusline+=%(%3*∕%Y%*%) " file type
 autocmd ColorScheme *
-    \ hi User1 gui=underline,bold guifg=#9f6809 guibg=#dddde1           |
+    \ hi User1 gui=underline,bold guifg=#9f6809 guibg=#dddde1 |
     \ hi User2 gui=underline,bold guifg=#000000 guibg=#dddde1 |
-    \ hi User3 gui=underline guifg=#000000 guibg=#dddde1      |
-    \ hi User4 gui=underline guifg=#4e093f guibg=#dddde1      |
-    \ hi User5 gui=underline guifg=#031968 guibg=#dddde1      |
-    \ hi User6 gui=underline guifg=#083244 guibg=#dddde1
+    \ hi User3 gui=underline      guifg=#000000 guibg=#dddde1 |
+    \ hi User4 gui=underline      guifg=#4e093f guibg=#dddde1 |
+    \ hi User5 gui=underline      guifg=#031968 guibg=#dddde1 |
+    \ hi User6 gui=underline      guifg=#083244 guibg=#dddde1
 
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=3
