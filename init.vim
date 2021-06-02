@@ -121,7 +121,7 @@ set relativenumber
 set synmaxcol=200
 
 " Solid window split border
-set fillchars+=vert:▕
+set fillchars+=vert:▕,diff:\ 
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 
