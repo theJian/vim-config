@@ -88,4 +88,12 @@ if api.nvim_get_option('loadplugins') then
 	fit_buffers('<leader>b')
 
 	vim.g.pura_color_test = 1
+
+	if jit.os == 'linux' then
+		require'nvim-treesitter.configs'.setup {
+			highlight = {
+				enable = true,
+			},
+		}
+	end
 end
