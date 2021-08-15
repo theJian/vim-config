@@ -138,8 +138,9 @@ set inccommand=nosplit
 " Set leader key
 let mapleader="\<space>"
 
-" Exit insert mode without esc
-" inoremap ,. <ESC>
+" Go to line header and end
+nnoremap gh ^
+nnoremap gl $
 
 " Treat long lines as break lines
 nnoremap <silent> j :<C-u>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'j'<CR>

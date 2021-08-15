@@ -51,9 +51,9 @@ if api.nvim_get_option('loadplugins') then
 	lsp_keymap('gd',    'declaration')
 	lsp_keymap('<c-]>', 'definition')
 	lsp_keymap('K',     'hover')
-	lsp_keymap('gD',    'implementation')
-	lsp_keymap('gk',    'signature_help')
-	lsp_keymap('gh',    'type_definition')
+	lsp_keymap('gI',    'implementation')
+	lsp_keymap('gs',    'signature_help')
+	lsp_keymap('gy',    'type_definition')
 	lsp_keymap('gr',    'references')
 	lsp_keymap('g0',    'document_symbol')
 
