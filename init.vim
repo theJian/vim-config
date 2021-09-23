@@ -140,7 +140,7 @@ let mapleader="\<space>"
 
 " Go to line header and end
 nnoremap gh ^
-nnoremap gl $
+nnoremap gl g_
 
 " Treat long lines as break lines
 nnoremap <silent> j :<C-u>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'j'<CR>
@@ -150,7 +150,7 @@ nnoremap <silent> k :<C-u>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g')
 nnoremap <leader><space> za
 
 " To save, press <leader>w
-nnoremap <leader>w :w<CR>
+nnoremap <leader>w :up<CR>
 
 " To create a file
 nnoremap <expr> <leader>n ':n ' . GetRelDir()
