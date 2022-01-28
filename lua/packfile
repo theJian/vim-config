@@ -31,10 +31,6 @@ Pack {
 }
 
 Pack {
-  "git@github.com:kovisoft/slimv.git",
-}
-
-Pack {
   "https://github.com/wellle/targets.vim.git",
 }
 
