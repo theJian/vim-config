@@ -63,11 +63,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/theJian/Mogao.git",
-  opt,
-}
-
-Pack {
   "https://github.com/haorenW1025/completion-nvim",
   opt,
 }
