@@ -109,9 +109,9 @@ set scrolloff=3
 " Scroll faster by scrolling more lines at a time
 set scrolljump=3
 
-" Highlight cursor position
-" set cursorcolumn
-" set cursorline
+" Highlight cursor line number
+set cursorline
+set cursorlineopt=number
 
 " Use relative number
 set number
