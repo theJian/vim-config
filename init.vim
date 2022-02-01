@@ -74,10 +74,6 @@ set jumpoptions=stack
 
 set termguicolors
 
-" Colorscheme
-set background=light
-colorscheme pura
-
 " Show invisiable chars
 set list
 set listchars=tab:⋮\ ,trail:∙,extends:…,nbsp:∙,precedes:…
@@ -102,6 +98,10 @@ autocmd ColorScheme *
     \ hi User4 gui=underline      guifg=#4e093f guibg=#dddde1 |
     \ hi User5 gui=underline      guifg=#031968 guibg=#dddde1 |
     \ hi User6 gui=underline      guifg=#083244 guibg=#dddde1
+
+" Colorscheme
+set background=light
+colorscheme pura
 
 " Mimium number of screen lines to keep above or below the cursor
 set scrolloff=3
