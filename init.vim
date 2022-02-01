@@ -84,7 +84,7 @@ set matchtime=3
 
 " Statusline
 set laststatus=2 " always show statusline
-set statusline=%(%2*%{fnamemodify(expand(\"%\"),\":.\")}⧹%*%) " file path
+set statusline=%(%2*%{fnamemodify(expand(\"%\"),\":.\")}%a⧹%*%) " file path
 set statusline+=%(%6*%R%H%W⧹%*%) "file info
 set statusline+=%(%1*%{&modified?\"\ ●\":\"\"}⧹%*%) " Modified flag
 set statusline+=%= "switch to the right side
