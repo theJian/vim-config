@@ -88,7 +88,7 @@ set statusline=%(%2*%{fnamemodify(expand(\"%\"),\":.\")}%a⧹%*%) " file path
 set statusline+=%(%6*%R%H%W⧹%*%) "file info
 set statusline+=%(%1*%{&modified?\"\ ●\":\"\"}⧹%*%) " Modified flag
 set statusline+=%= "switch to the right side
-set statusline+=%5*∕%4l,%-3c%* " cursor position
+set statusline+=%5*∕%4l:%-3c%* " cursor position
 set statusline+=%4*∕%<%3p%%%* " scroll position
 set statusline+=%(%3*∕%Y%*%) " file type
 autocmd ColorScheme *
