@@ -83,7 +83,7 @@ set showmatch
 set matchtime=3
 
 " Statusline
-set laststatus=2 " always show statusline
+set laststatus=3 " always show statusline
 set statusline=%(%2*%{fnamemodify(expand(\"%\"),\":.\")}%a⧹%*%) " file path
 set statusline+=%(%6*%R%H%W⧹%*%) "file info
 set statusline+=%(%1*%{&modified?\"\ ●\":\"\"}⧹%*%) " Modified flag
@@ -121,7 +121,7 @@ set relativenumber
 set synmaxcol=200
 
 " Solid window split border
-set fillchars+=vert:▕,diff:\ 
+set fillchars+=diff:\ 
 
 " Wrapped line mark
 set showbreak=↪\ \ \ 

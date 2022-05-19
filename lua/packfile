@@ -19,7 +19,7 @@ Pack {
 }
 
 Pack {
-  "git://github.com/neovim/nvim-lspconfig.git",
+  "https://github.com/neovim/nvim-lspconfig.git",
 }
 
 Pack {
