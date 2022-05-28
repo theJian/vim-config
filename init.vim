@@ -185,7 +185,7 @@ vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
 " Uppercase/Lowercase word
-inoremap <C-u> <esc>g~iwea
+" inoremap <C-u> <esc>g~iwea
 
 " Select last changed text
 nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
