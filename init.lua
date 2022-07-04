@@ -276,13 +276,7 @@ api.nvim_create_autocmd('BufWinEnter', {
 -- Terminal options
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
-	callback = function()
-		vim.wo.number = false
-		vim.wo.relativenumber = false
-		vim.wo.scrolloff = 0
-		vim.wo.statusline = '# %n'
-		vim.cmd 'startinsert'
-	end
+	command = 'setlocal nonumber norelativenumber statusline="# %n" | startinsert'
 })
 
 -- Load plugin configs
