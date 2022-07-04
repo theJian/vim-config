@@ -277,12 +277,10 @@ api.nvim_create_autocmd('BufWinEnter', {
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
 	callback = function()
-		vim.bo.number = false
-		vim.bo.relativenumber = false
-		vim.bo.ruler = false
-		vim.bo.showcmd = false
-		vim.bo.scrolloff = 0
-		vim.bo.statusline = '%n'
+		vim.wo.number = false
+		vim.wo.relativenumber = false
+		vim.wo.scrolloff = 0
+		vim.wo.statusline = '# %n'
 		vim.cmd 'startinsert'
 	end
 })
