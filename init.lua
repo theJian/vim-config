@@ -255,7 +255,7 @@ api.nvim_create_autocmd('BufNewFile', {
 	callback = function(tbl)
 		local file = tbl.file
 		local dir = vim.fn.fnamemodify(file, ':p:h')
-		if not vim.fn.isdirectory(dir) then
+		if vim.fn.isdirectory(dir) == 0 then
 			vim.fn.mkdir(dir, 'p')
 		end
 	end
