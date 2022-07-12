@@ -276,7 +276,7 @@ api.nvim_create_autocmd('BufWinEnter', {
 -- Terminal options
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
-	command = 'setlocal nonumber norelativenumber statusline="# %n" | startinsert'
+	command = 'setlocal nonumber norelativenumber statusline=#%n|startinsert'
 })
 
 -- Load plugin configs
