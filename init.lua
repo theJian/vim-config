@@ -143,6 +143,9 @@ vim.o.showmode = true
 vim.o.signcolumn = 'number'
 vim.o.inccommand = 'nosplit'
 
+-- Highlight cursor line
+vim.o.cursorline = true
+
 
 
 -- Key Mapping -----------------------------------------------------------------
