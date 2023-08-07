@@ -218,19 +218,19 @@ keymap.set('n', '<Tab>', 'gt')
 keymap.set('n', '<S-Tab>', 'gT')
 
 -- Use <Tab> and <S-Tab> to navigate through popup menu
-vim.keymap.set('i', '<Tab>', function()
+keymap.set('i', '<Tab>', function()
 	return vim.fn.pumvisible() == 1 and "<C-n>" or "<Tab>"
 end, { expr = true })
-vim.keymap.set('i', '<S-Tab>', function()
+keymap.set('i', '<S-Tab>', function()
 	return vim.fn.pumvisible() == 1 and "<C-p>" or "<S-Tab>"
 end, { expr = true })
 
 -- Visual mode pressing * or # searches for the current selection
--- local function visual_selection()
--- 	-- TODO
--- end
--- keymap.set('v', '*', visual_selection)
--- keymap.set('v', '#', visual_selection)
+local function visual_selection()
+	-- TODO
+end
+keymap.set('v', '*', visual_selection)
+keymap.set('v', '#', visual_selection)
 
 -- Show syntax highlighting groups for word under cursor
 local function show_hl()
