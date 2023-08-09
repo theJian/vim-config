@@ -165,7 +165,7 @@ keymap.set('n', 'k', [[<Cmd>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g
 keymap.set('n', '<leader><space>', 'za')
 
 -- Save
-keymap.set('n', '<leader>w', '<Cmd>up<CR>')
+keymap.set('n', '<leader>fs', '<Cmd>up<CR>')
 
 -- Split
 keymap.set('n', '<leader>h', '<Cmd>split<CR>')
