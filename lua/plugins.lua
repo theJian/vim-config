@@ -130,10 +130,10 @@ end
 local fit_files = 'rg --color never --files <cwd>'
 local fit_current_dir_files = 'rg --color never --files <dir>'
 local fit_repos = 'find ~ -maxdepth 2 -type d -execdir test -d {}/.git \\; -print -prune'
-fit_find('<leader>f', fit_files)
-fit_find('<leader>e', fit_current_dir_files)
+fit_find('<leader>ff', fit_files)
+fit_find('<leader>fe', fit_current_dir_files)
 fit_find('<leader>d', fit_repos, 'tcd')
-fit_buffers('<leader>b')
+fit_buffers('<leader>fb')
 
 vim.g.pura_color_test = 1
 
