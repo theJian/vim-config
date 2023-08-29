@@ -35,10 +35,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/SirVer/ultisnips",
-}
-
-Pack {
   "https://github.com/tpope/vim-commentary.git",
 }
 

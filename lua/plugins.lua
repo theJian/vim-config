@@ -19,13 +19,13 @@ vim.g.delimitMate_excluded_regions = "Comment"
 vim.g.delimitMate_excluded_ft = "md,lisp"
 
 
--- ultisnips
-vim.g.UltiSnipsSnippetDirectories = { vim.fn.fnamemodify(vim.env.MYVIMRC, ':h') .. '/UltiSnips' }
-vim.g.UltiSnipsExpandTrigger = '<c-j>'
-vim.g.UltiSnipsListSnippets = '<c-l>'
-vim.g.UltiSnipsJumpForwardTrigger = '<c-j>'
-vim.g.UltiSnipsJumpBackwardTrigger = '<c-k>'
-vim.g.UltiSnipsEditSplit = 'vertical'
+-- -- ultisnips
+-- vim.g.UltiSnipsSnippetDirectories = { vim.fn.fnamemodify(vim.env.MYVIMRC, ':h') .. '/UltiSnips' }
+-- vim.g.UltiSnipsExpandTrigger = '<c-j>'
+-- vim.g.UltiSnipsListSnippets = '<c-l>'
+-- vim.g.UltiSnipsJumpForwardTrigger = '<c-j>'
+-- vim.g.UltiSnipsJumpBackwardTrigger = '<c-k>'
+-- vim.g.UltiSnipsEditSplit = 'vertical'
 
 
 -- yankstack
