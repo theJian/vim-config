@@ -78,7 +78,7 @@ vim.opt.completeopt:append('menuone')
 vim.opt.completeopt:append('noselect')
 
 -- Default shell
-vim.o.shell = '/opt/homebrew/bin/nu'
+vim.o.shell = 'nu'
 
 -- User Interface --------------------------------------------------------------
 
