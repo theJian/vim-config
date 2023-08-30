@@ -3,7 +3,6 @@ local fn = vim.fn
 
 require 'packman'
 
-
 -- Netrw
 vim.g.netrw_liststyle = 3
 vim.g.netrw_altfile = 1
@@ -50,23 +49,47 @@ vim.g.slimv_keybindings = 2
 -- vim-sexp
 vim.g.sexp_enable_insert_mode_mappings = 0
 
+-- completion
+local cmp = require 'cmp'
+
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			require('luasnip').lsp_expand(args.body)
+		end,
+	},
+	sources = cmp.config.sources({
+		{ name = 'nvim_lsp' },
+		{ name = 'luasnip' },
+		{ name = 'buffer' }
+	})
+})
+
+cmp.setup.cmdline({ '/', '?' }, {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = 'buffer' }
+	}
+})
+
+cmp.setup.cmdline(':', {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = 'path' }
+	}, {
+		{ name = 'cmdline' }
+	})
+})
 
 -- LSP
 local lsp = require 'lspconfig'
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local function lsp_setup(target, options)
 	options = options or {}
-	options.on_attach = function()
-		vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-		require'ntc'.setup{
-			auto_popup = true,
-			chain = { 'omni', 'curt' }
-		}
-	end
+	options.capabilities = capabilities
 	lsp[target].setup(options)
 end
-lsp_setup('vimls')
--- lsp_setup('vimscript-language-server')
 lsp_setup('rust_analyzer')
 lsp_setup('pyright', {})
 lsp_setup('bashls', {})
@@ -76,8 +99,6 @@ lsp_setup('cssls', {})
 lsp_setup('gopls', {
 	cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 })
-
--- vim.g.completion_enable_snippet = 'UltiSnips'
 
 local function lsp_keymap(lhs, methodName)
 	vim.api.nvim_set_keymap(

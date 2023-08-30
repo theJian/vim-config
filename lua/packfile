@@ -59,12 +59,35 @@ Pack {
 }
 
 Pack {
-  "https://github.com/haorenW1025/completion-nvim",
-  opt,
+  "git@github.com:theJian/pura.git",
 }
 
 Pack {
-  "git@github.com:theJian/pura.git",
+  "hrsh7th/nvim-cmp"
+}
+
+Pack {
+  "hrsh7th/cmp-cmdline"
+}
+
+Pack {
+  "hrsh7th/cmp-path"
+}
+
+Pack {
+  "hrsh7th/cmp-buffer"
+}
+
+Pack {
+  "hrsh7th/cmp-nvim-lsp"
+}
+
+Pack {
+  "L3MON4D3/LuaSnip"
+}
+
+Pack {
+  "saadparwaiz1/cmp_luasnip"
 }
 
 Pack {
