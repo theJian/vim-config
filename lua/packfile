@@ -11,10 +11,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/thejian/ntc",
-}
-
-Pack {
   "https://github.com/norcalli/nvim-colorizer.lua",
 }
 
