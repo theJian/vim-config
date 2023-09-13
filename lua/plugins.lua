@@ -58,6 +58,15 @@ cmp.setup({
 			require('luasnip').lsp_expand(args.body)
 		end,
 	},
+	mapping = {
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+			else
+				fallback()
+			end
+		end, {"i","s","c",}),
+	},
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
 		{ name = 'luasnip' },
