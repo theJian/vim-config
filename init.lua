@@ -113,9 +113,12 @@ api.nvim_create_autocmd('ColorScheme', {
     end,
 })
 
+-- Winbar
+vim.opt.winbar = '%f'
+
 -- Colorscheme
 vim.o.background = 'light'
-vim.cmd [[colorscheme pura]]
+vim.cmd [[colorscheme moonwalk]]
 
 -- Mimium number of screen lines to keep above or below the cursor
 vim.o.scrolloff = 3
@@ -124,8 +127,8 @@ vim.o.scrolloff = 3
 vim.o.scrolljump = 3
 
 -- Highlight cursor line number
-vim.o.cursorline = true
-vim.o.cursorlineopt = 'number'
+vim.wo.cursorline = true
+vim.wo.cursorlineopt = 'both'
 
 -- Use relative number
 vim.o.number = true
@@ -143,9 +146,6 @@ vim.o.showmode = true
 -- Always show sign column
 vim.o.signcolumn = 'number'
 vim.o.inccommand = 'nosplit'
-
--- Highlight cursor line
-vim.o.cursorline = true
 
 
 
@@ -238,20 +238,13 @@ local function show_hl()
 	local names = vim.tbl_map(function(val)
 		return vim.fn.synIDattr(val, 'name')
 	end, vim.fn.synstack(vim.fn.line('.'), vim.fn.col('.')))
-	vim.pretty_print(names)
+	vim.print(names)
 end
 keymap.set('n', '<leader><C-P>', show_hl)
 
 
 
 -- Autocmd ---------------------------------------------------------------------
-
--- Auto reload theme
-api.nvim_create_autocmd('BufWritePost', {
-	group = api.nvim_create_augroup('Theme', {}),
-	pattern = {'*/colors/schemes/*.lua', '*/colors/colorscheme.lua'},
-	command = 'colorscheme pura',
-})
 
 -- Automatic create directory when it doesn't exist
 api.nvim_create_autocmd('BufNewFile', {
