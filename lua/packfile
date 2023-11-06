@@ -3,10 +3,6 @@ Pack {
 }
 
 Pack {
-  "git@github.com:editorconfig/editorconfig-vim.git",
-}
-
-Pack {
   "git@github.com:theJian/fit.git",
 }
 
@@ -52,10 +48,6 @@ Pack {
 
 Pack {
   "https://github.com/HerringtonDarkholme/yats.vim",
-}
-
-Pack {
-  "git@github.com:theJian/pura.git",
 }
 
 Pack {
@@ -111,3 +103,10 @@ Pack {
   opt,
 }
 
+Pack {
+  "smjonas/live-command.nvim",
+}
+
+Pack {
+  "kevinhwang91/nvim-ufo",
+}

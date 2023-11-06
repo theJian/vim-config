@@ -165,12 +165,12 @@ fit_find('<leader>fe', fit_current_dir_files)
 fit_find('<leader>d', fit_repos, 'tcd')
 fit_buffers('<leader>fb')
 
-vim.g.pura_color_test = 1
-
-if jit.os == 'linux' then
-	require'nvim-treesitter.configs'.setup {
-		highlight = {
-			enable = true,
-		},
-	}
-end
+require'nvim-treesitter.configs'.setup {
+	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json" },
+	highlight = {
+		enable = true,
+	},
+	indent = {
+		enable = true
+	},
+}

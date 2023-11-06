@@ -34,9 +34,12 @@ vim.o.smartcase = true
 vim.o.wildignorecase = true
 
 -- Folding
-vim.o.foldenable = true
+vim.wo.foldenable = true
 vim.o.foldlevelstart = 6
-vim.o.foldnestmax = 10
+vim.wo.foldnestmax = 10
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+-- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldopen:remove('block')
 
 -- File format
@@ -70,7 +73,7 @@ vim.opt.clipboard:append('unnamedplus')
 vim.o.undofile = true
 
 -- Browser like jumplist
-vim.o.jumpoptions = 'stack'
+vim.o.jumpoptions = 'view'
 
 -- Complete
 vim.opt.completeopt:remove('preview')
@@ -94,31 +97,31 @@ vim.o.matchtime = 3
 
 -- Statusline
 vim.o.laststatus = 3 -- always and ONLY the last window
-vim.opt.statusline = '%(%2*%{fnamemodify(expand("%"),":.")}%a⧹%*%)' -- file path
+-- vim.opt.statusline = '%(%2*%{fnamemodify(expand("%"),":.")}%a⧹%*%)' -- file path
 vim.opt.statusline:append('%(%6*%R%H%W⧹%*%) ')                      -- file info
 vim.opt.statusline:append('%(%1*%{&modified?" ●":""}⧹%*%)')         -- modified flag
 vim.opt.statusline:append('%=')                                     -- switch to the right side
 vim.opt.statusline:append('%5*∕%4l:%-3c%*')                         -- cursor position
 vim.opt.statusline:append('%4*∕%<%3p%%%*')                          -- scroll position
 vim.opt.statusline:append('%(%3*∕%Y%*%)')                           -- file type
-api.nvim_create_autocmd('ColorScheme', {
-    pattern = '*',
-    callback = function()
-        api.nvim_set_hl(0, 'User1', { bg = '#dddde1', fg = '#9f6809', underline = true, bold = true })
-        api.nvim_set_hl(0, 'User2', { bg = '#dddde1', fg = '#000000', underline = true, bold = true })
-        api.nvim_set_hl(0, 'User3', { bg = '#dddde1', fg = '#000000', underline = true, })
-        api.nvim_set_hl(0, 'User4', { bg = '#dddde1', fg = '#4e093f', underline = true, })
-        api.nvim_set_hl(0, 'User5', { bg = '#dddde1', fg = '#031968', underline = true, })
-        api.nvim_set_hl(0, 'User6', { bg = '#dddde1', fg = '#083244', underline = true, })
-    end,
-})
+-- api.nvim_create_autocmd('ColorScheme', {
+--     pattern = '*',
+--     callback = function()
+--         api.nvim_set_hl(0, 'User1', { bg = '#dddde1', fg = '#9f6809', underline = true, bold = true })
+--         api.nvim_set_hl(0, 'User2', { bg = '#dddde1', fg = '#000000', underline = true, bold = true })
+--         api.nvim_set_hl(0, 'User3', { bg = '#dddde1', fg = '#000000', underline = true, })
+--         api.nvim_set_hl(0, 'User4', { bg = '#dddde1', fg = '#4e093f', underline = true, })
+--         api.nvim_set_hl(0, 'User5', { bg = '#dddde1', fg = '#031968', underline = true, })
+--         api.nvim_set_hl(0, 'User6', { bg = '#dddde1', fg = '#083244', underline = true, })
+--     end,
+-- })
 
 -- Winbar
 vim.opt.winbar = '%f'
 
 -- Colorscheme
 vim.o.background = 'light'
-vim.cmd [[colorscheme moonwalk]]
+vim.cmd.colorscheme('moonwalk')
 
 -- Mimium number of screen lines to keep above or below the cursor
 vim.o.scrolloff = 3
@@ -166,7 +169,7 @@ keymap.set('n', 'k', [[<Cmd>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g
 keymap.set('n', '<leader><space>', 'za')
 
 -- Save
-keymap.set('n', '<leader>fs', '<Cmd>up<CR>')
+keymap.set('n', '<leader>fs', '<Cmd>up ++p<CR>')
 
 -- Split
 keymap.set('n', '<leader>h', '<Cmd>split<CR>')
