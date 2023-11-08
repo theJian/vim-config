@@ -39,7 +39,6 @@ vim.o.foldlevelstart = 6
 vim.wo.foldnestmax = 10
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
--- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldopen:remove('block')
 
 -- File format
@@ -235,16 +234,6 @@ local function visual_selection()
 end
 keymap.set('v', '*', visual_selection)
 keymap.set('v', '#', visual_selection)
-
--- Show syntax highlighting groups for word under cursor
-local function show_hl()
-	local names = vim.tbl_map(function(val)
-		return vim.fn.synIDattr(val, 'name')
-	end, vim.fn.synstack(vim.fn.line('.'), vim.fn.col('.')))
-	vim.print(names)
-end
-keymap.set('n', '<leader><C-P>', show_hl)
-
 
 
 -- Autocmd ---------------------------------------------------------------------

@@ -1,7 +1,7 @@
 local api = vim.api
 local fn = vim.fn
 
-require 'packman'
+require'packman'
 
 -- Netrw
 vim.g.netrw_liststyle = 3
@@ -50,7 +50,7 @@ vim.g.slimv_keybindings = 2
 vim.g.sexp_enable_insert_mode_mappings = 0
 
 -- completion
-local cmp = require 'cmp'
+local cmp = require'cmp'
 
 cmp.setup({
 	snippet = {
@@ -91,7 +91,7 @@ cmp.setup.cmdline(':', {
 })
 
 -- LSP
-local lsp = require 'lspconfig'
+local lsp = require'lspconfig'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local function lsp_setup(target, options)
@@ -166,11 +166,106 @@ fit_find('<leader>d', fit_repos, 'tcd')
 fit_buffers('<leader>fb')
 
 require'nvim-treesitter.configs'.setup {
-	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json" },
+	ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json"},
 	highlight = {
-		enable = true,
+		enable = false,
 	},
 	indent = {
 		enable = true
 	},
+}
+
+require'lualine'.setup {
+	options = {
+		icons_enabled = false,
+		theme = 'auto',
+		component_separators = '❘',
+		section_separators = '',
+		disabled_filetypes = {
+			statusline = {},
+			winbar = {},
+		},
+		ignore_focus = {},
+		always_divide_middle = true,
+		globalstatus = true,
+		refresh = {
+			statusline = 1000,
+			tabline = 1000,
+			winbar = 1000,
+		},
+		tabline_always_visible = false,
+	},
+	sections = {
+		lualine_a = {'mode'},
+		lualine_b = {'branch', 'diff', 'diagnostics'},
+		lualine_c = {},
+		lualine_x = {},
+		lualine_y = {'encoding', 'fileformat', 'filetype', 'location'},
+		lualine_z = {
+			{ 'datetime', style = '⏰ %H:%M' }
+		}
+	},
+	tabline = {
+		lualine_a = {'tabs'},
+		lualine_b = {},
+		lualine_c = {},
+		lualine_x = {},
+		lualine_y = {},
+		lualine_z = {}
+	},
+	winbar = {
+		lualine_a = {
+			{
+				'filename',
+				file_status = true,      -- Displays file status (readonly status, modified status)
+				newfile_status = false,  -- Display new file status (new file means no write after created)
+				path = 1,
+				-- 0: Just the filename
+				-- 1: Relative path
+				-- 2: Absolute path
+				-- 3: Absolute path, with tilde as the home directory
+				-- 4: Filename and parent dir, with tilde as the home directory
+
+				symbols = {
+					modified = '💭',      -- Text to show when the file is modified.
+					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
+					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
+					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
+				}
+			}
+		},
+		lualine_b = {},
+		lualine_c = {},
+		lualine_x = {'progress'},
+		lualine_y = {},
+		lualine_z = {},
+	},
+	inactive_winbar = {
+		lualine_a = {
+			{
+				'filename',
+				file_status = true,      -- Displays file status (readonly status, modified status)
+				newfile_status = false,  -- Display new file status (new file means no write after created)
+				path = 1,
+				-- 0: Just the filename
+				-- 1: Relative path
+				-- 2: Absolute path
+				-- 3: Absolute path, with tilde as the home directory
+				-- 4: Filename and parent dir, with tilde as the home directory
+
+				symbols = {
+					modified = '💭',      -- Text to show when the file is modified.
+					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
+					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
+					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
+				}
+			}
+		},
+		lualine_b = {},
+		lualine_c = {},
+		lualine_x = {'progress'},
+		lualine_y = {},
+		lualine_z = {},
+	},
+	extensions = {}
 }

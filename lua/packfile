@@ -110,3 +110,7 @@ Pack {
 Pack {
   "kevinhwang91/nvim-ufo",
 }
+
+Pack {
+  "nvim-lualine/lualine.nvim",
+}
