@@ -168,7 +168,7 @@ fit_buffers('<leader>fb')
 require'nvim-treesitter.configs'.setup {
 	ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json"},
 	highlight = {
-		enable = false,
+		enable = true,
 	},
 	indent = {
 		enable = true
@@ -269,3 +269,5 @@ require'lualine'.setup {
 	},
 	extensions = {}
 }
+
+require'colorizer'.setup()
