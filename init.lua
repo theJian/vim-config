@@ -97,12 +97,12 @@ vim.o.matchtime = 3
 -- Statusline
 vim.o.laststatus = 3 -- always and ONLY the last window
 -- vim.opt.statusline = '%(%2*%{fnamemodify(expand("%"),":.")}%a⧹%*%)' -- file path
-vim.opt.statusline:append('%(%6*%R%H%W⧹%*%) ')                      -- file info
-vim.opt.statusline:append('%(%1*%{&modified?" ●":""}⧹%*%)')         -- modified flag
+vim.opt.statusline:append('%(%R%H%W⧹%) ')                      -- file info
+vim.opt.statusline:append('%(%{&modified?" ●":""}⧹%)')         -- modified flag
 vim.opt.statusline:append('%=')                                     -- switch to the right side
-vim.opt.statusline:append('%5*∕%4l:%-3c%*')                         -- cursor position
-vim.opt.statusline:append('%4*∕%<%3p%%%*')                          -- scroll position
-vim.opt.statusline:append('%(%3*∕%Y%*%)')                           -- file type
+vim.opt.statusline:append('∕%4l:%-3c')                         -- cursor position
+vim.opt.statusline:append('∕%<%3p%%')                          -- scroll position
+vim.opt.statusline:append('%(∕%Y%)')                           -- file type
 -- api.nvim_create_autocmd('ColorScheme', {
 --     pattern = '*',
 --     callback = function()
@@ -119,6 +119,9 @@ vim.opt.statusline:append('%(%3*∕%Y%*%)')                           -- file ty
 vim.opt.winbar = '%f'
 
 -- Colorscheme
+require'moonwalk'.setup({
+	transparent = true
+})
 vim.o.background = 'light'
 vim.cmd.colorscheme('moonwalk')
 
