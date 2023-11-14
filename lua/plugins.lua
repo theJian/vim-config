@@ -271,7 +271,7 @@ require'lualine'.setup {
 				-- 4: Filename and parent dir, with tilde as the home directory
 
 				symbols = {
-					modified = '💭',      -- Text to show when the file is modified.
+					modified = '🚧',      -- Text to show when the file is modified.
 					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
 					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
 					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
@@ -301,7 +301,7 @@ require'lualine'.setup {
 				-- 4: Filename and parent dir, with tilde as the home directory
 
 				symbols = {
-					modified = '💭',      -- Text to show when the file is modified.
+					modified = '🚧',      -- Text to show when the file is modified.
 					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
 					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
 					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
