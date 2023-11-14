@@ -82,6 +82,8 @@ vim.opt.completeopt:append('noselect')
 -- Default shell
 vim.o.shell = 'nu'
 
+vim.o.updatetime = 600
+
 -- User Interface --------------------------------------------------------------
 
 vim.o.termguicolors = true
@@ -143,7 +145,7 @@ vim.o.relativenumber = true
 vim.o.synmaxcol = 180
 
 -- Wrapped line mark
-vim.o.showbreak = '↪   '
+vim.o.showbreak = '↪  '
 
 -- Show message in insert
 vim.o.showmode = true

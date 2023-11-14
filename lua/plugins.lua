@@ -59,13 +59,15 @@ cmp.setup({
 		end,
 	},
 	mapping = {
-		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-			else
-				fallback()
-			end
-		end, {"i","s","c",}),
+		["<C-p>"] = cmp.mapping.select_prev_item(),
+		["<C-n>"] = cmp.mapping.select_next_item(),
+	-- 	["<Tab>"] = cmp.mapping(function(fallback)
+	-- 		if cmp.visible() then
+	-- 			cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+	-- 		else
+	-- 			fallback()
+	-- 		end
+	-- 	end, {"i","s","c",}),
 	},
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
@@ -91,6 +93,10 @@ cmp.setup.cmdline(':', {
 })
 
 -- LSP
+vim.lsp.set_log_level 'trace'
+if vim.fn.has 'nvim-0.5.1' == 1 then
+	require('vim.lsp.log').set_format_func(vim.inspect)
+end
 local lsp = require'lspconfig'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -109,6 +115,7 @@ lsp_setup('gopls', {
 	cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 })
 
+-- TODO: remove to LspAttach group
 local function lsp_keymap(lhs, methodName)
 	vim.api.nvim_set_keymap(
 		'n',
@@ -135,6 +142,45 @@ lsp_keymap('gy',    'type_definition')
 lsp_keymap('gr',    'references')
 lsp_keymap('g0',    'document_symbol')
 
+api.nvim_create_autocmd('LspAttach', {
+	callback = function (ev)
+
+		local opts = { buffer = ev.buf }
+		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+		vim.keymap.set('n', '<C-d>', vim.diagnostic.open_float, opts)
+
+		api.nvim_create_autocmd({'CursorHold', 'CursorHoldI'}, {
+			buffer = ev.buf,
+			callback = vim.lsp.buf.document_highlight,
+		})
+
+		api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
+			buffer = ev.buf,
+			callback = vim.lsp.buf.clear_references,
+		})
+
+		api.nvim_create_autocmd({'BufEnter', 'CursorHold', 'InsertLeave'}, {
+			buffer = ev.buf,
+			callback = vim.lsp.codelens.refresh,
+		})
+
+	end
+})
+
+
+-- diagnostics
+vim.diagnostic.config({
+	virtual_text = false,
+	sign = true,
+})
+fn.sign_define({
+	{ name = 'DiagnosticSignError', text = '🧨' },
+	{ name = 'DiagnosticSignWarn', text = '🤨' },
+	{ name = 'DiagnosticSignInfo', text = '📘' },
+	{ name = 'DiagnosticSignHint', text = '💡' },
+})
+
+
 local function fit_find(lhs, find_command, accept_command)
 	local find_command_with_query = find_command .. '|fzy --show-matches=<query>|head -n 30'
 	vim.api.nvim_set_keymap(
@@ -159,10 +205,8 @@ end
 
 local fit_files = 'rg --color never --files <cwd>'
 local fit_current_dir_files = 'rg --color never --files <dir>'
-local fit_repos = 'find ~ -maxdepth 2 -type d -execdir test -d {}/.git \\; -print -prune'
 fit_find('<leader>ff', fit_files)
 fit_find('<leader>fe', fit_current_dir_files)
-fit_find('<leader>d', fit_repos, 'tcd')
 fit_buffers('<leader>fb')
 
 require'nvim-treesitter.configs'.setup {
@@ -197,10 +241,10 @@ require'lualine'.setup {
 	},
 	sections = {
 		lualine_a = {'mode'},
-		lualine_b = {'branch', 'diff', 'diagnostics'},
+		lualine_b = {'branch', 'diff'},
 		lualine_c = {},
 		lualine_x = {},
-		lualine_y = {'encoding', 'fileformat', 'filetype', 'location'},
+		lualine_y = {'location'},
 		lualine_z = {
 			{ 'datetime', style = '⏰ %H:%M' }
 		}
@@ -236,7 +280,10 @@ require'lualine'.setup {
 		},
 		lualine_b = {},
 		lualine_c = {},
-		lualine_x = {'progress'},
+		lualine_x = {{
+			'diagnostics',
+			symbols = {error = '🧨', warn = '🤨', info = '📘', hint = '💡'},
+		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
 	},
@@ -263,7 +310,10 @@ require'lualine'.setup {
 		},
 		lualine_b = {},
 		lualine_c = {},
-		lualine_x = {'progress'},
+		lualine_x = {{
+			'diagnostics',
+			symbols = {error = '🧨', warn = '🤨', info = '📘', hint = '💡'},
+		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
 	},
