@@ -105,49 +105,61 @@ local function lsp_setup(target, options)
 	options.capabilities = capabilities
 	lsp[target].setup(options)
 end
+lsp_setup('lua_ls')
 lsp_setup('rust_analyzer')
-lsp_setup('pyright', {})
-lsp_setup('bashls', {})
-lsp_setup('tsserver', {})
-lsp_setup('jsonls', {})
-lsp_setup('cssls', {})
+lsp_setup('pyright')
+lsp_setup('bashls')
+lsp_setup('tsserver')
+lsp_setup('jsonls')
+lsp_setup('cssls')
 lsp_setup('gopls', {
 	cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 })
 
 -- TODO: remove to LspAttach group
-local function lsp_keymap(lhs, methodName)
-	vim.api.nvim_set_keymap(
-		'n',
-		lhs,
-		string.format(
-			'<cmd>lua '..
-			'if vim.tbl_isempty(vim.lsp.buf_get_clients()) then '..
-				'vim.api.nvim_feedkeys("%s", "n", true) '..
-			'else '..
-				'vim.lsp.buf.%s() '..
-			'end<CR>',
-			lhs, methodName
-		),
-		{ unique = true, silent = true }
-	)
-end
-
-lsp_keymap('gd',    'declaration')
-lsp_keymap('<c-]>', 'definition')
-lsp_keymap('K',     'hover')
-lsp_keymap('gI',    'implementation')
-lsp_keymap('gs',    'signature_help')
-lsp_keymap('gy',    'type_definition')
-lsp_keymap('gr',    'references')
-lsp_keymap('g0',    'document_symbol')
+-- local function lsp_keymap(lhs, methodName)
+-- 	vim.api.nvim_set_keymap(
+-- 		'n',
+-- 		lhs,
+-- 		string.format(
+-- 			'<cmd>lua '..
+-- 			'if vim.tbl_isempty(vim.lsp.buf_get_clients()) then '..
+-- 				'vim.api.nvim_feedkeys("%s", "n", true) '..
+-- 			'else '..
+-- 				'vim.lsp.buf.%s() '..
+-- 			'end<CR>',
+-- 			lhs, methodName
+-- 		),
+-- 		{ unique = true, silent = true }
+-- 	)
+-- end
 
 api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
 
 		local opts = { buffer = ev.buf }
-		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-		vim.keymap.set('n', '<C-d>', vim.diagnostic.open_float, opts)
+		vim.keymap.set('n', 'ga', vim.diagnostic.open_float, opts)
+		vim.keymap.set('n', 'g0', vim.diagnostic.setloclist)
+		vim.keymap.set('n', '[a', vim.diagnostic.goto_prev)
+		vim.keymap.set('n', ']a', vim.diagnostic.goto_next)
+		vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
+      vim.keymap.set('n', 'gd', vim.lsp.buf.declaration, opts)
+      vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, opts)
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', 'gI', vim.lsp.buf.implementation, opts)
+      vim.keymap.set('n', '<leader>wn', vim.lsp.buf.add_workspace_folder, opts)
+      vim.keymap.set('n', '<leader>wd', vim.lsp.buf.remove_workspace_folder, opts)
+      vim.keymap.set('n', '<leader>wl', function()
+        vim.print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+      end, opts)
+      vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, opts)
+      vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+      vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
+      vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+      vim.keymap.set('n', 'gO', vim.lsp.buf.document_symbol, opts)
+      vim.keymap.set('n', '<leader>fm', function()
+        vim.lsp.buf.format { async = true }
+      end, opts)
 
 		api.nvim_create_autocmd({'CursorHold', 'CursorHoldI'}, {
 			buffer = ev.buf,
