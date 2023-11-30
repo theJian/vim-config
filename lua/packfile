@@ -44,6 +44,7 @@ Pack {
 
 Pack {
   "https://github.com/maxbrunsfeld/vim-yankstack.git",
+  opt,
 }
 
 Pack {
@@ -113,4 +114,16 @@ Pack {
 
 Pack {
   "nvim-lualine/lualine.nvim",
+}
+
+Pack {
+  "lewis6991/gitsigns.nvim",
+}
+
+Pack {
+  "lukas-reineke/indent-blankline.nvim"
+}
+
+Pack {
+  "mfussenegger/nvim-dap"
 }

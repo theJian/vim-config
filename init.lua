@@ -82,7 +82,7 @@ vim.opt.completeopt:append('noselect')
 -- Default shell
 vim.o.shell = 'nu'
 
-vim.o.updatetime = 600
+vim.o.updatetime = 300
 
 -- User Interface --------------------------------------------------------------
 
@@ -90,7 +90,7 @@ vim.o.termguicolors = true
 
 -- Show invisiable chars
 vim.o.list = true
-vim.o.listchars = 'tab:│ ,trail:∙,extends:…,nbsp:∙,precedes:…'
+vim.o.listchars = 'tab:┊ ,trail:∙,extends:…,nbsp:∙,precedes:…'
 
 -- Matches highlight delay
 vim.o.showmatch = true
