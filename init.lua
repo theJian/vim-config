@@ -125,7 +125,7 @@ require'moonwalk'.setup({
 	transparent = true
 })
 vim.o.background = 'light'
-vim.cmd.colorscheme('moonwalk')
+vim.cmd.colorscheme'moonwalk'
 
 -- Mimium number of screen lines to keep above or below the cursor
 vim.o.scrolloff = 3
