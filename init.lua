@@ -138,8 +138,8 @@ vim.wo.cursorline = true
 vim.wo.cursorlineopt = 'both'
 
 -- Use relative number
-vim.o.number = true
-vim.o.relativenumber = true
+vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Clear highlight above 180 characters width
 vim.o.synmaxcol = 180
@@ -151,7 +151,7 @@ vim.o.showbreak = '↪  '
 vim.o.showmode = true
 
 -- Always show sign column
-vim.o.signcolumn = 'number'
+vim.wo.signcolumn = 'yes:2'
 vim.o.inccommand = 'nosplit'
 
 
@@ -270,7 +270,12 @@ api.nvim_create_autocmd('BufWinEnter', {
 -- Terminal options
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
-	command = 'setlocal nonumber norelativenumber statusline=#%n|startinsert'
+	callback = function()
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
+		vim.opt_local.signcolumn = 'no'
+	end
+	-- command = 'setlocal nonumber norelativenumber statusline=#%n|startinsert'
 })
 
 -- Load plugin configs
