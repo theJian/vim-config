@@ -116,24 +116,6 @@ lsp_setup('gopls', {
 	cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 })
 
--- TODO: remove to LspAttach group
--- local function lsp_keymap(lhs, methodName)
--- 	vim.api.nvim_set_keymap(
--- 		'n',
--- 		lhs,
--- 		string.format(
--- 			'<cmd>lua '..
--- 			'if vim.tbl_isempty(vim.lsp.buf_get_clients()) then '..
--- 				'vim.api.nvim_feedkeys("%s", "n", true) '..
--- 			'else '..
--- 				'vim.lsp.buf.%s() '..
--- 			'end<CR>',
--- 			lhs, methodName
--- 		),
--- 		{ unique = true, silent = true }
--- 	)
--- end
-
 api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
 		local opts = { buffer = ev.buf }
@@ -375,15 +357,15 @@ require'gitsigns'.setup{
 	signs = {
 		add          = { text = '▌' },
 		change       = { text = '▌' },
-		delete       = { text = '_' },
-		topdelete    = { text = '‾' },
+		delete       = { text = '▄' },
+		topdelete    = { text = '▀' },
 		changedelete = { text = '~' },
 		untracked    = { text = '¦' },
 	},
 	signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
 	numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
 	linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-	word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+	word_diff  = true, -- Toggle with `:Gitsigns toggle_word_diff`
 	watch_gitdir = {
 		follow_files = true
 	},
@@ -403,7 +385,7 @@ require'gitsigns'.setup{
 	max_file_length = 40000, -- Disable if file is longer than this (in lines)
 	preview_config = {
 		-- Options passed to nvim_open_win
-		border = 'single',
+		border = 'none',
 		style = 'minimal',
 		relative = 'cursor',
 		row = 0,
