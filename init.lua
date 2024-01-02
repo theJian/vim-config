@@ -122,11 +122,11 @@ vim.opt.winbar = '%f'
 
 -- Colorscheme
 if not pcall(function()
-	require'oonwalk'.setup({
+	require'moonwalk'.setup({
 		transparent = true
 	})
 	vim.o.background = 'light'
-	vim.cmd.colorscheme'oonwalk'
+	vim.cmd.colorscheme'moonwalk'
 end) then
 	vim.api.nvim_err_writeln'missing colorscheme'
 end
