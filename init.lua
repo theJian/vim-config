@@ -121,11 +121,15 @@ vim.opt.statusline:append('%(∕%Y%)')                           -- file type
 vim.opt.winbar = '%f'
 
 -- Colorscheme
-require'moonwalk'.setup({
-	transparent = true
-})
-vim.o.background = 'light'
-vim.cmd.colorscheme'moonwalk'
+if not pcall(function()
+	require'oonwalk'.setup({
+		transparent = true
+	})
+	vim.o.background = 'light'
+	vim.cmd.colorscheme'oonwalk'
+end) then
+	vim.api.nvim_err_writeln'missing colorscheme'
+end
 
 -- Mimium number of screen lines to keep above or below the cursor
 vim.o.scrolloff = 3

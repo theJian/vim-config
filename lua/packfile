@@ -127,3 +127,7 @@ Pack {
 Pack {
   "mfussenegger/nvim-dap"
 }
+
+Pack {
+  "theJian/nvim-moonwalk"
+}
