@@ -59,15 +59,15 @@ cmp.setup{
 		end,
 	},
 	mapping = {
-		["<C-p>"] = cmp.mapping.select_prev_item(),
-		["<C-n>"] = cmp.mapping.select_next_item(),
-	-- 	["<Tab>"] = cmp.mapping(function(fallback)
-	-- 		if cmp.visible() then
-	-- 			cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-	-- 		else
-	-- 			fallback()
-	-- 		end
-	-- 	end, {"i","s","c",}),
+		["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+		["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert })
+			else
+				fallback()
+			end
+		end, {"i","s","c",}),
 	},
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },

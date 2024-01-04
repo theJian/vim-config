@@ -278,6 +278,8 @@ api.nvim_create_autocmd('TermOpen', {
 		vim.opt_local.number = false
 		vim.opt_local.relativenumber = false
 		vim.opt_local.signcolumn = 'no'
+		vim.opt_local.winbar = ''
+		vim.cmd[[startinsert]]
 	end
 	-- command = 'setlocal nonumber norelativenumber statusline=#%n|startinsert'
 })
