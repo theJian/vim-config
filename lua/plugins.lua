@@ -241,7 +241,7 @@ fit_find('<leader>fe', fit_current_dir_files)
 fit_buffers('<leader>fb')
 
 require'nvim-treesitter.configs'.setup {
-	ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json"},
+	ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "json", "tsx", "go", "html"},
 	highlight = {
 		enable = true,
 	},
