@@ -75,9 +75,10 @@ vim.o.undofile = true
 vim.o.jumpoptions = 'view'
 
 -- Complete
-vim.opt.completeopt:remove('preview')
-vim.opt.completeopt:append('menuone')
-vim.opt.completeopt:append('noselect')
+-- vim.opt.completeopt:remove('preview')
+-- vim.opt.completeopt:append('menuone')
+-- vim.opt.completeopt:append('noselect')
+vim.o.completeopt = 'menu,menuone'
 
 -- Default shell
 vim.o.shell = 'nu'
