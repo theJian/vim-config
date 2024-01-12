@@ -83,7 +83,8 @@ vim.o.completeopt = 'menu,menuone'
 -- Default shell
 vim.o.shell = 'nu'
 
-vim.o.updatetime = 300
+-- Control how often lualine updates
+vim.o.updatetime = 180
 
 -- User Interface --------------------------------------------------------------
 
