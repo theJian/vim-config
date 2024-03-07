@@ -61,19 +61,33 @@ cmp.setup{
 			require('luasnip').lsp_expand(args.body)
 		end,
 	},
-	mapping = {
-		["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-		["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-		["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-		["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+	mapping = cmp.mapping.preset.insert({
+		['<C-j>'] = {
+			i = function()
+				if cmp.visible() then
+					cmp.select_next_item({ behavior = types.cmp.SelectBehavior.Insert })
+				else
+					cmp.complete()
+				end
+			end,
+		},
+		['<C-k>'] = {
+			i = function()
+				if cmp.visible() then
+					cmp.select_prev_item({ behavior = types.cmp.SelectBehavior.Insert })
+				else
+					cmp.complete()
+				end
+			end,
+		},
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert })
 			else
 				fallback()
 			end
-		end, {"i","s","c",}),
-	},
+		end, {"i","s"}),
+	}),
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
 		{ name = 'luasnip' },
