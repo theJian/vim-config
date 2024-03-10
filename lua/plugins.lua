@@ -275,6 +275,7 @@ require'nvim-treesitter.configs'.setup {
 		"html",
 		"erlang",
 		"elixir",
+		"solidity",
 	},
 	highlight = {
 		enable = true,
