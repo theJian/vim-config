@@ -84,7 +84,7 @@ vim.o.completeopt = 'menu,menuone'
 vim.o.shell = 'nu'
 
 -- Control how often lualine updates
-vim.o.updatetime = 180
+vim.o.updatetime = 80
 
 -- User Interface --------------------------------------------------------------
 
