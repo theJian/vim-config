@@ -54,7 +54,7 @@ local cmp = require'cmp'
 
 cmp.setup{
 	completion = {
-		completeopt = 'menu,menuone'
+		completeopt = 'menu,menuone,preview'
 	},
 	snippet = {
 		expand = function(args)
@@ -65,7 +65,7 @@ cmp.setup{
 		['<C-j>'] = {
 			i = function()
 				if cmp.visible() then
-					cmp.select_next_item({ behavior = types.cmp.SelectBehavior.Insert })
+					cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
 				else
 					cmp.complete()
 				end
@@ -74,7 +74,7 @@ cmp.setup{
 		['<C-k>'] = {
 			i = function()
 				if cmp.visible() then
-					cmp.select_prev_item({ behavior = types.cmp.SelectBehavior.Insert })
+					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
 				else
 					cmp.complete()
 				end
@@ -87,6 +87,8 @@ cmp.setup{
 				fallback()
 			end
 		end, {"i","s"}),
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
 	}),
 	sources = cmp.config.sources({
 		{ name = 'nvim_lsp' },
@@ -112,7 +114,7 @@ cmp.setup.cmdline(':', {
 })
 
 -- LSP
-vim.lsp.set_log_level 'trace'
+-- vim.lsp.set_log_level 'trace'
 if vim.fn.has 'nvim-0.5.1' == 1 then
 	require('vim.lsp.log').set_format_func(vim.inspect)
 end
@@ -276,12 +278,25 @@ require'nvim-treesitter.configs'.setup {
 		"erlang",
 		"elixir",
 		"solidity",
+		"yaml",
+		"css",
+		"bash",
+		"astro"
 	},
 	highlight = {
 		enable = true,
 	},
 	indent = {
 		enable = true
+	},
+	incremental_selection = {
+		enable = true,
+		keymaps = {
+			init_selection = "vin",
+			node_incremental = "<c-h>",
+			node_decremental = "<c-h>",
+			scope_incremental = "grc",
+      },
 	},
 }
 
