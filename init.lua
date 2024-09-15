@@ -86,6 +86,11 @@ vim.o.shell = 'nu'
 -- Control how often lualine updates
 vim.o.updatetime = 80
 
+-- Enable spell check
+vim.opt.spelllang = 'en_us'
+vim.opt.spell = true
+
+
 -- User Interface --------------------------------------------------------------
 
 vim.o.termguicolors = true

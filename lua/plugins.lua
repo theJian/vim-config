@@ -293,8 +293,8 @@ require'nvim-treesitter.configs'.setup {
 		enable = true,
 		keymaps = {
 			init_selection = "vin",
-			node_incremental = "<c-h>",
-			node_decremental = "<c-h>",
+			node_incremental = "]",
+			node_decremental = "[",
 			scope_incremental = "grc",
       },
 	},
