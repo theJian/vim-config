@@ -72,11 +72,11 @@ cmp.setup{
 			end,
 		},
 		['<C-k>'] = {
-			i = function()
+			i = function(fallback)
 				if cmp.visible() then
 					cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
 				else
-					cmp.complete()
+					fallback()
 				end
 			end,
 		},

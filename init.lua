@@ -99,6 +99,9 @@ vim.o.termguicolors = true
 vim.o.list = true
 vim.o.listchars = 'tab:┊ ,trail:∙,extends:…,nbsp:∙,precedes:…'
 
+-- Alternative chars for special lines, separator, etc.
+vim.o.fillchars = 'wbr:░,fold:₋,diff:╱'
+
 -- Matches highlight delay
 vim.o.showmatch = true
 vim.o.matchtime = 3
