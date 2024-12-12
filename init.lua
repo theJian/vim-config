@@ -78,7 +78,7 @@ vim.o.jumpoptions = 'view'
 -- vim.opt.completeopt:remove('preview')
 -- vim.opt.completeopt:append('menuone')
 -- vim.opt.completeopt:append('noselect')
-vim.o.completeopt = 'menu,menuone'
+vim.o.completeopt = 'menu,menuone,popup'
 
 -- Default shell
 vim.o.shell = 'nu'
@@ -146,6 +146,9 @@ vim.o.scrolloff = 3
 
 -- Scroll faster by scrolling more lines at a time
 vim.o.scrolljump = 3
+
+-- scroll by screen line rather than by text line 
+vim.o.smoothscroll = true
 
 -- Highlight cursor line number
 vim.wo.cursorline = true
@@ -236,8 +239,8 @@ keymap.set('n', 'ss', '"_cc')
 keymap.set('n', 'S', '"_C')
 
 -- Switch tabs
-keymap.set('n', '<Tab>', 'gt')
-keymap.set('n', '<S-Tab>', 'gT')
+-- keymap.set('n', '<Tab>', 'gt')
+-- keymap.set('n', '<S-Tab>', 'gT')
 
 -- Use <Tab> and <S-Tab> to navigate through popup menu
 keymap.set('i', '<Tab>', function()

@@ -141,15 +141,17 @@ api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
 		local opts = { buffer = ev.buf }
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		-- Use <c-w>d instead
-		-- vim.keymap.set('n', 'ga', vim.diagnostic.open_float, opts)
+		-- vim.keymap.set('n', '<c-w>d', vim.diagnostic.open_float, opts)
+
 		vim.keymap.set('n', 'g0', vim.diagnostic.setloclist)
-		vim.keymap.set('n', '[a', vim.diagnostic.goto_prev)
-		vim.keymap.set('n', ']a', vim.diagnostic.goto_next)
+
+		-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+		-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+
 		vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
       vim.keymap.set('n', 'gd', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', '<c-]>', vim.lsp.buf.definition, opts)
-      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
       vim.keymap.set('n', 'gI', vim.lsp.buf.implementation, opts)
       vim.keymap.set('n', '<leader>wn', vim.lsp.buf.add_workspace_folder, opts)
       vim.keymap.set('n', '<leader>wd', vim.lsp.buf.remove_workspace_folder, opts)
