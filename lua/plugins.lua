@@ -141,7 +141,8 @@ api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
 		local opts = { buffer = ev.buf }
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		vim.keymap.set('n', 'ga', vim.diagnostic.open_float, opts)
+		-- Use <c-w>d instead
+		-- vim.keymap.set('n', 'ga', vim.diagnostic.open_float, opts)
 		vim.keymap.set('n', 'g0', vim.diagnostic.setloclist)
 		vim.keymap.set('n', '[a', vim.diagnostic.goto_prev)
 		vim.keymap.set('n', ']a', vim.diagnostic.goto_next)
