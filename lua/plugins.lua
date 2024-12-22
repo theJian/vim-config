@@ -62,12 +62,21 @@ cmp.setup{
 		end,
 	},
 	mapping = cmp.mapping.preset.insert({
-		['<C-j>'] = {
+		['<C-space>'] = {
 			i = function()
+				if cmp.visible() then
+					cmp.close()
+				else
+					cmp.complete()
+				end
+			end,
+		},
+		['<C-j>'] = {
+			i = function(fallback)
 				if cmp.visible() then
 					cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
 				else
-					cmp.complete()
+					fallback()
 				end
 			end,
 		},
