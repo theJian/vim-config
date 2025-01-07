@@ -136,10 +136,32 @@ local function lsp_setup(target, options)
 	lsp[target].setup(options)
 end
 lsp_setup('lua_ls')
-lsp_setup('rust_analyzer')
+lsp_setup('rust_analyzer', {
+	on_attach = function(client, bufnr)
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+	end,
+	settings = {
+		["rust-analyzer"] = {
+			imports = {
+				granularity = {
+					group = "module",
+				},
+				prefix = "self",
+			},
+			cargo = {
+				buildScripts = {
+					enable = true,
+				},
+			},
+			procMacro = {
+				enable = true
+			},
+		}
+	}
+})
 lsp_setup('pyright')
 lsp_setup('bashls')
-lsp_setup('tsserver')
+lsp_setup('ts_ls')
 lsp_setup('jsonls')
 lsp_setup('cssls')
 lsp_setup('gopls', {
@@ -424,6 +446,15 @@ require'gitsigns'.setup{
 		changedelete = { text = '~' },
 		untracked    = { text = '¦' },
 	},
+	signs_staged = {
+		add          = { text = '▌' },
+		change       = { text = '▌' },
+		delete       = { text = '▄' },
+		topdelete    = { text = '▀' },
+		changedelete = { text = '~' },
+		untracked    = { text = '¦' },
+	},
+	signs_staged_enable = true,
 	signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
 	numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
 	linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
@@ -431,6 +462,7 @@ require'gitsigns'.setup{
 	watch_gitdir = {
 		follow_files = true
 	},
+	auto_attach = true,
 	attach_to_untracked = true,
 	current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
 	current_line_blame_opts = {
@@ -439,8 +471,9 @@ require'gitsigns'.setup{
 		delay = 1000,
 		ignore_whitespace = false,
 		virt_text_priority = 100,
+		use_focus = true,
 	},
-	current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+	current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
 	sign_priority = 6,
 	update_debounce = 300,
 	status_formatter = nil, -- Use default
@@ -452,9 +485,6 @@ require'gitsigns'.setup{
 		relative = 'cursor',
 		row = 0,
 		col = 1
-	},
-	yadm = {
-		enable = false
 	},
 }
 
