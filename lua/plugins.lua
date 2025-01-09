@@ -260,10 +260,10 @@ vim.diagnostic.config({
 })
 
 fn.sign_define({
-	{ name = 'DiagnosticSignError', text = '🧨', texthl = 'DiagnosticSignError' },
-	{ name = 'DiagnosticSignWarn', text = '🤨', texthl = 'DiagnosticSignWarn' },
-	{ name = 'DiagnosticSignInfo', text = '📘', texthl = 'DiagnosticSignInfo' },
-	{ name = 'DiagnosticSignHint', text = '💡', texthl = 'DiagnosticSignHint' },
+	{ name = 'DiagnosticSignError', text = '🯀', texthl = 'DiagnosticSignError' },
+	{ name = 'DiagnosticSignWarn', text = '‼', texthl = 'DiagnosticSignWarn' },
+	{ name = 'DiagnosticSignInfo', text = '𝑖', texthl = 'DiagnosticSignInfo' },
+	{ name = 'DiagnosticSignHint', text = '⯍', texthl = 'DiagnosticSignHint' },
 })
 
 
@@ -336,7 +336,7 @@ require'nvim-treesitter.configs'.setup {
 
 require'lualine'.setup {
 	options = {
-		icons_enabled = false,
+		icons_enabled = true,
 		theme = 'auto',
 		component_separators = '❘',
 		section_separators = '',
@@ -356,12 +356,15 @@ require'lualine'.setup {
 	},
 	sections = {
 		lualine_a = {'mode'},
-		lualine_b = {'branch', 'diff'},
+		lualine_b = {
+			{'branch', icon = ''},
+			'diff'
+		},
 		lualine_c = {},
 		lualine_x = {},
 		lualine_y = {'location'},
 		lualine_z = {
-			{ 'datetime', style = '⏰ %H:%M' }
+			{ 'datetime', style = '🕰 %H:%M' }
 		}
 	},
 	tabline = {
@@ -387,7 +390,7 @@ require'lualine'.setup {
 
 				symbols = {
 					modified = '🚧',      -- Text to show when the file is modified.
-					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
+					readonly = '',      -- Text to show when the file is non-modifiable or readonly.
 					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
 					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
 				}
@@ -397,7 +400,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '🧨', warn = '🤨', info = '📘', hint = '💡'},
+			symbols = {error = '🯀', warn = '‼', info = '𝑖', hint = '⯍'},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
@@ -417,7 +420,7 @@ require'lualine'.setup {
 
 				symbols = {
 					modified = '🚧',      -- Text to show when the file is modified.
-					readonly = '🔒',      -- Text to show when the file is non-modifiable or readonly.
+					readonly = '',      -- Text to show when the file is non-modifiable or readonly.
 					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
 					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
 				}
@@ -427,7 +430,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '🧨', warn = '🤨', info = '📘', hint = '💡'},
+			symbols = {error = '🯀', warn = '‼', info = '𝑖', hint = '⯍'},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
