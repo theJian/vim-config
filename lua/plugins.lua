@@ -260,10 +260,10 @@ vim.diagnostic.config({
 })
 
 fn.sign_define({
-	{ name = 'DiagnosticSignError', text = '🯀', texthl = 'DiagnosticSignError' },
-	{ name = 'DiagnosticSignWarn', text = '‼', texthl = 'DiagnosticSignWarn' },
+	{ name = 'DiagnosticSignError', text = '', texthl = 'DiagnosticSignError' },
+	{ name = 'DiagnosticSignWarn', text = '', texthl = 'DiagnosticSignWarn' },
 	{ name = 'DiagnosticSignInfo', text = '𝑖', texthl = 'DiagnosticSignInfo' },
-	{ name = 'DiagnosticSignHint', text = '⯍', texthl = 'DiagnosticSignHint' },
+	{ name = 'DiagnosticSignHint', text = '', texthl = 'DiagnosticSignHint' },
 })
 
 
@@ -391,8 +391,8 @@ require'lualine'.setup {
 				symbols = {
 					modified = '🚧',      -- Text to show when the file is modified.
 					readonly = '',      -- Text to show when the file is non-modifiable or readonly.
-					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
-					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
+					unnamed = '- NO NAME -',       -- Text to show for unnamed buffers.
+					newfile = '- NEW -',     -- Text to show for newly created file before first write
 				}
 			}
 		},
@@ -400,7 +400,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '🯀', warn = '‼', info = '𝑖', hint = '⯍'},
+			symbols = {error = '', warn = '', info = '𝑖', hint = ''},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
@@ -421,8 +421,8 @@ require'lualine'.setup {
 				symbols = {
 					modified = '🚧',      -- Text to show when the file is modified.
 					readonly = '',      -- Text to show when the file is non-modifiable or readonly.
-					unnamed = 'ɴᴏ ɴᴀᴍᴇ',       -- Text to show for unnamed buffers.
-					newfile = 'ɴɛɯ',     -- Text to show for newly created file before first write
+					unnamed = '- NO NAME -',       -- Text to show for unnamed buffers.
+					newfile = '- NEW -',     -- Text to show for newly created file before first write
 				}
 			}
 		},
@@ -430,7 +430,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '🯀', warn = '‼', info = '𝑖', hint = '⯍'},
+			symbols = {error = '', warn = '', info = '𝑖', hint = ''},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
