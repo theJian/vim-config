@@ -315,7 +315,8 @@ require'nvim-treesitter.configs'.setup {
 		"yaml",
 		"css",
 		"bash",
-		"astro"
+		"astro",
+		"rust"
 	},
 	highlight = {
 		enable = true,
