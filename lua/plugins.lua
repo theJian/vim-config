@@ -159,7 +159,6 @@ lsp_setup('rust_analyzer', {
 		}
 	}
 })
-lsp_setup('pyright')
 lsp_setup('bashls')
 lsp_setup('ts_ls')
 lsp_setup('jsonls')
@@ -167,6 +166,17 @@ lsp_setup('cssls')
 lsp_setup('gopls', {
 	cmd = { fn.trim(fn.system('go env GOPATH')) .. "/bin/gopls" };
 })
+lsp_setup('basedpyright', {
+	settings = {
+		basedpyright = {
+			disableOrganizeImports = true,
+			analysis = {
+				ignore = { '*' }
+			}
+		}
+	}
+})
+lsp_setup('ruff')
 
 api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
@@ -316,7 +326,8 @@ require'nvim-treesitter.configs'.setup {
 		"css",
 		"bash",
 		"astro",
-		"rust"
+		"rust",
+		"python",
 	},
 	highlight = {
 		enable = true,
