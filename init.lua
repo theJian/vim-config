@@ -238,10 +238,6 @@ keymap.set('n', 's', '"_c')
 keymap.set('n', 'ss', '"_cc')
 keymap.set('n', 'S', '"_C')
 
--- Switch tabs
--- keymap.set('n', '<Tab>', 'gt')
--- keymap.set('n', '<S-Tab>', 'gT')
-
 -- Use <Tab> and <S-Tab> to navigate through popup menu
 keymap.set('i', '<Tab>', function()
 	return vim.fn.pumvisible() == 1 and "<C-n>" or "<Tab>"
@@ -251,11 +247,30 @@ keymap.set('i', '<S-Tab>', function()
 end, { expr = true })
 
 -- Visual mode pressing * or # searches for the current selection
-local function visual_selection()
-	-- TODO
+local function visual_selection(direction)
+	local old_a = vim.fn.getreg('a')
+	vim.cmd('normal! "ay')
+	local selected_text = vim.fn.getreg('a')
+	vim.fn.setreg('a', old_a)
+
+	-- Escape backslashes in the selected text for literal searching
+	-- In '\V' (very nomagic) mode, only '\' is special and needs escaping
+	local escaped_text = selected_text:gsub('\\', '\\\\')
+
+	-- Create a search pattern using '\V' for literal matching
+	local pattern = '\\V' .. escaped_text
+
+	-- Set the search register '/' to the pattern
+	vim.fn.setreg('/', pattern)
+
+	-- Attempt to search, but don't let it error out
+	local ok = pcall(vim.cmd, 'normal! ' .. (direction == '*' and 'n' or 'N'))
+	if not ok then
+		vim.notify("No match found", vim.log.levels.ERROR)
+	end
 end
-keymap.set('v', '*', visual_selection)
-keymap.set('v', '#', visual_selection)
+keymap.set('v', '*', function() visual_selection('*') end)
+keymap.set('v', '#', function() visual_selection('#') end)
 
 
 -- Autocmd ---------------------------------------------------------------------
