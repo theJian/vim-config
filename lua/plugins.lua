@@ -135,7 +135,21 @@ local function lsp_setup(target, options)
 	options.capabilities = capabilities
 	lsp[target].setup(options)
 end
-lsp_setup('lua_ls')
+lsp_setup('lua_ls', {
+	settings = {
+		Lua = {
+			runtime = {
+				version = 'LuaJIT',
+			},
+			diagnostics = {
+				globals = {'vim'},
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file('', true),
+			},
+		},
+	},
+})
 lsp_setup('rust_analyzer', {
 	on_attach = function(client, bufnr)
 		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
@@ -270,10 +284,10 @@ vim.diagnostic.config({
 })
 
 fn.sign_define({
-	{ name = 'DiagnosticSignError', text = '', texthl = 'DiagnosticSignError' },
-	{ name = 'DiagnosticSignWarn', text = '', texthl = 'DiagnosticSignWarn' },
-	{ name = 'DiagnosticSignInfo', text = '', texthl = 'DiagnosticSignInfo' },
-	{ name = 'DiagnosticSignHint', text = '', texthl = 'DiagnosticSignHint' },
+	{ name = 'DiagnosticSignError', text = '●', texthl = 'DiagnosticSignError' },
+	{ name = 'DiagnosticSignWarn', text = '●', texthl = 'DiagnosticSignWarn' },
+	{ name = 'DiagnosticSignInfo', text = '○', texthl = 'DiagnosticSignInfo' },
+	{ name = 'DiagnosticSignHint', text = '⊙', texthl = 'DiagnosticSignHint' },
 })
 
 
@@ -412,7 +426,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '', warn = '', info = '', hint = ''},
+			symbols = {error = '● ', warn = '● ', info = '○ ', hint = '⊙ '},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
@@ -442,7 +456,7 @@ require'lualine'.setup {
 		lualine_c = {},
 		lualine_x = {{
 			'diagnostics',
-			symbols = {error = '', warn = '', info = '', hint = ''},
+			symbols = {error = '● ', warn = '● ', info = '○ ', hint = '⊙ '},
 		}, 'filetype'},
 		lualine_y = {},
 		lualine_z = {},
@@ -456,18 +470,18 @@ require'gitsigns'.setup{
 	signs = {
 		add          = { text = '▌' },
 		change       = { text = '▌' },
-		delete       = { text = '▙' },
-		topdelete    = { text = '▛' },
-		changedelete = { text = '~' },
-		untracked    = { text = '┥' },
+		delete       = { text = '▄' },
+		topdelete    = { text = '▀' },
+		changedelete = { text = '▙' },
+		untracked    = { text = '▚' },
 	},
 	signs_staged = {
 		add          = { text = '▌' },
 		change       = { text = '▌' },
-		delete       = { text = '▙' },
-		topdelete    = { text = '▛' },
-		changedelete = { text = '~' },
-		untracked    = { text = '┥' },
+		delete       = { text = '▄' },
+		topdelete    = { text = '▀' },
+		changedelete = { text = '▙' },
+		untracked    = { text = '▚' },
 	},
 	signs_staged_enable = true,
 	signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
