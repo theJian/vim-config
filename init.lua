@@ -66,7 +66,9 @@ vim.o.errorbells = false
 vim.o.wrapscan = false
 
 -- Yank text to system clipboard
-vim.opt.clipboard:append('unnamedplus')
+if string.find(vim.loop.os_uname().sysname, 'Darwin') then
+	vim.opt.clipboard:append('unnamedplus')
+end
 
 -- Persistent undo
 vim.o.undofile = true
