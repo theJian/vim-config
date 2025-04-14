@@ -35,6 +35,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/mhartington/formatter.nvim",
+}
+
+Pack {
   "https://github.com/lewis6991/gitsigns.nvim.git",
 }
 
@@ -51,6 +55,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/williamboman/mason-lspconfig.nvim",
+}
+
+Pack {
   "https://github.com/williamboman/mason.nvim",
 }
 
@@ -64,6 +72,14 @@ Pack {
 
 Pack {
   "https://github.com/mfussenegger/nvim-dap",
+}
+
+Pack {
+  "https://github.com/rcarriga/nvim-dap-ui",
+}
+
+Pack {
+  "https://github.com/mfussenegger/nvim-lint",
 }
 
 Pack {
