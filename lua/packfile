@@ -1,4 +1,32 @@
 Pack {
+  "https://github.com/L3MON4D3/LuaSnip",
+}
+
+Pack {
+  "https://github.com/hrsh7th/cmp-buffer",
+}
+
+Pack {
+  "https://github.com/hrsh7th/cmp-cmdline",
+}
+
+Pack {
+  "https://github.com/hrsh7th/cmp-nvim-lsp",
+}
+
+Pack {
+  "https://github.com/hrsh7th/cmp-path",
+}
+
+Pack {
+  "https://github.com/saadparwaiz1/cmp_luasnip",
+}
+
+Pack {
+  "https://github.com/github/copilot.vim",
+}
+
+Pack {
   "https://github.com/Raimondi/delimitMate.git",
 }
 
@@ -7,7 +35,35 @@ Pack {
 }
 
 Pack {
+  "https://github.com/lewis6991/gitsigns.nvim.git",
+}
+
+Pack {
+  "https://github.com/lukas-reineke/indent-blankline.nvim",
+}
+
+Pack {
+  "https://github.com/smjonas/live-command.nvim",
+}
+
+Pack {
+  "https://github.com/nvim-lualine/lualine.nvim",
+}
+
+Pack {
+  "https://github.com/williamboman/mason.nvim",
+}
+
+Pack {
+  "https://github.com/hrsh7th/nvim-cmp",
+}
+
+Pack {
   "https://github.com/norcalli/nvim-colorizer.lua",
+}
+
+Pack {
+  "https://github.com/mfussenegger/nvim-dap",
 }
 
 Pack {
@@ -19,7 +75,15 @@ Pack {
 }
 
 Pack {
+  "git@github.com:theJian/nvim-moonwalk.git",
+}
+
+Pack {
   "https://github.com/nvim-treesitter/nvim-treesitter",
+}
+
+Pack {
+  "https://github.com/kevinhwang91/nvim-ufo",
 }
 
 Pack {
@@ -39,40 +103,7 @@ Pack {
 }
 
 Pack {
-  "https://github.com/maxbrunsfeld/vim-yankstack.git",
-  opt,
-}
-
-Pack {
   "https://github.com/HerringtonDarkholme/yats.vim",
-}
-
-Pack {
-  "hrsh7th/nvim-cmp"
-}
-
-Pack {
-  "hrsh7th/cmp-cmdline"
-}
-
-Pack {
-  "hrsh7th/cmp-path"
-}
-
-Pack {
-  "hrsh7th/cmp-buffer"
-}
-
-Pack {
-  "hrsh7th/cmp-nvim-lsp"
-}
-
-Pack {
-  "L3MON4D3/LuaSnip"
-}
-
-Pack {
-  "saadparwaiz1/cmp_luasnip"
 }
 
 Pack {
@@ -101,29 +132,7 @@ Pack {
 }
 
 Pack {
-  "smjonas/live-command.nvim",
+  "https://github.com/maxbrunsfeld/vim-yankstack.git",
+  opt,
 }
 
-Pack {
-  "kevinhwang91/nvim-ufo",
-}
-
-Pack {
-  "nvim-lualine/lualine.nvim",
-}
-
-Pack {
-  "lewis6991/gitsigns.nvim",
-}
-
-Pack {
-  "lukas-reineke/indent-blankline.nvim"
-}
-
-Pack {
-  "mfussenegger/nvim-dap"
-}
-
-Pack {
-  "theJian/nvim-moonwalk"
-}
