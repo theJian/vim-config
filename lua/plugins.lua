@@ -1,8 +1,6 @@
 local api = vim.api
 local fn = vim.fn
 
-require'packman'
-
 -- Netrw
 vim.g.netrw_liststyle = 3
 vim.g.netrw_altfile = 1
@@ -48,6 +46,11 @@ vim.g.slimv_keybindings = 2
 
 -- vim-sexp
 vim.g.sexp_enable_insert_mode_mappings = 0
+
+require'mason'.setup()
+require'mason-lspconfig'.setup{
+	automatic_installation = true
+}
 
 -- completion
 local cmp = require'cmp'
@@ -191,6 +194,7 @@ lsp_setup('basedpyright', {
 	}
 })
 lsp_setup('ruff')
+lsp_setup('fennel_ls')
 
 api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
@@ -321,7 +325,7 @@ fit_buffers('<leader>fb')
 
 require'nvim-treesitter.configs'.setup {
 	ensure_installed = {
-		"c", 
+		"c",
 		"lua", 
 		"vim", 
 		"vimdoc", 
