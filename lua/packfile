@@ -103,10 +103,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/wellle/targets.vim.git",
-}
-
-Pack {
   "https://github.com/tpope/vim-fugitive.git",
 }
 
@@ -119,21 +115,12 @@ Pack {
 }
 
 Pack {
-  "https://github.com/HerringtonDarkholme/yats.vim",
-}
-
-Pack {
   "https://github.com/junegunn/rainbow_parentheses.vim.git",
   opt,
 }
 
 Pack {
   "https://github.com/tpope/vim-fireplace.git",
-  opt,
-}
-
-Pack {
-  "https://github.com/flowtype/vim-flow.git",
   opt,
 }
 
