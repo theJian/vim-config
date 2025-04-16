@@ -95,7 +95,15 @@ Pack {
 }
 
 Pack {
+  "https://github.com/kylechui/nvim-surround.git",
+}
+
+Pack {
   "https://github.com/nvim-treesitter/nvim-treesitter",
+}
+
+Pack {
+  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
 }
 
 Pack {
