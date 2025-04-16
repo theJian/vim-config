@@ -72,7 +72,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function (ev)
 		local opts = { buffer = ev.buf }
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		vim.keymap.set('n', 'gK', vim.diagnostic.open_float, opts)
+		vim.keymap.set('n', 'gK', function()
+			local new_config = not vim.diagnostic.config().virtual_lines
+			vim.diagnostic.config({ virtual_lines = new_config })
+		end, opts)
 
 		vim.keymap.set('n', 'g0', vim.diagnostic.setloclist)
 

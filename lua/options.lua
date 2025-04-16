@@ -33,7 +33,7 @@ vim.wo.foldenable = true
 vim.o.foldlevelstart = 6
 vim.wo.foldnestmax = 10
 vim.wo.foldmethod = 'expr'
-vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldopen:remove('block')
 
 -- File format
