@@ -139,6 +139,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/jbyuki/one-small-step-for-vimkind",
+}
+
+Pack {
   "https://github.com/tpope/vim-fugitive.git",
 }
 
