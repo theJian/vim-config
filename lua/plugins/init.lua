@@ -1,6 +1,7 @@
 require'packman'
 require'colorizer'.setup()
 require'nvim-surround'.setup()
+require("nvim-paredit").setup()
 require'plugins.netrw'
 require'plugins.mason'
 require'plugins.cmp'
@@ -22,11 +23,5 @@ vim.g.delimitMate_jump_expansion = 1
 vim.g.delimitMate_excluded_regions = "Comment"
 vim.g.delimitMate_excluded_ft = "md,lisp,clojure,scheme,racket,fennel"
 
--- yankstack
--- rainbow pairs
-
 -- markdown preview
 vim.g.markdown_composer_autostart = 0
-
--- vim-sexp
-vim.g.sexp_enable_insert_mode_mappings = 0

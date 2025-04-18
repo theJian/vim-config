@@ -99,6 +99,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/julienvincent/nvim-paredit.git",
+}
+
+Pack {
   "https://github.com/gpanders/nvim-parinfer.git",
 }
 
@@ -127,21 +131,5 @@ Pack {
 }
 
 Pack {
-  "https://github.com/jparise/vim-graphql.git",
-  opt,
-}
-
-Pack {
   "https://github.com/euclio/vim-markdown-composer",
 }
-
-Pack {
-  "https://github.com/junegunn/rainbow_parentheses.vim.git",
-  opt,
-}
-
-Pack {
-  "https://github.com/tpope/vim-fireplace.git",
-  opt,
-}
-
