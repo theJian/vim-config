@@ -78,7 +78,7 @@ vim.o.completeopt = 'fuzzy,menu,menuone,popup'
 vim.o.shell = 'nu'
 
 -- Control how often lualine updates
-vim.o.updatetime = 80
+vim.o.updatetime = 30
 
 -- Enable spell check
 vim.opt.spelllang = 'en_us'

@@ -43,6 +43,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/MagicDuck/grug-far.nvim.git",
+}
+
+Pack {
   "https://github.com/lukas-reineke/indent-blankline.nvim",
 }
 
@@ -95,6 +99,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/gpanders/nvim-parinfer.git",
+}
+
+Pack {
   "https://github.com/kylechui/nvim-surround.git",
 }
 
@@ -111,11 +119,16 @@ Pack {
 }
 
 Pack {
+  "https://github.com/stevearc/oil.nvim.git",
+}
+
+Pack {
   "https://github.com/tpope/vim-fugitive.git",
 }
 
 Pack {
   "https://github.com/jparise/vim-graphql.git",
+  opt,
 }
 
 Pack {
@@ -129,21 +142,6 @@ Pack {
 
 Pack {
   "https://github.com/tpope/vim-fireplace.git",
-  opt,
-}
-
-Pack {
-  "https://github.com/bhurlow/vim-parinfer.git",
-  opt,
-}
-
-Pack {
-  "https://github.com/guns/vim-sexp.git",
-  opt,
-}
-
-Pack {
-  "https://github.com/maxbrunsfeld/vim-yankstack.git",
   opt,
 }
 
