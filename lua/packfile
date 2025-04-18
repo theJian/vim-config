@@ -111,6 +111,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/nvim-neotest/nvim-nio",
+}
+
+Pack {
   "https://github.com/julienvincent/nvim-paredit.git",
 }
 
