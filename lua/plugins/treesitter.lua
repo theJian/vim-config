@@ -1,4 +1,4 @@
-require'nvim-treesitter.configs'.setup {
+require("nvim-treesitter.configs").setup({
 	ensure_installed = {
 		"c",
 		"lua",
@@ -29,7 +29,7 @@ require'nvim-treesitter.configs'.setup {
 		enable = true,
 	},
 	indent = {
-		enable = true
+		enable = true,
 	},
 	-- incremental_selection = {
 	-- 	enable = true,
@@ -49,8 +49,8 @@ require'nvim-treesitter.configs'.setup {
 
 			keymaps = {
 				-- You can use the capture groups defined in textobjects.scm
-				["iNa"] = "@assignment.lhs",
-				["ina"] = "@assignment.rhs",
+				["aV"] = "@assignment.lhs",
+				["av"] = "@assignment.rhs",
 				["aa"] = "@parameter.outer",
 				["ia"] = "@parameter.inner",
 				["ai"] = "@conditional.outer",
@@ -74,16 +74,16 @@ require'nvim-treesitter.configs'.setup {
 			-- and should return the mode ('v', 'V', or '<c-v>') or a table
 			-- mapping query_strings to modes.
 			selection_modes = {
-				['@parameter.inner'] = 'v', -- charwise
-				['@function.inner'] = 'v', -- charwise
-				['@class.inner'] = 'v', -- charwise
-				['@conditional.inner'] = 'v', -- charwise
-				['@loop.inner'] = 'v', -- charwise
-				['@parameter.outer'] = 'V', -- linewise
-				['@function.outer'] = 'V', -- linewise
-				['@class.outer'] = 'V', -- linewise
-				['@conditional.outer'] = 'V', -- linewise
-				['@loop.outer'] = 'V', -- linewise
+				["@parameter.inner"] = "v", -- charwise
+				["@function.inner"] = "v", -- charwise
+				["@class.inner"] = "v", -- charwise
+				["@conditional.inner"] = "v", -- charwise
+				["@loop.inner"] = "v", -- charwise
+				["@parameter.outer"] = "V", -- linewise
+				["@function.outer"] = "V", -- linewise
+				["@class.outer"] = "V", -- linewise
+				["@conditional.outer"] = "V", -- linewise
+				["@loop.outer"] = "V", -- linewise
 			},
 			-- If you set this to `true` (default is `false`) then any textobject is
 			-- extended to include preceding or succeeding whitespace. Succeeding
@@ -141,11 +141,11 @@ require'nvim-treesitter.configs'.setup {
 			},
 			goto_previous = {
 				["[i"] = "@conditional.outer",
-			}
+			},
 		},
 		lsp_interop = {
 			enable = true,
-			border = 'none',
+			border = "none",
 			floating_preview_opts = {},
 			peek_definition_code = {
 				["<leader>df"] = "@function.outer",
@@ -153,9 +153,9 @@ require'nvim-treesitter.configs'.setup {
 			},
 		},
 	},
-}
+})
 
-local ts_repeat_move = require "nvim-treesitter.textobjects.repeatable_move"
+local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 
 -- Repeat movement with ; and ,
 -- ensure ; goes forward and , goes backward regardless of the last direction

@@ -83,7 +83,15 @@ Pack {
 }
 
 Pack {
+  "https://github.com/leoluz/nvim-dap-go",
+}
+
+Pack {
   "https://github.com/rcarriga/nvim-dap-ui",
+}
+
+Pack {
+  "https://github.com/theHamsta/nvim-dap-virtual-text",
 }
 
 Pack {
