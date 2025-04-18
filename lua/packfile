@@ -23,6 +23,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/Olical/conjure.git",
+}
+
+Pack {
   "https://github.com/github/copilot.vim",
 }
 
@@ -133,3 +137,4 @@ Pack {
 Pack {
   "https://github.com/euclio/vim-markdown-composer",
 }
+
