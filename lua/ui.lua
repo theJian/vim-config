@@ -43,7 +43,7 @@ if not pcall(function()
 	vim.o.background = 'light'
 	vim.cmd.colorscheme'moonwalk'
 end) then
-	vim.api.nvim_echo({'missing colorscheme'}, true, { err = true })
+	vim.api.nvim_echo({{'missing colorscheme'}}, true, { err = true })
 end
 
 -- Mimium number of screen lines to keep above or below the cursor
