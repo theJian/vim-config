@@ -32,6 +32,7 @@ vim.keymap.set('n', '<F12>', dap.restart)
 
 require('nvim-dap-virtual-text').setup()
 
+-- Elixir
 local elixir_ls_debugger = vim.fn.exepath 'elixir-ls-debugger'
 if elixir_ls_debugger ~= '' then
 	dap.adapters.mix_task = {
@@ -51,7 +52,9 @@ if elixir_ls_debugger ~= '' then
 		},
 	}
 end
+-- End of Elixir
 
+-- Neovim
 dap.configurations.lua = {
 	{
 		type = 'nlua',
@@ -62,3 +65,62 @@ dap.configurations.lua = {
 dap.adapters.nlua = function(callback, config)
 	callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }
 end
+-- End of Neovim
+
+-- Node
+local js_debug_adapter = vim.fn.exepath 'js-debug-adapter'
+if not dap.adapters['pwa-node'] then
+	require('dap').adapters['pwa-node'] = {
+		type = 'server',
+		host = 'localhost',
+		port = '${port}',
+		executable = {
+			command = js_debug_adapter,
+			args = {
+				'${port}',
+			},
+		},
+	}
+end
+
+if not dap.adapters['node'] then
+	dap.adapters['node'] = function(cb, config)
+		if config.type == 'node' then
+			config.type = 'pwa-node'
+		end
+		local nativeAdapter = dap.adapters['pwa-node']
+		if type(nativeAdapter) == 'function' then
+			nativeAdapter(cb, config)
+		else
+			cb(nativeAdapter)
+		end
+	end
+end
+
+local js_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
+
+local vscode = require 'dap.ext.vscode'
+vscode.type_to_filetypes['node'] = js_filetypes
+vscode.type_to_filetypes['pwa-node'] = js_filetypes
+
+for _, language in ipairs(js_filetypes) do
+	if not dap.configurations[language] then
+		dap.configurations[language] = {
+			{
+				type = 'pwa-node',
+				request = 'launch',
+				name = 'Launch file',
+				program = '${file}',
+				cwd = '${workspaceFolder}',
+			},
+			{
+				type = 'pwa-node',
+				request = 'attach',
+				name = 'Attach',
+				processId = require('dap.utils').pick_process,
+				cwd = '${workspaceFolder}',
+			},
+		}
+	end
+end
+-- End of Node

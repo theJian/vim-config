@@ -10,6 +10,7 @@ local function lsp_setup(target, options)
 	options.capabilities = capabilities
 	lsp[target].setup(options)
 end
+
 lsp_setup('lua_ls', {
 	settings = {
 		Lua = {
