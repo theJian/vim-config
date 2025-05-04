@@ -9,31 +9,28 @@ api.nvim_create_autocmd('BufNewFile', {
 		if vim.fn.isdirectory(dir) == 0 then
 			vim.fn.mkdir(dir, 'p')
 		end
-	end
+	end,
 })
 
 -- Open help file in new tab
 api.nvim_create_autocmd('BufWinEnter', {
 	group = api.nvim_create_augroup('HelpInTabs', {}),
 	pattern = '*.txt',
-	callback = function ()
+	callback = function()
 		if vim.o.buftype == 'help' then
 			-- convert help window to tab
 			vim.cmd 'execute "normal! \\<C-W>T"'
 		end
-	end
+	end,
 })
 
 -- Terminal options
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
 	callback = function()
-		vim.opt_local.number = false
-		vim.opt_local.relativenumber = false
-		vim.opt_local.signcolumn = 'no'
 		vim.opt_local.winbar = ''
-		vim.cmd[[startinsert]]
-	end
+		vim.cmd [[startinsert]]
+	end,
 })
 
 -- Load plugin configs
@@ -44,14 +41,14 @@ api.nvim_create_autocmd('VimEnter', {
 			require 'plugins'
 		end
 	end,
-	once = true
+	once = true,
 })
 
 -- Reload file if it has been changed outside of Vim
-api.nvim_create_autocmd({'FocusGained', 'BufEnter'}, {
+api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
 	group = api.nvim_create_augroup('ReloadContent', {}),
 	callback = function()
-		if vim.fn.getfsize(vim.fn.expand('%:p')) > 0 then
+		if vim.fn.getfsize(vim.fn.expand '%:p') > 0 then
 			vim.cmd 'checktime'
 		end
 	end,
