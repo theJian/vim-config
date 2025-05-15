@@ -1,3 +1,4 @@
+vim.lsp.set_log_level("WARN")
 require('vim.lsp.log').set_format_func(vim.inspect)
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
