@@ -1,4 +1,4 @@
-vim.lsp.set_log_level("WARN")
+vim.lsp.set_log_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -60,18 +60,21 @@ vim.lsp.enable 'ts_ls'
 vim.lsp.enable 'jsonls'
 vim.lsp.enable 'cssls'
 vim.lsp.enable 'gopls'
-vim.lsp.enable 'basedpyright'
-vim.lsp.config('basedpyright', {
-	settings = {
-		basedpyright = {
-			disableOrganizeImports = true,
-			analysis = {
-				ignore = { '*' },
-			},
-		},
-	},
-})
+vim.lsp.enable 'pyrefly'
 vim.lsp.enable 'ruff'
+
+-- vim.lsp.enable 'basedpyright'
+-- vim.lsp.config('basedpyright', {
+-- 	settings = {
+-- 		basedpyright = {
+-- 			disableOrganizeImports = true,
+-- 			analysis = {
+-- 				ignore = { '*' },
+-- 			},
+-- 		},
+-- 	},
+-- })
+
 vim.lsp.enable 'fennel_ls'
 
 vim.api.nvim_create_autocmd('LspAttach', {
