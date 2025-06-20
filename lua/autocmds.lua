@@ -61,3 +61,13 @@ api.nvim_create_autocmd('VimResized', {
 		vim.cmd 'tabdo wincmd ='
 	end,
 })
+
+-- Autosave
+api.nvim_create_autocmd({ 'InsertLeave' }, {
+	pattern = '*',
+	callback = function()
+		if vim.bo.modified then
+			vim.cmd 'silent! write'
+		end
+	end,
+})

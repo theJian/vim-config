@@ -15,7 +15,7 @@ keymap.set('n', 'k', [[<Cmd>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g
 keymap.set('n', '<leader><space>', 'za')
 
 -- Save
-keymap.set('n', '<leader>fs', '<Cmd>up ++p<CR>')
+-- keymap.set('n', '<leader>fs', '<Cmd>up ++p<CR>')
 
 -- Split
 keymap.set('n', '<leader>h', '<Cmd>split<CR>')
@@ -55,8 +55,8 @@ keymap.set('c', '<C-a>', '<Home>')
 keymap.set('c', '<C-e>', '<End>')
 
 -- Swap ;/:
-keymap.set({'n', 'v'}, ';', ':')
-keymap.set({'n', 'v'}, ':', ';')
+keymap.set({ 'n', 'v' }, ';', ':')
+keymap.set({ 'n', 'v' }, ':', ';')
 
 -- Edit without clobbering register
 keymap.set('n', 's', '"_c')
@@ -65,17 +65,17 @@ keymap.set('n', 'S', '"_C')
 
 -- Use <Tab> and <S-Tab> to navigate through popup menu
 keymap.set('i', '<Tab>', function()
-	return vim.fn.pumvisible() == 1 and "<C-n>" or "<Tab>"
+	return vim.fn.pumvisible() == 1 and '<C-n>' or '<Tab>'
 end, { expr = true })
 keymap.set('i', '<S-Tab>', function()
-	return vim.fn.pumvisible() == 1 and "<C-p>" or "<S-Tab>"
+	return vim.fn.pumvisible() == 1 and '<C-p>' or '<S-Tab>'
 end, { expr = true })
 
 -- Visual mode pressing * or # searches for the current selection
 local function visual_selection(direction)
-	local old_a = vim.fn.getreg('a')
-	vim.cmd('normal! "ay')
-	local selected_text = vim.fn.getreg('a')
+	local old_a = vim.fn.getreg 'a'
+	vim.cmd 'normal! "ay'
+	local selected_text = vim.fn.getreg 'a'
 	vim.fn.setreg('a', old_a)
 
 	-- Escape backslashes in the selected text for literal searching
@@ -91,8 +91,12 @@ local function visual_selection(direction)
 	-- Attempt to search, but don't let it error out
 	local ok = pcall(vim.cmd, 'normal! ' .. (direction == '*' and 'n' or 'N'))
 	if not ok then
-		vim.notify("No match found", vim.log.levels.ERROR)
+		vim.notify('No match found', vim.log.levels.ERROR)
 	end
 end
-keymap.set('v', '*', function() visual_selection('*') end)
-keymap.set('v', '#', function() visual_selection('#') end)
+keymap.set('v', '*', function()
+	visual_selection '*'
+end)
+keymap.set('v', '#', function()
+	visual_selection '#'
+end)

@@ -3,10 +3,7 @@ local function fit_find(lhs, find_command, accept_command)
 	vim.api.nvim_set_keymap(
 		'n',
 		lhs,
-		string.format(
-			'<cmd>lua require("fit").find(%q, %q)<CR>',
-			find_command_with_query, accept_command or 'e'
-		),
+		string.format('<cmd>lua require("fit").find(%q, %q)<CR>', find_command_with_query, accept_command or 'e'),
 		{ unique = true, silent = true }
 	)
 end
@@ -22,6 +19,6 @@ end
 
 local fit_files = 'rg --color never --files <cwd>'
 local fit_current_dir_files = 'rg --color never --files <dir>'
-fit_find('<leader>ff', fit_files)
-fit_find('<leader>fe', fit_current_dir_files)
-fit_buffers('<leader>fb')
+fit_find('<leader>f', fit_files)
+fit_find('<leader>e', fit_current_dir_files)
+fit_buffers '<leader>b'
