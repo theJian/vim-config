@@ -63,7 +63,7 @@ api.nvim_create_autocmd('VimResized', {
 })
 
 -- Autosave
-api.nvim_create_autocmd({ 'InsertLeave' }, {
+api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
 	pattern = '*',
 	callback = function()
 		if vim.bo.modified then
