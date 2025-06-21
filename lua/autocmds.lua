@@ -67,7 +67,7 @@ api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
 	pattern = '*',
 	callback = function()
 		if vim.bo.modified then
-			vim.cmd 'silent! write'
+			vim.cmd 'silent! update'
 		end
 	end,
 })
