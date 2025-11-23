@@ -3,7 +3,6 @@ require("nvim-treesitter.configs").setup({
 		"c",
 		"lua",
 		"vim",
-		"vimdoc",
 		"query",
 		"javascript",
 		"typescript",
