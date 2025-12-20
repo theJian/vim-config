@@ -66,3 +66,6 @@ vim.o.showmode = true
 -- Always show sign column
 vim.wo.signcolumn = 'yes:2'
 vim.o.inccommand = 'nosplit'
+
+-- Popup menu height
+vim.o.pumheight = 5
