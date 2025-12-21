@@ -1,4 +1,24 @@
 return {
-	-- ts_ls doesn't require special configuration in your current setup
-	-- Basic configuration will be handled by the main lsp.lua file
+	settings = {
+		typescript = {
+			inlayHints = {
+				includeInlayParameterNameHints = 'all',
+				includeInlayFunctionParameterTypeHints = true,
+				includeInlayVariableTypeHints = true,
+				includeInlayPropertyDeclarationTypeHints = true,
+				includeInlayFunctionLikeReturnTypeHints = true,
+				includeInlayEnumMemberValueHints = true,
+			},
+		},
+		javascript = {
+			inlayHints = {
+				includeInlayParameterNameHints = 'all',
+				includeInlayFunctionParameterTypeHints = true,
+				includeInlayVariableTypeHints = true,
+				includeInlayPropertyDeclarationTypeHints = true,
+				includeInlayFunctionLikeReturnTypeHints = true,
+				includeInlayEnumMemberValueHints = true,
+			},
+		},
+	},
 }

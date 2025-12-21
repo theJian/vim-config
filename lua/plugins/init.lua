@@ -17,6 +17,7 @@ require 'plugins.ibl'
 require 'plugins.treesitter'
 require 'plugins.oil'
 require 'plugins.grug-far'
+require 'plugins.live-command'
 
 -- delimitMate
 vim.g.delimitMate_expand_cr = 1

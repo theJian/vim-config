@@ -1,4 +1,15 @@
 return {
-	-- gopls doesn't require special configuration in your current setup
-	-- Basic configuration will be handled by the main lsp.lua file
+	settings = {
+		gopls = {
+			hints = {
+				rangeVariableTypes = true,
+				parameterNames = true,
+				constantValues = true,
+				assignVariableTypes = true,
+				compositeLiteralFields = true,
+				compositeLiteralTypes = true,
+				functionTypeParameters = true,
+			},
+		},
+	},
 }
