@@ -20,7 +20,6 @@ This is a minimalist Neovim configuration written in Lua that uses a custom plug
 - `lua/plugins/init.lua` - Main plugin loader that initializes all plugins
 - `lua/plugins/*.lua` - Individual plugin configurations:
   - `lsp.lua` - LSP configuration with mason.nvim
-  - `cmp.lua` - nvim-cmp completion setup
   - `treesitter.lua` - Syntax highlighting
   - `gitsigns.lua` - Git integration
   - `dap.lua` - Debug adapter protocol
@@ -42,7 +41,6 @@ This config uses a custom plugin manager called `packman` instead of common alte
 
 ### LSP and Development Tools
 - Mason.nvim for LSP server management
-- nvim-cmp for completion with sources for LSP, paths, cmdline, and snippets
 - Treesitter for syntax highlighting
 - nvim-dap for debugging
 - nvim-lint for linting
@@ -133,7 +131,6 @@ This config uses a custom plugin manager called `packman` instead of common alte
 │   └── plugins/               # Plugin configurations
 │       ├── init.lua           # Plugin loader
 │       ├── lsp.lua            # LSP setup
-│       ├── cmp.lua            # Completion
 │       ├── treesitter.lua     # Syntax highlighting
 │       └── ...                # Other plugin configs
 └── pack/

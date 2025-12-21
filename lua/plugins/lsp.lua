@@ -8,53 +8,7 @@ vim.lsp.config('*', {
 })
 
 vim.lsp.enable 'lua_ls'
-vim.lsp.config('lua_ls', {
-	settings = {
-		Lua = {
-			runtime = {
-				-- Tell the language server which version of Lua you're using
-				-- (most likely LuaJIT in the case of Neovim)
-				version = 'LuaJIT',
-			},
-			diagnostics = {
-				-- Get the language server to recognize the `vim` global
-				globals = {
-					'vim',
-					'require',
-				},
-			},
-			workspace = {
-				-- Make the server aware of Neovim runtime files
-				library = vim.api.nvim_get_runtime_file('', true),
-			},
-			-- Do not send telemetry data containing a randomized but unique identifier
-			telemetry = {
-				enable = false,
-			},
-		},
-	},
-})
 vim.lsp.enable 'rust_analyzer'
-vim.lsp.config('rust_analyzer', {
-	settings = {
-		['rust-analyzer'] = {
-			imports = {
-				granularity = {
-					group = 'module',
-				},
-				prefix = 'self',
-			},
-			cargo = {
-				buildScripts = {
-					enable = true,
-				},
-			},
-			procMacro = {
-				enable = true,
-			},
-		},
-	},
-})
 vim.lsp.enable 'bashls'
 vim.lsp.enable 'ts_ls'
 vim.lsp.enable 'jsonls'
@@ -62,25 +16,13 @@ vim.lsp.enable 'cssls'
 vim.lsp.enable 'gopls'
 vim.lsp.enable 'pyrefly'
 vim.lsp.enable 'ruff'
-
--- vim.lsp.enable 'basedpyright'
--- vim.lsp.config('basedpyright', {
--- 	settings = {
--- 		basedpyright = {
--- 			disableOrganizeImports = true,
--- 			analysis = {
--- 				ignore = { '*' },
--- 			},
--- 		},
--- 	},
--- })
-
 vim.lsp.enable 'fennel_ls'
 
 vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(ev)
 		local opts = { buffer = ev.buf }
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
 		vim.keymap.set('n', 'gK', function()
 			local new_config = not vim.diagnostic.config().virtual_lines
 			vim.diagnostic.config { virtual_lines = new_config }
@@ -107,7 +49,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		-- vim.keymap.set('n', 'grr', vim.lsp.buf.references, opts)
 		-- vim.keymap.set('n', 'gO', vim.lsp.buf.document_symbol, opts)
 
-		if client:supports_method 'textDocument/documentHighlight' then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
 			vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
 				buffer = ev.buf,
 				callback = vim.lsp.buf.document_highlight,
@@ -119,15 +61,21 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			callback = vim.lsp.buf.clear_references,
 		})
 
-		if client:supports_method 'textDocument/codeLens' then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_codeLens) then
 			vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
 				buffer = ev.buf,
 				callback = vim.lsp.codelens.refresh,
 			})
 		end
 
-		if client:supports_method 'textDocument/inlayHint' then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 			vim.lsp.inlay_hint.enable(true)
+		end
+
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion) then
+			vim.opt.completeopt = { 'fuzzy', 'menu', 'menuone', 'popup', 'preview' }
+			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+			vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get)
 		end
 	end,
 })

@@ -2,6 +2,7 @@ local keymap = vim.keymap
 
 -- Set space as leader key
 vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
 -- Go to line header and end
 keymap.set('n', 'gh', '^')
@@ -25,7 +26,7 @@ keymap.set('n', '<leader>v', '<Cmd>vsplit<CR>')
 keymap.set('n', '<leader>t', '<Cmd>tabnew<CR>')
 
 -- Close buffer
-keymap.set('n', '<leader>q', '<Cmd>bp|bd #<CR>')
+keymap.set('n', '<leader>x', '<Cmd>bp|bd #<CR>')
 
 -- Clean search highlight
 keymap.set('n', '<BS>', '<Cmd>noh<CR>')
