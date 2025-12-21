@@ -74,10 +74,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 			vim.lsp.inlay_hint.enable(true)
 		end
-
-		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion) then
-			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-			vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get)
-		end
 	end,
 })

@@ -71,9 +71,6 @@ vim.o.undofile = true
 -- Browser like jumplist
 vim.o.jumpoptions = 'view'
 
--- Complete
-vim.o.completeopt = 'fuzzy,menu,menuone,popup,noinsert'
-
 -- Default shell
 vim.o.shell = 'nu'
 
