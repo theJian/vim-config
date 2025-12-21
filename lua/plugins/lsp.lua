@@ -1,11 +1,5 @@
 vim.lsp.set_log_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-vim.lsp.config('*', {
-	capabilities = capabilities,
-	root_markers = { '.git' },
-})
 
 vim.lsp.enable 'lua_ls'
 vim.lsp.enable 'rust_analyzer'
@@ -73,7 +67,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		end
 
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion) then
-			vim.opt.completeopt = { 'fuzzy', 'menu', 'menuone', 'popup', 'preview' }
+			vim.opt.completeopt = { 'fuzzy', 'menu', 'menuone', 'popup', 'preview', 'noinsert' }
 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
 			vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get)
 		end

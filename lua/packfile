@@ -111,10 +111,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/kevinhwang91/nvim-ufo",
-}
-
-Pack {
   "https://github.com/stevearc/oil.nvim.git",
 }
 
