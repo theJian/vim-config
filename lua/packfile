@@ -3,6 +3,10 @@ Pack {
 }
 
 Pack {
+  "https://github.com/saghen/blink.pairs",
+}
+
+Pack {
   "https://github.com/Olical/conjure.git",
 }
 
