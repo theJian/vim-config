@@ -111,7 +111,7 @@ Pack {
 }
 
 Pack {
-  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
+  "https://github.com/nvim-treesitter/nvim-treesitter-context",
 }
 
 Pack {
