@@ -7,10 +7,6 @@ Pack {
 }
 
 Pack {
-  "https://github.com/Olical/conjure.git",
-}
-
-Pack {
   "https://github.com/github/copilot.vim",
 }
 
