@@ -75,8 +75,8 @@ api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
 -- restore cursor to file position in previous editing session
 api.nvim_create_autocmd('BufReadPost', {
 	callback = function(args)
-		-- ignore terminal buffers
-		if vim.bo[args.buf].buftype == 'terminal' then
+		-- Skip non-file buffers
+		if vim.bo[args.buf].buftype ~= '' then
 			return
 		end
 
@@ -86,7 +86,9 @@ api.nvim_create_autocmd('BufReadPost', {
 			api.nvim_win_set_cursor(0, mark)
 			-- defer centering slightly so it's applied after render
 			vim.schedule(function()
-				vim.cmd 'normal! zz'
+				if vim.api.nvim_get_mode().mode == 'n' then
+					vim.cmd 'normal! zz'
+				end
 			end)
 		end
 	end,
