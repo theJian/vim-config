@@ -3,6 +3,7 @@ require('vim.lsp.log').set_format_func(vim.inspect)
 
 vim.lsp.enable 'lua_ls'
 vim.lsp.enable 'rust_analyzer'
+vim.lsp.enable 'bacon_ls'
 vim.lsp.enable 'bashls'
 vim.lsp.enable 'ts_ls'
 vim.lsp.enable 'jsonls'
@@ -21,7 +22,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				vim.diagnostic.config { virtual_lines = new_config }
 			end, opts)
 
-			vim.keymap.set('n', 'g0', vim.diagnostic.setloclist)
+			vim.keymap.set('n', 'grc', vim.lsp.codelens.run, opts)
+
+			vim.keymap.set('n', 'g0', vim.diagnostic.setloclist, opts)
 
 			-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 			-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)

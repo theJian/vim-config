@@ -34,11 +34,12 @@ vim.diagnostic.config {
 	virtual_lines = false,
 	sign = true,
 	severity_sort = true,
+	update_in_insert = true,
 }
 
 vim.fn.sign_define {
 	{ name = 'DiagnosticSignError', text = '●', texthl = 'DiagnosticSignError' },
-	{ name = 'DiagnosticSignWarn', text = '●', texthl = 'DiagnosticSignWarn' },
+	{ name = 'DiagnosticSignWarn', text = '▲', texthl = 'DiagnosticSignWarn' },
 	{ name = 'DiagnosticSignInfo', text = '○', texthl = 'DiagnosticSignInfo' },
 	{ name = 'DiagnosticSignHint', text = '⊙', texthl = 'DiagnosticSignHint' },
 }
