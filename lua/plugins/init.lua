@@ -21,12 +21,5 @@ require 'plugins.live-command'
 require 'plugins.blink'
 require 'plugins.pairs'
 
--- delimitMate
-vim.g.delimitMate_expand_cr = 1
-vim.g.delimitMate_expand_space = 1
-vim.g.delimitMate_jump_expansion = 1
-vim.g.delimitMate_excluded_regions = 'Comment'
-vim.g.delimitMate_excluded_ft = 'md,lisp,clojure,scheme,racket,fennel'
-
 -- markdown preview
 vim.g.markdown_composer_autostart = 0
