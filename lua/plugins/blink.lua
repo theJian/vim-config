@@ -12,6 +12,8 @@ require('blink.cmp').setup {
 
 		['<CR>'] = { 'accept', 'fallback' },
 
+		['<Right>'] = { 'accept', 'fallback' },
+
 		['<Tab>'] = {
 			'select_next', -- Select next item in list if menu is open
 			'snippet_forward', -- Jump to next snippet placeholder if snippet is active
