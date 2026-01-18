@@ -63,7 +63,7 @@ api.nvim_create_autocmd('VimResized', {
 })
 
 -- Autosave
-api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
+api.nvim_create_autocmd({ 'InsertLeave' }, {
 	pattern = '*',
 	nested = true,
 	command = 'silent! update',
