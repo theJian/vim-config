@@ -63,14 +63,24 @@ api.nvim_create_autocmd('VimResized', {
 })
 
 -- Autosave
+local save = function()
+	if
+		vim.api.nvim_get_option_value('modified', { buf = 0 })
+		and vim.api.nvim_get_option_value('buftype', { buf = 0 })
+		and vim.api.nvim_buf_get_name(0) ~= ''
+		and vim.api.nvim_get_option_value('modifiable', { buf = 0 })
+	then
+		vim.cmd 'silent! update'
+	end
+end
 api.nvim_create_autocmd({ 'InsertLeave' }, {
 	pattern = '*',
 	nested = true, -- trigger code formatting
-	command = 'silent! update',
+	callback = save,
 })
 api.nvim_create_autocmd({ 'TextChanged' }, {
 	pattern = '*',
-	command = 'silent! update',
+	callback = save,
 })
 
 -- restore cursor to file position in previous editing session
