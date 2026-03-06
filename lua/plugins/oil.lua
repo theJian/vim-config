@@ -1,6 +1,19 @@
-local oil = require'oil'
+local oil = require 'oil'
 
-oil.setup{
+oil.setup {
+	win_options = {
+		wrap = false,
+		signcolumn = 'no',
+		cursorcolumn = false,
+		foldcolumn = '0',
+		spell = false,
+	},
+	lsp_file_methods = {
+		enabled = true,
+		timeout_ms = 1000,
+		autosave_changes = true,
+	},
+
 	keymaps = {
 		-- create a new mapping, gs, to search and replace in the current directory
 		gs = {
@@ -8,24 +21,24 @@ oil.setup{
 				-- get the current directory
 				local prefills = { paths = oil.get_current_dir() }
 
-				local grug_far = require "grug-far"
+				local grug_far = require 'grug-far'
 				-- instance check
-				if not grug_far.has_instance "explorer" then
+				if not grug_far.has_instance 'explorer' then
 					grug_far.open {
-						instanceName = "explorer",
+						instanceName = 'explorer',
 						prefills = prefills,
-						staticTitle = "Find and Replace from Explorer",
+						staticTitle = 'Find and Replace from Explorer',
 					}
 				else
-					grug_far.open_instance "explorer"
+					grug_far.open_instance 'explorer'
 					-- updating the prefills without clearing the search and other fields
-					grug_far.update_instance_prefills("explorer", prefills, false)
+					grug_far.update_instance_prefills('explorer', prefills, false)
 				end
 			end,
-			desc = "oil: Search in directory",
+			desc = 'oil: Search in directory',
 		},
 	},
 	view_options = {
 		show_hidden = true,
-	}
+	},
 }

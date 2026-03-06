@@ -12,6 +12,7 @@ vim.lsp.enable 'gopls'
 vim.lsp.enable 'pyrefly'
 vim.lsp.enable 'ruff'
 vim.lsp.enable 'fennel_ls'
+vim.lsp.enable 'quick_lint_js'
 
 vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(ev)
