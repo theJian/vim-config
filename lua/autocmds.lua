@@ -63,24 +63,40 @@ api.nvim_create_autocmd('VimResized', {
 })
 
 -- Autosave
-local save = function()
+local timer = vim.uv.new_timer()
+local DEBOUNCE_DELAY = 500 -- ms
+local function save(ctx)
+	local buf = ctx.buf
 	if
-		vim.api.nvim_get_option_value('modified', { buf = 0 })
-		and vim.api.nvim_get_option_value('buftype', { buf = 0 })
-		and vim.api.nvim_buf_get_name(0) ~= ''
-		and vim.api.nvim_get_option_value('modifiable', { buf = 0 })
+		vim.api.nvim_buf_is_valid(buf)
+		and vim.api.nvim_get_option_value('modified', { buf = buf })
+		and vim.api.nvim_get_option_value('buftype', { buf = buf }) == ''
+		and vim.api.nvim_buf_get_name(buf) ~= ''
+		and vim.api.nvim_get_option_value('modifiable', { buf = buf })
 	then
-		vim.cmd 'silent! update'
+		vim.api.nvim_buf_call(buf, function()
+			vim.cmd 'silent! update'
+		end)
 	end
+end
+local function debounced_save(ctx)
+	timer:stop()
+	timer:start(
+		DEBOUNCE_DELAY,
+		0,
+		vim.schedule_wrap(function()
+			save(ctx)
+		end)
+	)
 end
 api.nvim_create_autocmd({ 'InsertLeave' }, {
 	pattern = '*',
 	nested = true, -- trigger code formatting
-	callback = save,
+	callback = debounced_save,
 })
 api.nvim_create_autocmd({ 'TextChanged' }, {
 	pattern = '*',
-	callback = save,
+	callback = debounced_save,
 })
 
 -- restore cursor to file position in previous editing session
