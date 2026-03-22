@@ -65,30 +65,39 @@ api.nvim_create_autocmd('VimResized', {
 -- Autosave
 local timer = vim.uv.new_timer()
 local DEBOUNCE_DELAY = 500 -- ms
+
+local function has_syntax_errors(buf)
+	local ok, parser = pcall(vim.treesitter.get_parser, buf)
+	if not ok or not parser then
+		return false -- no parser available, assume valid
+	end
+	local tree = parser:parse()[1]
+	return tree:root():has_error()
+end
+
 local function save(ctx)
 	local buf = ctx.buf
-	if
-		vim.api.nvim_buf_is_valid(buf)
-		and vim.api.nvim_get_option_value('modified', { buf = buf })
-		and vim.api.nvim_get_option_value('buftype', { buf = buf }) == ''
-		and vim.api.nvim_buf_get_name(buf) ~= ''
-		and vim.api.nvim_get_option_value('modifiable', { buf = buf })
-	then
+
+	if not vim.api.nvim_buf_get_name(buf) or vim.api.nvim_buf_get_name(buf) == '' then
+		return
+	end
+	if not vim.bo[buf].modified then
+		return
+	end
+	if vim.bo[buf].readonly then
+		return
+	end
+	if vim.bo[buf].buftype ~= '' then
+		return
+	end
+
+	if not has_syntax_errors(buf) then
 		vim.api.nvim_buf_call(buf, function()
 			vim.cmd 'silent! update'
 		end)
 	end
 end
-local function debounced_save(ctx)
-	timer:stop()
-	timer:start(
-		DEBOUNCE_DELAY,
-		0,
-		vim.schedule_wrap(function()
-			save(ctx)
-		end)
-	)
-end
+
 api.nvim_create_autocmd({ 'InsertLeave' }, {
 	pattern = '*',
 	nested = true, -- trigger code formatting
@@ -96,7 +105,7 @@ api.nvim_create_autocmd({ 'InsertLeave' }, {
 })
 api.nvim_create_autocmd({ 'TextChanged' }, {
 	pattern = '*',
-	callback = debounced_save,
+	callback = save,
 })
 
 -- restore cursor to file position in previous editing session
