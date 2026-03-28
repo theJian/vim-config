@@ -1,5 +1,8 @@
 vim.o.termguicolors = true
 
+-- Cursor shape: terminal mode uses underline, no blink
+vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:hor20'
+
 -- Show invisiable chars
 vim.o.list = true
 vim.o.listchars = 'tab:┊ ,trail:∙,extends:…,nbsp:∙,precedes:…'
