@@ -33,6 +33,13 @@ api.nvim_create_autocmd('TermOpen', {
 	end,
 })
 
+-- Auto-enter terminal mode when switching to a terminal buffer
+api.nvim_create_autocmd('BufEnter', {
+	group = 'Terminal',
+	pattern = 'term://*',
+	command = 'startinsert',
+})
+
 -- Load plugin configs
 api.nvim_create_autocmd('VimEnter', {
 	group = api.nvim_create_augroup('Plugins', {}),

@@ -39,6 +39,12 @@ keymap.set('n', '<C-h>', '<C-w>h')
 keymap.set('n', '<C-q>', '<C-w>q')
 keymap.set('t', '<esc>', [[<C-\><C-n>]])
 
+-- Switch windows from terminal mode (no need to press esc first)
+keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]])
+keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]])
+keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]])
+keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]])
+
 -- Shifting
 keymap.set('v', '<', '<gv')
 keymap.set('v', '>', '>gv')
