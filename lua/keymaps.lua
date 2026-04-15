@@ -26,6 +26,8 @@ keymap.set('n', '<leader>v', '<Cmd>vsplit<CR>')
 keymap.set('n', '<leader>t', '<Cmd>tabnew<CR>')
 for i = 1, 9 do
 	keymap.set('n', '<M-' .. i .. '>', i .. 'gt')
+	keymap.set('i', '<M-' .. i .. '>', '<Cmd>tabn ' .. i .. '<CR>')
+	keymap.set('t', '<M-' .. i .. '>', '<Cmd>tabn ' .. i .. '<CR>')
 end
 
 -- Close buffer
