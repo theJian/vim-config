@@ -1,0 +1,8 @@
+{
+  "plugins": {
+    "fff.nvim": {
+      "rev": "1bcbce2bc67d1eca5a6b2f540b5c0bf8a3fdeb2c",
+      "src": "https://github.com/dmtrKovalenko/fff.nvim"
+    }
+  }
+}
