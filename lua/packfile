@@ -7,10 +7,6 @@ Pack {
 }
 
 Pack {
-  "git@github.com:theJian/fit.git",
-}
-
-Pack {
   "https://github.com/mhartington/formatter.nvim",
 }
 

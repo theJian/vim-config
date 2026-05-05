@@ -17,6 +17,6 @@ vim.g.fff = {
 	debug = { enabled = true, show_scores = true },
 }
 
-vim.keymap.set('n', 'ff', function()
+vim.keymap.set('n', '<leader>f', function()
 	require('fff').find_files()
 end, { desc = 'FFFind files' })
