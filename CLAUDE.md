@@ -164,7 +164,7 @@ Pack {
 ## Configuration Notes
 
 - Uses space as leader key
-- Default shell is nushell (`nu`)
+- Default shell is fish
 - Spell checking enabled (English US)
 - Uses system clipboard on macOS only
 - Folding enabled with treesitter

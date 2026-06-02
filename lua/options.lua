@@ -72,7 +72,7 @@ vim.o.undofile = true
 vim.o.jumpoptions = 'view'
 
 -- Default shell
-vim.o.shell = 'nu'
+vim.o.shell = 'fish'
 
 -- Control how often lualine updates
 vim.o.updatetime = 30
