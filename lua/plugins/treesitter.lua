@@ -27,6 +27,7 @@ require('nvim-treesitter').install {
 	"make",
 	"markdown",
 	"toml",
+	"commonlisp",
 }
 
 vim.api.nvim_create_autocmd('FileType', {
