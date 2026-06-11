@@ -1,4 +1,4 @@
-vim.lsp.set_log_level 'WARN'
+vim.lsp.log.set_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
 
 vim.lsp.enable 'lua_ls'
