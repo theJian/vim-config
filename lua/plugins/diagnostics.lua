@@ -35,11 +35,12 @@ vim.diagnostic.config {
 	sign = true,
 	severity_sort = true,
 	update_in_insert = true,
-}
-
-vim.fn.sign_define {
-	{ name = 'DiagnosticSignError', text = '●', texthl = 'DiagnosticSignError' },
-	{ name = 'DiagnosticSignWarn', text = '▲', texthl = 'DiagnosticSignWarn' },
-	{ name = 'DiagnosticSignInfo', text = '○', texthl = 'DiagnosticSignInfo' },
-	{ name = 'DiagnosticSignHint', text = '⊙', texthl = 'DiagnosticSignHint' },
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = '●',
+			[vim.diagnostic.severity.WARN] = '▲',
+			[vim.diagnostic.severity.INFO] = '○',
+			[vim.diagnostic.severity.HINT] = '⊙',
+		},
+	}
 }
