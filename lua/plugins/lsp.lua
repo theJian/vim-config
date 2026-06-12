@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				vim.diagnostic.config { virtual_lines = new_config }
 			end, opts)
 
-			vim.keymap.set('n', 'grc', vim.lsp.codelens.run, opts)
+			-- vim.keymap.set('n', 'grx', vim.lsp.codelens.run, opts)
 
 			vim.keymap.set('n', 'g0', vim.diagnostic.setloclist, opts)
 
@@ -40,7 +40,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			vim.keymap.set('n', '<leader>wl', function()
 				vim.print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 			end, opts)
-			vim.keymap.set('n', 'gy', vim.lsp.buf.type_definition, opts)
+			-- vim.keymap.set('n', 'grt', vim.lsp.buf.type_definition, opts)
 			-- vim.keymap.set('n', 'grn', vim.lsp.buf.rename, opts)
 			-- vim.keymap.set({ 'n', 'v' }, 'gra', vim.lsp.buf.code_action, opts)
 			-- vim.keymap.set('n', 'grr', vim.lsp.buf.references, opts)
@@ -70,7 +70,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			vim.api.nvim_create_autocmd({ 'BufEnter', 'InsertLeave' }, {
 				buffer = ev.buf,
 				callback = function()
-					vim.lsp.codelens.refresh { bufnr = 0 }
+					vim.lsp.codelens.enable(true, { bufnr = 0 })
 				end,
 			})
 		end
