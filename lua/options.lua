@@ -61,7 +61,7 @@ vim.o.errorbells = false
 vim.o.wrapscan = false
 
 -- Yank text to system clipboard
-if string.find(vim.loop.os_uname().sysname, 'Darwin') then
+if string.find(vim.uv.os_uname().sysname, 'Darwin') then
 	vim.opt.clipboard:append 'unnamedplus'
 end
 
