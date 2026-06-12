@@ -72,3 +72,6 @@ vim.o.inccommand = 'nosplit'
 
 -- Popup menu height
 vim.o.pumheight = 5
+
+-- New UI opt-in
+require('vim._core.ui2').enable({})
