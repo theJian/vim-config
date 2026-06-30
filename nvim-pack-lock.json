@@ -3,6 +3,10 @@
     "fff.nvim": {
       "rev": "1bcbce2bc67d1eca5a6b2f540b5c0bf8a3fdeb2c",
       "src": "https://github.com/dmtrKovalenko/fff.nvim"
+    },
+    "parinfer-rust": {
+      "rev": "7f13acea20f03228f72156cec4fa4e49f0d5d1e5",
+      "src": "https://github.com/eraserhd/parinfer-rust"
     }
   }
 }

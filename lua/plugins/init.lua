@@ -20,6 +20,7 @@ require 'plugins.grug-far'
 require 'plugins.live-command'
 require 'plugins.blink'
 require 'plugins.pairs'
+require 'plugins.parinfer-rust'
 
 -- markdown preview
 vim.g.markdown_composer_autostart = 0

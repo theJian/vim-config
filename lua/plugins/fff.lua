@@ -1,5 +1,3 @@
-vim.pack.add { 'https://github.com/dmtrKovalenko/fff.nvim' }
-
 vim.api.nvim_create_autocmd('PackChanged', {
 	callback = function(ev)
 		local name, kind = ev.data.spec.name, ev.data.kind
@@ -11,6 +9,8 @@ vim.api.nvim_create_autocmd('PackChanged', {
 		end
 	end,
 })
+
+vim.pack.add { 'https://github.com/dmtrKovalenko/fff.nvim' }
 
 vim.g.fff = {
 	lazy_sync = true,
