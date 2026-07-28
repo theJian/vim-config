@@ -75,14 +75,6 @@ keymap.set('n', 's', '"_c')
 keymap.set('n', 'ss', '"_cc')
 keymap.set('n', 'S', '"_C')
 
--- Use <Tab> and <S-Tab> to navigate through popup menu
-keymap.set('i', '<Tab>', function()
-	return vim.fn.pumvisible() == 1 and '<C-n>' or '<Tab>'
-end, { expr = true })
-keymap.set('i', '<S-Tab>', function()
-	return vim.fn.pumvisible() == 1 and '<C-p>' or '<S-Tab>'
-end, { expr = true })
-
 -- Visual mode pressing * or # searches for the current selection
 local function visual_selection(direction)
 	local old_a = vim.fn.getreg 'a'

@@ -1,8 +1,4 @@
 Pack {
-  "https://github.com/saghen/blink.cmp",
-}
-
-Pack {
   "https://github.com/saghen/blink.pairs",
 }
 
@@ -117,4 +113,3 @@ Pack {
 Pack {
   "https://github.com/euclio/vim-markdown-composer",
 }
-
