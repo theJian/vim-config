@@ -8,6 +8,14 @@ vim.api.nvim_create_autocmd('VimEnter', {
 				assert(not package.loaded['blink.cmp'])
 				assert(package.loaded['blink.pairs'])
 				assert(vim.fn.maparg('<Tab>', 'i', false, true).desc == 'Select next completion or snippet tabstop')
+
+				vim.keymap.set('i', '<F6>', function()
+					vim.fn.complete(1, { 'apple', 'apricot' })
+				end)
+				vim.fn.feedkeys('i' .. vim.keycode '<F6><Tab><CR><Esc>', 'xt')
+				vim.keymap.del('i', '<F6>')
+				assert(vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, false), { 'apple' }))
+				vim.bo.modified = false
 			end)
 
 			if not ok then

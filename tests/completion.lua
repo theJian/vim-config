@@ -17,6 +17,7 @@ local function test(name, callback)
 end
 
 local function load_completion()
+	pcall(vim.keymap.del, 'i', '<CR>')
 	package.loaded['plugins.completion'] = nil
 	return require 'plugins.completion'
 end
@@ -94,7 +95,40 @@ test('uses popup navigation before snippet navigation and fallback', function()
 	end)
 end)
 
-test('accepts only a selected completion item', function()
+test('preserves existing enter behavior when no completion item is selected', function()
+	pcall(vim.keymap.del, 'i', '<CR>')
+	local fallback_calls = 0
+	vim.keymap.set('i', '<CR>', function()
+		fallback_calls = fallback_calls + 1
+		return '<C-]><CR>'
+	end, { expr = true })
+
+	package.loaded['plugins.completion'] = nil
+	require 'plugins.completion'
+	local enter = mapping '<CR>'
+
+	override(vim.fn, {
+		pumvisible = function()
+			return 0
+		end,
+	}, function()
+		assert(enter() == '<C-]><CR>')
+	end)
+
+	override(vim.fn, {
+		pumvisible = function()
+			return 1
+		end,
+		complete_info = function()
+			return { selected = -1 }
+		end,
+	}, function()
+		assert(enter() == '<C-]><CR>')
+	end)
+	assert(fallback_calls == 2)
+end)
+
+test('accepts only a selected completion candidate', function()
 	load_completion()
 	local enter = mapping '<CR>'
 	local right = mapping '<Right>'
@@ -117,6 +151,18 @@ test('accepts only a selected completion item', function()
 		end,
 		complete_info = function()
 			return { selected = -1 }
+		end,
+	}, function()
+		assert(enter() == '<CR>')
+		assert(right() == '<Right>')
+	end)
+
+	override(vim.fn, {
+		pumvisible = function()
+			return 0
+		end,
+		complete_info = function()
+			error 'complete_info must not be called without a popup'
 		end,
 	}, function()
 		assert(enter() == '<CR>')

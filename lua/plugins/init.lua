@@ -4,6 +4,7 @@ require('nvim-surround').setup()
 require('nvim-paredit').setup()
 require 'plugins.netrw'
 require 'plugins.mason'
+require 'plugins.pairs'
 require 'plugins.completion'
 require 'plugins.lsp'
 require 'plugins.dap'
@@ -19,7 +20,6 @@ require 'plugins.treesitter'
 require 'plugins.oil'
 require 'plugins.grug-far'
 require 'plugins.live-command'
-require 'plugins.pairs'
 require 'plugins.parinfer-rust'
 
 -- markdown preview

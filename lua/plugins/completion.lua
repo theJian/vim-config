@@ -25,9 +25,32 @@ local function trigger_characters(server_characters)
 	return characters
 end
 
-local function selected_completion()
-	return vim.fn.pumvisible() == 1 and vim.fn.complete_info().selected ~= -1
+local function key_fallback(lhs)
+	local mapping = vim.fn.maparg(lhs, 'i', false, true)
+	if mapping.expr == 1 then
+		if type(mapping.callback) == 'function' then
+			return mapping.callback
+		end
+		if mapping.rhs and mapping.rhs ~= '' then
+			return function()
+				return mapping.rhs
+			end
+		end
+	end
+	return function()
+		return lhs
+	end
 end
+
+local function confirm_completion(fallback)
+	if vim.fn.pumvisible() ~= 1 or vim.fn.complete_info().selected == -1 then
+		return fallback()
+	end
+	return '<C-y>'
+end
+
+local enter_fallback = key_fallback '<CR>'
+local right_fallback = key_fallback '<Right>'
 
 function M.attach(client, bufnr)
 	if not client:supports_method 'textDocument/completion' then
@@ -65,11 +88,11 @@ vim.keymap.set({ 'i', 's' }, '<S-Tab>', function()
 end, { desc = 'Select previous completion or snippet tabstop', expr = true, silent = true })
 
 vim.keymap.set('i', '<CR>', function()
-	return selected_completion() and '<C-y>' or '<CR>'
+	return confirm_completion(enter_fallback)
 end, { desc = 'Accept selected completion', expr = true, silent = true })
 
 vim.keymap.set('i', '<Right>', function()
-	return selected_completion() and '<C-y>' or '<Right>'
+	return confirm_completion(right_fallback)
 end, { desc = 'Accept selected completion', expr = true, silent = true })
 
 vim.keymap.set('i', '<C-Space>', function()
