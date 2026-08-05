@@ -44,6 +44,11 @@ keymap.set('n', '<C-h>', '<C-w>h')
 keymap.set('n', '<C-q>', '<C-w>q')
 keymap.set('t', '<esc>', [[<C-\><C-n>]])
 
+-- Send raw ESC byte to the underlying TUI program (e.g. opencode modal close)
+keymap.set('t', '<C-[>', function()
+	vim.api.nvim_chan_send(vim.bo.channel, '\27')
+end, { desc = 'Send ESC to TUI program' })
+
 -- Switch windows from terminal mode (no need to press esc first)
 keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]])
 keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]])
