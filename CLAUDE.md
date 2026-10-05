@@ -84,7 +84,7 @@ Pack {
 - `j`/`k` - Move by visual line (handles wrapped lines with count support)
 - `<C-j/k/l/h>` - Navigate between windows
 - `<C-q>` - Close window
-- `<BS>` - Clear search highlights
+- `<CR>` - Clear active search highlights; otherwise use normal Enter behavior
 
 ### Window Management
 - `<leader>h` / `<leader>v` - Horizontal/vertical split

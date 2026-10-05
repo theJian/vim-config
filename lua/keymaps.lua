@@ -12,15 +12,12 @@ keymap.set('n', 'gl', 'g_')
 keymap.set('n', 'j', [[<Cmd>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'j'<CR>]])
 keymap.set('n', 'k', [[<Cmd>execute 'normal!' (v:count > 1 ? "m'" . v:count : 'g') . 'k'<CR>]])
 
--- Toggle folding
-keymap.set('n', '<leader><space>', 'za')
-
 -- Save
 -- keymap.set('n', '<leader>fs', '<Cmd>up ++p<CR>')
 
 -- Split
-keymap.set('n', '<leader>h', '<Cmd>split<CR>')
-keymap.set('n', '<leader>v', '<Cmd>vsplit<CR>')
+keymap.set('n', '<leader>ws', '<Cmd>split<CR>')
+keymap.set('n', '<leader>wv', '<Cmd>vsplit<CR>')
 
 -- Tabs
 keymap.set('n', '<leader>t', '<Cmd>tabnew<CR>')
@@ -34,13 +31,15 @@ end
 keymap.set('n', '<leader>x', '<Cmd>bp|bd #<CR>')
 
 -- Clean search highlight
-keymap.set('n', '<BS>', '<Cmd>noh<CR>')
+keymap.set('n', '<CR>', function()
+	return vim.v.hlsearch == 1 and '<Cmd>nohlsearch<CR>' or '<CR>'
+end, { expr = true, desc = 'Clear active search highlights' })
 
 -- Switch windows focus
-keymap.set('n', '<C-j>', '<C-w>j')
-keymap.set('n', '<C-k>', '<C-w>k')
-keymap.set('n', '<C-l>', '<C-w>l')
-keymap.set('n', '<C-h>', '<C-w>h')
+keymap.set('n', '<leader>wj', '<C-w>j')
+keymap.set('n', '<leader>wk', '<C-w>k')
+keymap.set('n', '<leader>wl', '<C-w>l')
+keymap.set('n', '<leader>wh', '<C-w>h')
 keymap.set('n', '<C-q>', '<C-w>q')
 keymap.set('t', '<esc>', [[<C-\><C-n>]])
 
@@ -50,10 +49,10 @@ keymap.set('t', '<C-[>', function()
 end, { desc = 'Send ESC to TUI program' })
 
 -- Switch windows from terminal mode (no need to press esc first)
-keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]])
-keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]])
-keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]])
-keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]])
+keymap.set('t', '<leader>wh', [[<C-\><C-n><C-w>h]])
+keymap.set('t', '<leader>wj', [[<C-\><C-n><C-w>j]])
+keymap.set('t', '<leader>wk', [[<C-\><C-n><C-w>k]])
+keymap.set('t', '<leader>wl', [[<C-\><C-n><C-w>l]])
 
 -- Shifting
 keymap.set('v', '<', '<gv')
@@ -64,21 +63,12 @@ keymap.set('v', 'J', "<Cmd>m '>+1<CR>gv=gv")
 keymap.set('v', 'K', "<Cmd>m '<-2<CR>gv=gv")
 
 -- Command line cursor move
-keymap.set('c', '<C-h>', '<Left>')
-keymap.set('c', '<C-h>', '<Right>')
-keymap.set('c', '<C-k>', '<Up>')
-keymap.set('c', '<C-j>', '<Down>')
 keymap.set('c', '<C-a>', '<Home>')
 keymap.set('c', '<C-e>', '<End>')
 
 -- Swap ;/:
 keymap.set({ 'n', 'v' }, ';', ':')
 keymap.set({ 'n', 'v' }, ':', ';')
-
--- Edit without clobbering register
-keymap.set('n', 's', '"_c')
-keymap.set('n', 'ss', '"_cc')
-keymap.set('n', 'S', '"_C')
 
 -- Visual mode pressing * or # searches for the current selection
 local function visual_selection(direction)
