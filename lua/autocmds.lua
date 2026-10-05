@@ -28,6 +28,7 @@ api.nvim_create_autocmd('BufWinEnter', {
 api.nvim_create_autocmd('TermOpen', {
 	group = api.nvim_create_augroup('Terminal', {}),
 	callback = function()
+		vim.bo.filetype = 'terminal'
 		vim.opt_local.winbar = ''
 		vim.opt_local.spell = false
 		vim.cmd [[startinsert]]
