@@ -59,12 +59,6 @@ keymap.set('t', '<C-[>', function()
 	vim.api.nvim_chan_send(vim.bo.channel, '\27')
 end, { desc = 'Send ESC to TUI program' })
 
--- Switch windows from terminal mode (no need to press esc first)
-keymap.set('t', '<leader>wh', [[<C-\><C-n><C-w>h]])
-keymap.set('t', '<leader>wj', [[<C-\><C-n><C-w>j]])
-keymap.set('t', '<leader>wk', [[<C-\><C-n><C-w>k]])
-keymap.set('t', '<leader>wl', [[<C-\><C-n><C-w>l]])
-
 -- Shifting
 keymap.set('v', '<', '<gv', { desc = 'Indent selection left and reselect' })
 keymap.set('v', '>', '>gv', { desc = 'Indent selection right and reselect' })
