@@ -24,8 +24,8 @@ vim.opt.statusline:append '∕%4l:%-3c' -- cursor position
 vim.opt.statusline:append '∕%<%3p%%' -- scroll position
 vim.opt.statusline:append '%(∕%Y%)' -- file type
 
--- Winbar
-vim.opt.winbar = '%f'
+-- Let lualine manage window bars, including hiding them in terminals.
+vim.opt.winbar = ''
 
 -- Colorscheme
 if
