@@ -17,39 +17,53 @@ vim.lsp.enable 'quick_lint_js'
 vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(ev)
 		if not vim.b[ev.buf].keymaps_set then
-			local opts = { buffer = ev.buf }
 			vim.keymap.set('n', 'gK', function()
 				local new_config = not vim.diagnostic.config().virtual_lines
 				vim.diagnostic.config { virtual_lines = new_config }
-			end, opts)
+			end, { buffer = ev.buf, desc = 'Toggle diagnostic virtual lines' })
 
-			-- vim.keymap.set('n', 'grx', vim.lsp.codelens.run, opts)
+			-- vim.keymap.set('n', 'grx', vim.lsp.codelens.run, { buffer = ev.buf, desc = 'Run code lens' })
 
-			vim.keymap.set('n', 'g0', vim.diagnostic.setloclist, opts)
+			vim.keymap.set(
+				'n',
+				'g0',
+				vim.diagnostic.setloclist,
+				{ buffer = ev.buf, desc = 'Show diagnostics in location list' }
+			)
 
-			-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-			-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+			-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic' })
+			-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic' })
 
-			vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
-			vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-			vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-			vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-			-- vim.keymap.set('n', 'gri', vim.lsp.buf.implementation, opts)
-			vim.keymap.set('n', '<leader>wn', vim.lsp.buf.add_workspace_folder, opts)
-			vim.keymap.set('n', '<leader>wd', vim.lsp.buf.remove_workspace_folder, opts)
+			vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, { buffer = ev.buf, desc = 'Show signature help' })
+			vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = ev.buf, desc = 'Go to declaration' })
+			vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = ev.buf, desc = 'Go to definition' })
+			vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = ev.buf, desc = 'Show hover documentation' })
+			-- vim.keymap.set('n', 'gri', vim.lsp.buf.implementation, { buffer = ev.buf, desc = 'Go to implementation' })
+			vim.keymap.set(
+				'n',
+				'<leader>wn',
+				vim.lsp.buf.add_workspace_folder,
+				{ buffer = ev.buf, desc = 'Add workspace folder' }
+			)
+			vim.keymap.set(
+				'n',
+				'<leader>wd',
+				vim.lsp.buf.remove_workspace_folder,
+				{ buffer = ev.buf, desc = 'Remove workspace folder' }
+			)
 			vim.keymap.set('n', '<leader>wL', function()
 				vim.print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-			end, opts)
-			-- vim.keymap.set('n', 'grt', vim.lsp.buf.type_definition, opts)
-			-- vim.keymap.set('n', 'grn', vim.lsp.buf.rename, opts)
-			-- vim.keymap.set({ 'n', 'v' }, 'gra', vim.lsp.buf.code_action, opts)
-			-- vim.keymap.set('n', 'grr', vim.lsp.buf.references, opts)
-			-- vim.keymap.set('n', 'gO', vim.lsp.buf.document_symbol, opts)
+			end, { buffer = ev.buf, desc = 'List workspace folders' })
+			-- vim.keymap.set('n', 'grt', vim.lsp.buf.type_definition, { buffer = ev.buf, desc = 'Go to type definition' })
+			-- vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = ev.buf, desc = 'Rename symbol' })
+			-- vim.keymap.set({ 'n', 'v' }, 'gra', vim.lsp.buf.code_action, { buffer = ev.buf, desc = 'Code action' })
+			-- vim.keymap.set('n', 'grr', vim.lsp.buf.references, { buffer = ev.buf, desc = 'List references' })
+			-- vim.keymap.set('n', 'gO', vim.lsp.buf.document_symbol, { buffer = ev.buf, desc = 'List document symbols' })
 			vim.keymap.set('n', 'grh', function()
 				local bufnr = ev.buf
 				local current = vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }
 				vim.lsp.inlay_hint.enable(not current, { bufnr = bufnr })
-			end, opts)
+			end, { buffer = ev.buf, desc = 'Toggle inlay hints' })
 			vim.b[ev.buf].keymaps_set = true
 		end
 

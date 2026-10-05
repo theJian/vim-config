@@ -101,7 +101,7 @@ test('preserves existing enter behavior when no completion item is selected', fu
 	vim.keymap.set('i', '<CR>', function()
 		fallback_calls = fallback_calls + 1
 		return '<C-]><CR>'
-	end, { expr = true })
+	end, { expr = true, desc = 'Test Enter fallback' })
 
 	package.loaded['plugins.completion'] = nil
 	require 'plugins.completion'
@@ -299,11 +299,11 @@ test('previews and accepts includes without duplicating the existing delimiter',
 			end,
 		}, function()
 			assert(completion.attach(client, 0))
-			vim.keymap.set('i', '<F6>', vim.lsp.completion.get)
+			vim.keymap.set('i', '<F6>', vim.lsp.completion.get, { desc = 'Test LSP completion' })
 			vim.keymap.set('i', '<F7>', function()
 				preview = vim.api.nvim_get_current_line()
 				menu = vim.fn.complete_info().items[1].abbr
-			end)
+			end, { desc = 'Capture completion preview for test' })
 			-- Enter insert mode immediately before the existing closing delimiter.
 			vim.api.nvim_win_set_cursor(0, { 1, math.min(case.col, #case.line - 1) })
 			local insert = case.col == #case.line and 'a' or 'i'

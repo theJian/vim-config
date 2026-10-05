@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd('VimEnter', {
 
 				vim.keymap.set('i', '<F6>', function()
 					vim.fn.complete(1, { 'apple', 'apricot' })
-				end)
+				end, { desc = 'Test completion popup' })
 				vim.fn.feedkeys('i' .. vim.keycode '<F6><Tab><CR><Esc>', 'xt')
 				vim.keymap.del('i', '<F6>')
 				assert(vim.deep_equal(vim.api.nvim_buf_get_lines(0, 0, -1, false), { 'apple' }))
