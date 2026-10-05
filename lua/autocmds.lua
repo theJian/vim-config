@@ -12,15 +12,25 @@ api.nvim_create_autocmd('BufNewFile', {
 	end,
 })
 
--- Open help file in new tab
+-- Open help in a centered floating window
 api.nvim_create_autocmd('BufWinEnter', {
-	group = api.nvim_create_augroup('HelpInTabs', {}),
-	pattern = '*.txt',
-	callback = function()
-		if vim.o.buftype == 'help' then
-			-- convert help window to tab
-			vim.cmd 'execute "normal! \\<C-W>T"'
+	group = api.nvim_create_augroup('HelpInFloat', {}),
+	callback = function(args)
+		if vim.bo[args.buf].buftype ~= 'help' then
+			return
 		end
+
+		local width = math.max(1, math.floor(vim.o.columns * 0.8))
+		local height = math.max(1, math.floor((vim.o.lines - vim.o.cmdheight - 2) * 0.8))
+		api.nvim_win_set_config(0, {
+			relative = 'editor',
+			width = width,
+			height = height,
+			row = math.floor((vim.o.lines - vim.o.cmdheight - height - 2) / 2),
+			col = math.floor((vim.o.columns - width - 2) / 2),
+			border = 'rounded',
+		})
+		vim.keymap.set('n', 'q', '<Cmd>close<CR>', { buffer = args.buf, desc = 'Close help' })
 	end,
 })
 
