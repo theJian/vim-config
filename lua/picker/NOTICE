@@ -1,0 +1,6 @@
+The ui2 renderer in view.lua is adapted from comfysage/artio.nvim.
+Source: https://github.com/comfysage/artio.nvim
+Revision: ebf5ed35bf17babeee20b04129ce60a382214687
+License: European Union Public Licence v1.2 (see LICENSE).
+Modified 2026-10-06 for a generic picker API, cleanup, and UTF-8 rendering.
+The picker module is distributed under EUPL-1.2.
