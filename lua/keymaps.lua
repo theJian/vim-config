@@ -39,6 +39,7 @@ end
 
 -- Close buffer
 keymap.set('n', '<leader>x', '<Cmd>bp|bd #<CR>', { desc = 'Switch to previous buffer and delete current buffer' })
+keymap.set('n', '<leader>bd', '<Cmd>bdelete<CR>', { desc = 'Delete buffer' })
 
 -- Clean search highlight
 keymap.set('n', '<CR>', function()
