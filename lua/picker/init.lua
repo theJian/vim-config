@@ -1,9 +1,9 @@
--- Generic ui2 picker. Licensed under EUPL-1.2; see LICENSE and NOTICE.
+-- Generic ui2 picker. Licensed under EUPL-1.2; see LICENSE and NOTICE in this directory.
 local M = {}
 ---@class picker.Picker: picker.Options
 ---@field items picker.Entry[]
----@field matches table[]
----@field idx integer
+---@field matches table[] Ordered {source_index, zero_based_character_positions, score} matches
+---@field idx integer 1-based match position; 0 means no selection
 ---@field closed boolean
 ---@field view picker.View
 local Picker = {}
@@ -37,13 +37,15 @@ local defaults = {
 }
 local config = {}
 
+---@alias picker.Highlight {[1]: {[1]: integer, [2]: integer}, [2]: string} Byte range {start, end_exclusive} and highlight group
+
 ---@class picker.Entry
----@field id integer Original source index
+---@field id integer 1-based original source index
 ---@field v any Original source value (never copied)
 ---@field text string Single-line display and search text
 ---@field icon? string
 ---@field icon_hl? string
----@field hls? table[] Byte ranges: { { start, end_exclusive }, highlight_group }
+---@field hls? picker.Highlight[] Byte ranges relative to the formatted label
 
 ---@class picker.Options
 ---@field source table|fun(query: string, emit: fun(items: table?, err?: any), ctx: table): table|function|nil
@@ -61,8 +63,8 @@ local config = {}
 ---@field defaulttext? string
 ---@field live? boolean Default: true for providers, false for lists
 ---@field debounce? integer Provider delay in milliseconds (default 30)
----@field opts? table Artio-style UI options
----@field win? table Artio-style window options
+---@field opts? table Prompt, selection, marking, and match-count display options
+---@field win? table Picker height, statusline visibility, and preview-window options
 
 function M.setup(opts)
 	config = vim.deepcopy(opts or {})
@@ -209,7 +211,7 @@ function Picker:refresh(immediate)
 			emit(nil, 'provider must return a list, cancellation function, or nil')
 		end
 	end
-	-- Invalidate immediately so older results cannot arrive during the debounce interval.
+	-- Delay source requests without delaying invalidation of older results.
 	if immediate or self.debounce == 0 then
 		request()
 	else

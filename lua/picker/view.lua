@@ -4,6 +4,8 @@
 local cmdline = require 'vim._core.ui2.cmdline'
 local ui2 = require 'vim._core.ui2'
 
+---@alias picker.CmdContent {[1]: integer, [2]: string}[] Highlight ID and text chunks
+
 local view_ns = vim.api.nvim_create_namespace '@picker.view.ns'
 local prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'PickerPrompt'
 
@@ -35,12 +37,12 @@ end
 
 local prompthl_id = -1
 
-local cmdbuff = '' ---@type string Stored cmdline used to calculate translation offset.
-local promptlen = 0 -- Current length of the last line in the prompt.
+local cmdbuff = '' ---@type string Unescaped query text; its byte length positions the initial cursor.
+local promptlen = 0 -- Byte length of the prompt prefix, excluding query text.
 local promptidx = 0
 --- Concatenate content chunks and set the text for the current row in the cmdline buffer.
 ---
----@param content CmdContent
+---@param content picker.CmdContent
 ---@param prompt string
 function View:setprompttext(content, prompt)
 	local lines = {} ---@type string[]
@@ -67,7 +69,7 @@ end
 
 --- Set the cmdline buffer text and cursor position.
 ---
----@param content CmdContent
+---@param content picker.CmdContent
 ---@param pos? integer
 ---@param firstc string
 ---@param prompt string
@@ -115,8 +117,8 @@ function View:win_config(win, hide, height)
 	end
 
 	if vim.o.cmdheight ~= height then
-		-- Avoid moving the cursor with 'splitkeep' = "screen", and altering the user
-		-- configured value with noautocmd.
+		-- Preserve the editor view and prevent ui2's OptionSet handler from
+		-- replacing its saved cmdheight with the picker's temporary height.
 		vim._with({ noautocmd = true, o = { splitkeep = 'screen' } }, function()
 			vim.o.cmdheight = height
 		end)
@@ -291,7 +293,6 @@ function View:trigger_show()
 	self:show({ { 0, input } }, -1, '', self.picker.prompttext, cmdline.indent, cmdline.level, prompt_hl_id)
 end
 
----@param force? boolean
 function View:update()
 	if self.closed then
 		return
@@ -303,7 +304,7 @@ function View:update()
 	end
 end
 
----@param pos? integer relative to prompt
+---@param pos? integer Zero-based query byte offset; nil or negative preserves the cursor position
 function View:updatecursor(pos)
 	self.curpos = self.curpos or { 0, 0 }
 
@@ -314,7 +315,7 @@ function View:updatecursor(pos)
 		pos = cursorpos[2] - promptlen
 	end
 
-	-- set cursor pos to *at least* the prompt length
+	-- Keep the cursor out of the noneditable prompt prefix.
 	self.curpos[2] = math.max(self.curpos[2], promptlen)
 
 	if self.curpos[1] == promptidx + 1 and self.curpos[2] == promptlen + pos then
@@ -322,7 +323,7 @@ function View:updatecursor(pos)
 	end
 
 	if pos < 0 then
-		-- reset to last known position
+		-- Reuse the last query position when the cursor enters the prompt prefix.
 		pos = self.curpos[2] - promptlen
 	end
 
@@ -351,7 +352,7 @@ function View:promptpos()
 end
 
 function View:setlines(posstart, posend, lines)
-	-- update winheight to prevent wrong scroll when increasing from 1
+	-- Grow the window before adding rows so the prompt stays visible.
 	local diff = #lines - (posend - posstart)
 	if diff ~= 0 then
 		local height = vim.api.nvim_win_text_height(ui2.wins.cmd, {}).all
@@ -479,7 +480,7 @@ function View:showmatches()
 	local lines = {} ---@type string[]
 	local hls = {}
 	local icons = {} ---@type ([string, string]|false)[]
-	local custom_hls = {} ---@type (picker.Picker.hl[]|false)[]
+	local custom_hls = {} ---@type (picker.Highlight[]|false)[]
 	local marks = {} ---@type boolean[]
 	for i = 1 + offset, math.min(#self.picker.matches, maxlistheight + offset) do
 		local match = self.picker.matches[i]

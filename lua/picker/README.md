@@ -1,8 +1,14 @@
 # Generic picker
 
-`require('picker')` provides Artio's ui2 prompt/list experience for arbitrary Lua
-values, without installing Artio or registering file-specific pickers. Requires
-Neovim 0.12+ and enabled ui2; this config already enables it in `lua/ui.lua`.
+`require('picker')` selects arbitrary Lua values using a command-area prompt,
+a list of matches, fuzzy filtering, marking, and optional previews. Requires
+Neovim 0.12+ with ui2 enabled. This repository enables ui2 in `lua/ui.lua`;
+when using the module in another configuration, enable it before opening a picker:
+
+```lua
+require('vim._core.ui2').enable({})
+```
+
 The renderer is adapted from [artio.nvim](https://github.com/comfysage/artio.nvim)
 at revision `ebf5ed35bf17babeee20b04129ce60a382214687`; attribution and EUPL-1.2
 terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
@@ -29,7 +35,7 @@ Strings, numbers, booleans, and records are supported. `format_item` defaults to
 `tostring`; provide it for readable record labels. Newlines/control characters
 are displayed as escaped text, so every value occupies one row. Equal fuzzy
 scores preserve source order. Prefix a query with `/lua_pattern/` to restrict
-fuzzy matches, as in Artio.
+fuzzy matches: `/^src/handler` fuzzy-matches `handler` only in labels starting with `src`.
 
 ## Computed sources
 
@@ -37,9 +43,12 @@ A provider receives `(query, emit, ctx)` and can either return a list or emit
 lists asynchronously. Providers default to live mode: changing the prompt
 requests new results, whose order is preserved without additional fuzzy sorting.
 Use `live = false` to load once and fuzzy-filter locally; `handle:refresh()`
-reloads that source. The query passed in this mode is an empty string.
+reloads that source. The provider receives an empty query string in this mode.
+The returned list must contain the original values; `format_item` supplies their
+display labels, and `on_choice` receives the selected value without copying it.
 
 ```lua
+local picker = require 'picker'
 picker.pick {
     prompt = 'Buffers',
     source = function()
@@ -56,6 +65,7 @@ picker.pick {
 ## Async/live sources
 
 ```lua
+local picker = require 'picker'
 picker.pick {
     prompt = 'Tracked files',
     debounce = 50,
@@ -138,6 +148,7 @@ Additional hooks:
 changes merge with defaults; set a mapping to `false` to disable it.
 
 ```lua
+local picker = require 'picker'
 picker.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
@@ -165,6 +176,8 @@ No keymaps or selection overrides are installed globally. Buffer-local mappings
 and editor options are restored on exit.
 
 ## Verification
+
+Run the integration tests from the repository root:
 
 ```sh
 nvim --headless -u NONE -i NONE -l tests/picker.lua

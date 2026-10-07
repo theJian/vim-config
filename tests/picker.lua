@@ -1,8 +1,8 @@
--- Run: nvim --headless -u NONE -i NONE -l tests/picker.lua
+-- Run from the repository root: nvim --headless -u NONE -i NONE -l tests/picker.lua
 vim.opt.rtp:prepend(vim.fn.getcwd())
 local ui2 = require 'vim._core.ui2'
--- enable() intentionally does nothing without an attached UI. Use its real
--- windows and modules for headless integration tests.
+-- vim._core.ui2.enable() does nothing without an attached UI, so initialize
+-- its command-line and message modules directly for headless integration tests.
 ui2.cmd = require 'vim._core.ui2.cmdline'
 ui2.msg = require 'vim._core.ui2.messages'
 ui2.check_targets()
