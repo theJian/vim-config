@@ -4,3 +4,4 @@ tags
 pack
 packman.lua
 __pycache__
+nvim.log
