@@ -61,9 +61,11 @@ local closing_chars = {
 }
 
 local function pair_aware_completion(item)
+	local kind = vim.lsp.protocol.CompletionItemKind[item.kind]
+	local result = kind and kind ~= 'Color' and { kind_hlgroup = 'LspKind' .. kind } or {}
 	-- Snippets apply their own textEdit when accepted.
 	if item.insertTextFormat == vim.lsp.protocol.InsertTextFormat.Snippet then
-		return {}
+		return result
 	end
 	local word = item.textEdit and item.textEdit.newText
 		or (item.insertText and item.insertText ~= '' and item.insertText)
@@ -73,9 +75,9 @@ local function pair_aware_completion(item)
 	local col = vim.api.nvim_win_get_cursor(0)[2]
 	-- Native completion only replaces up to the cursor, including during preview.
 	if closing_chars[tail] and vim.api.nvim_get_current_line():sub(col + 1, col + 1) == tail then
-		return { word = word:sub(1, -2) }
+		result.word = word:sub(1, -2)
 	end
-	return {}
+	return result
 end
 
 function M.attach(client, bufnr)
