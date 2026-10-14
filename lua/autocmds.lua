@@ -82,9 +82,6 @@ api.nvim_create_autocmd('VimResized', {
 })
 
 -- Autosave
-local timer = vim.uv.new_timer()
-local DEBOUNCE_DELAY = 500 -- ms
-
 local function has_syntax_errors(buf)
 	local ok, parser = pcall(vim.treesitter.get_parser, buf)
 	if not ok or not parser then
