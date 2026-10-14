@@ -1,29 +1,27 @@
 local M = {}
 
 vim.opt.completeopt = { 'fuzzy', 'menuone', 'noselect', 'popup' }
+-- Use one trigger for LSP and buffer words, with LSP as the first source.
+vim.opt.complete:prepend 'o'
 
-local function trigger_characters(server_characters)
-	local characters = {}
-	local seen = {}
+local completion_group = vim.api.nvim_create_augroup('NativeCompletion', { clear = true })
 
-	local function add(character)
-		if not seen[character] then
-			table.insert(characters, character)
-			seen[character] = true
-		end
-	end
-
-	for _, character in ipairs(server_characters or {}) do
-		add(character)
-	end
-	for codepoint = 32, 126 do
-		add(string.char(codepoint))
-	end
-	add '\n'
-	add '\t'
-
-	return characters
-end
+vim.bo.autocomplete = vim.bo.buftype == ''
+vim.api.nvim_create_autocmd({ 'BufEnter', 'TermOpen' }, {
+	group = completion_group,
+	desc = 'Enable autocomplete only in normal buffers',
+	callback = function()
+		vim.bo.autocomplete = vim.bo.buftype == ''
+	end,
+})
+vim.api.nvim_create_autocmd('OptionSet', {
+	group = completion_group,
+	pattern = 'buftype',
+	desc = 'Update autocomplete when the buffer type changes',
+	callback = function()
+		vim.bo.autocomplete = vim.bo.buftype == ''
+	end,
+})
 
 local function key_fallback(lhs)
 	local mapping = vim.fn.maparg(lhs, 'i', false, true)
@@ -90,8 +88,7 @@ function M.attach(client, bufnr)
 		return false
 	end
 
-	provider.triggerCharacters = trigger_characters(provider.triggerCharacters)
-	vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true, convert = pair_aware_completion })
+	vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = false, convert = pair_aware_completion })
 	return true
 end
 
@@ -128,7 +125,7 @@ vim.keymap.set('i', '<C-Space>', function()
 end, { desc = 'Trigger LSP completion' })
 
 vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('NativeCompletion', { clear = true }),
+	group = completion_group,
 	desc = 'Enable native LSP completion',
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)

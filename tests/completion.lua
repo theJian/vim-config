@@ -47,6 +47,29 @@ end
 test('enables fuzzy completion without disabling fuzzy sorting', function()
 	load_completion()
 	assert(vim.deep_equal(vim.opt.completeopt:get(), { 'fuzzy', 'menuone', 'noselect', 'popup' }))
+	assert(vim.o.autocomplete)
+	assert(vim.opt.complete:get()[1] == 'o')
+end)
+
+test('enables autocomplete only in normal buffers on entry', function()
+	local global_autocomplete = vim.opt_global.autocomplete:get()
+	load_completion()
+	assert(vim.opt_global.autocomplete:get() == global_autocomplete)
+	local original = vim.api.nvim_get_current_buf()
+	for _, buftype in ipairs { '', 'nofile', 'nowrite', 'acwrite', 'quickfix', 'help', 'prompt' } do
+		local bufnr = vim.api.nvim_create_buf(true, false)
+		vim.bo[bufnr].buftype = buftype
+		vim.api.nvim_set_current_buf(bufnr)
+		assert(vim.bo.autocomplete == (buftype == ''), 'wrong autocomplete setting for ' .. buftype)
+		vim.api.nvim_set_current_buf(original)
+		vim.api.nvim_buf_delete(bufnr, { force = true })
+	end
+	local terminal = vim.api.nvim_create_buf(true, false)
+	vim.api.nvim_set_current_buf(terminal)
+	assert(vim.fn.jobstart({ '/bin/sh', '-c', 'exit 0' }, { term = true }) > 0)
+	assert(vim.bo.buftype == 'terminal' and not vim.bo.autocomplete)
+	vim.api.nvim_set_current_buf(original)
+	vim.api.nvim_buf_delete(terminal, { force = true })
 end)
 
 test('uses popup navigation before snippet navigation and fallback', function()
@@ -186,8 +209,10 @@ test('triggers completion manually with control-space', function()
 	assert(called)
 end)
 
-test('enables autotrigger with fuzzy-friendly trigger characters', function()
+test('uses omnifunc completion without a second automatic trigger', function()
 	local completion = load_completion()
+	local bufnr = vim.api.nvim_create_buf(true, false)
+	vim.bo[bufnr].omnifunc = 'CustomComplete'
 	local client = {
 		id = 42,
 		server_capabilities = {
@@ -206,26 +231,15 @@ test('enables autotrigger with fuzzy-friendly trigger characters', function()
 			enable_args = { ... }
 		end,
 	}, function()
-		assert(completion.attach(client, 7))
+		assert(completion.attach(client, bufnr))
 	end)
 
-	assert(vim.deep_equal({ unpack(enable_args, 1, 3) }, { true, 42, 7 }))
-	assert(enable_args[4].autotrigger == true)
+	assert(vim.deep_equal({ unpack(enable_args, 1, 3) }, { true, 42, bufnr }))
+	assert(enable_args[4].autotrigger == false)
 	assert(type(enable_args[4].convert) == 'function')
-
-	local triggers = client.server_capabilities.completionProvider.triggerCharacters
-	local counts = {}
-	for _, character in ipairs(triggers) do
-		counts[character] = (counts[character] or 0) + 1
-	end
-
-	for codepoint = 32, 126 do
-		assert(counts[string.char(codepoint)] == 1, 'missing or duplicate printable trigger ' .. codepoint)
-	end
-	assert(counts['\n'] == 1)
-	assert(counts['\t'] == 1)
-	assert(counts['λ'] == 1)
-	assert(#triggers == 98)
+	assert(vim.bo[bufnr].omnifunc == 'CustomComplete')
+	assert(vim.deep_equal(client.server_capabilities.completionProvider.triggerCharacters, { '.', 'λ', '.' }))
+	vim.api.nvim_buf_delete(bufnr, { force = true })
 end)
 
 test('does not enable completion for unsupported clients', function()
