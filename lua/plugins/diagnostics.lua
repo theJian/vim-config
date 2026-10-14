@@ -54,3 +54,10 @@ vim.diagnostic.config {
 		},
 	},
 }
+
+vim.api.nvim_create_autocmd('CursorHold', {
+	group = vim.api.nvim_create_augroup('DiagnosticHover', {}),
+	callback = function()
+		vim.diagnostic.open_float { scope = 'cursor', focus = false, border = 'rounded' }
+	end,
+})
