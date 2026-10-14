@@ -119,7 +119,6 @@ end
 
 api.nvim_create_autocmd({ 'InsertLeave' }, {
 	pattern = '*',
-	nested = true, -- trigger code formatting
 	callback = save,
 })
 api.nvim_create_autocmd({ 'TextChanged' }, {
