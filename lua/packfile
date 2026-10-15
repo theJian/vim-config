@@ -71,10 +71,6 @@ Pack {
 }
 
 Pack {
-  "git@github.com:theJian/nvim-moonwalk.git",
-}
-
-Pack {
   "https://github.com/nvim-neotest/nvim-nio",
 }
 
