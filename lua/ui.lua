@@ -31,7 +31,7 @@ vim.opt.winbar = ''
 if
 	not pcall(function()
 		require('moonwalk').setup {
-			-- transparent = true
+			transparent = true,
 		}
 		vim.o.background = 'light'
 		vim.cmd.colorscheme 'moonwalk'
