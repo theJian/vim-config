@@ -74,22 +74,26 @@ end
 function M.sorter(entries, query)
 	local pattern = query:match '^/([^/]*)/'
 	if pattern then
-		entries = vim.tbl_filter(function(entry)
-			return entry.text:match(pattern) ~= nil
-		end, entries)
+		entries = vim.iter(entries)
+			:filter(function(entry)
+				return entry.text:match(pattern) ~= nil
+			end)
+			:totable()
 		query = query:gsub('^/[^/]*/', '')
 	end
 	if query == '' then
-		return vim.tbl_map(function(entry)
-			return { entry.id, {}, 0 }
-		end, entries)
+		return vim.iter(entries)
+			:map(function(entry)
+				return { entry.id, {}, 0 }
+			end)
+			:totable()
 	end
 	local result = vim.fn.matchfuzzypos(entries, query, { key = 'text' })
-	local matches = {}
-	for i, entry in ipairs(result[1]) do
-		matches[i] = { entry.id, result[2][i], result[3][i] }
-	end
-	return matches
+	return vim.iter(ipairs(result[1]))
+		:map(function(i, entry)
+			return { entry.id, result[2][i], result[3][i] }
+		end)
+		:totable()
 end
 
 function EnhancedSearch:report(err)
