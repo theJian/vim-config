@@ -366,17 +366,15 @@ function EnhancedSelect:action(name)
 end
 
 local function highlights()
-	local normal = vim.api.nvim_get_hl(0, { name = 'Normal' })
-	local msg = vim.api.nvim_get_hl(0, { name = 'MsgArea' })
-	local cursor = vim.api.nvim_get_hl(0, { name = 'Cursor' })
-	local cursorline = vim.api.nvim_get_hl(0, { name = 'CursorLine' })
 	local groups = {
-		EnhancedSelectNormal = { fg = normal.fg, bg = msg.bg },
-		EnhancedSelectPrompt = { link = 'Title' },
-		EnhancedSelectSel = { fg = cursor.bg, bg = cursorline.bg },
-		EnhancedSelectPointer = { fg = cursor.bg },
+		EnhancedSelectNormal = { link = 'Pmenu' },
+		EnhancedSelectPrompt = { link = 'Question' },
+		EnhancedSelectSel = { link = 'PmenuSel' },
+		EnhancedSelectPointer = { link = 'PmenuSel' },
 		EnhancedSelectMatch = { link = 'PmenuMatch' },
-		EnhancedSelectMark = { link = 'DiagnosticWarn' },
+		EnhancedSelectMatchSel = { link = 'PmenuMatchSel' },
+		EnhancedSelectInfo = { link = 'PmenuExtra' },
+		EnhancedSelectMark = { link = 'Special' },
 		EnhancedSelectMarkLine = { link = 'Visual' },
 	}
 	for name, spec in pairs(groups) do

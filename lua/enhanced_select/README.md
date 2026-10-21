@@ -163,7 +163,7 @@ search.setup {
 Height may be a fraction of the editor (0 < height <= 1) or a number of rows.
 `win.preview_opts(view)` can return Neovim floating window options. Highlight
 groups use the `EnhancedSelect` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
-`Mark`, and `MarkLine`. The module uses experimental `vim._core.ui2` internals,
+`MatchSel`, `Info`, `Mark`, and `MarkLine`. The module uses experimental `vim._core.ui2` internals,
 so future Neovim changes may require updating the renderer.
 
 Opt into the standard selection interface explicitly:

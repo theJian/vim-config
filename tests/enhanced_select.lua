@@ -172,7 +172,7 @@ test('pattern filtering and multibyte match highlights use whole characters', fu
 	)
 	local found = false
 	for _, mark in ipairs(marks) do
-		if mark[4].hl_group == 'EnhancedSelectMatch' then
+		if mark[4].hl_group == 'EnhancedSelectMatchSel' then
 			assert(mark[4].end_col - mark[3] == 3, vim.inspect(mark))
 			found = true
 		end

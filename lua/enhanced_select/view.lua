@@ -437,7 +437,7 @@ function View:draw_prompt()
 							:totable(),
 						' '
 					),
-					'InfoText',
+					'EnhancedSelectInfo',
 				},
 			},
 			virt_text_pos = 'eol_right_align',
@@ -562,7 +562,7 @@ function View:show_matches()
 				local next_byte = vim.fn.byteidx(text, hls[i][j] + 1)
 				local col = indent + icon_indent + byte
 				self:mark(nil, start_row + i - 1, col, {
-					hl_group = 'EnhancedSelectMatch',
+					hl_group = offset + i == self.search.idx and 'EnhancedSelectMatchSel' or 'EnhancedSelectMatch',
 					end_col = indent + icon_indent + (next_byte < 0 and #text or next_byte),
 					priority = ext_priority.match,
 				})
