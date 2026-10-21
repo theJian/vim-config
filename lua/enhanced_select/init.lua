@@ -312,21 +312,24 @@ function EnhancedSelect:set_quickfix()
 	if not self.to_quickfix then
 		return
 	end
-	local selected = {}
 	local has_marks = next(self.marked) ~= nil
-	for _, entry in ipairs(self.items) do
-		if has_marks and self.marked[entry.id] then
-			selected[#selected + 1] = entry
-		end
+	local selected
+
+	if has_marks then
+		selected = vim.iter(self.items):filter(function(entry)
+			return self.marked[entry.id]
+		end)
+	else
+		selected = vim.iter(self.matches):map(function(match)
+			return self.items[match[1]]
+		end)
 	end
-	if not has_marks then
-		for _, match in ipairs(self.matches) do
-			selected[#selected + 1] = self.items[match[1]]
-		end
-	end
-	local entries = vim.tbl_map(function(entry)
-		return self.to_quickfix(entry.v, entry.id)
-	end, selected)
+
+	local entries = selected
+		:map(function(entry)
+			return self.to_quickfix(entry.v, entry.id)
+		end)
+		:totable()
 	self:close()
 	vim.schedule(function()
 		vim.fn.setqflist({}, ' ', { title = self.prompt, items = entries })
