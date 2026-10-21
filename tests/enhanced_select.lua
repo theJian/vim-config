@@ -10,7 +10,7 @@ local search = require 'enhanced_select'
 local failures = {}
 local handles = {}
 local function open(opts)
-	local handle = search.pick(opts)
+	local handle = search.open(opts)
 	handles[#handles + 1] = handle
 	return handle
 end

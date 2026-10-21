@@ -17,7 +17,7 @@ terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
 
 ```lua
 local search = require 'enhanced_select'
-search.pick {
+search.open {
     prompt = 'Environment',
     source = {
         { name = 'Development', url = 'http://localhost:3000' },
@@ -49,7 +49,7 @@ display labels, and `on_choice` receives the selected value without copying it.
 
 ```lua
 local search = require 'enhanced_select'
-search.pick {
+search.open {
     prompt = 'Buffers',
     source = function()
         return vim.tbl_filter(function(buf) return vim.bo[buf].buflisted end,
@@ -66,7 +66,7 @@ search.pick {
 
 ```lua
 local search = require 'enhanced_select'
-search.pick {
+search.open {
     prompt = 'Tracked files',
     debounce = 50,
     source = function(query, emit, ctx)
@@ -139,12 +139,12 @@ Additional hooks:
   `handle:get_marked()` returns marked original values. Use `handle:close()`
   before changing editor windows from a custom action.
 
-`pick` returns a handle with `set_query(query)`, `refresh()`, `action(name)`,
+`open` returns a handle with `set_query(query)`, `refresh()`, `action(name)`,
 `get_current()`, `get_marked()`, `accept()`, `cancel()`, and `close()`.
 
 ## UI configuration
 
-`search.setup` sets defaults; each `pick` call can override them. Mapping
+`search.setup` sets defaults; each `open` call can override them. Mapping
 changes merge with defaults; set a mapping to `false` to disable it.
 
 ```lua

@@ -385,8 +385,8 @@ end
 
 ---@param options enhanced_select.Options
 ---@return table search Handle: set_query, refresh, get_current, get_marked, action, accept, cancel
-function M.pick(options)
-	assert(type(options) == 'table', 'pick expects an options table')
+function M.open(options)
+	assert(type(options) == 'table', 'open expects an options table')
 	assert(
 		type(options.source) == 'function' or (type(options.source) == 'table' and vim.islist(options.source)),
 		'source must be a list or provider function'
@@ -468,7 +468,7 @@ function M.select(items, opts, on_choice)
 			on_choice(nil, nil)
 		end,
 	})
-	return M.pick(options)
+	return M.open(options)
 end
 
 return M
