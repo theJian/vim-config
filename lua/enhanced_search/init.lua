@@ -72,23 +72,22 @@ end
 
 -- matchfuzzypos returns character offsets; the view converts them to byte ranges.
 function M.sorter(entries, query)
+	local items = vim.iter(entries)
 	local pattern = query:match '^/([^/]*)/'
 	if pattern then
-		entries = vim.iter(entries)
-			:filter(function(entry)
-				return entry.text:match(pattern) ~= nil
-			end)
-			:totable()
+		items:filter(function(entry)
+			return entry.text:match(pattern) ~= nil
+		end)
 		query = query:gsub('^/[^/]*/', '')
 	end
 	if query == '' then
-		return vim.iter(entries)
+		return items
 			:map(function(entry)
 				return { entry.id, {}, 0 }
 			end)
 			:totable()
 	end
-	local result = vim.fn.matchfuzzypos(entries, query, { key = 'text' })
+	local result = vim.fn.matchfuzzypos(items:totable(), query, { key = 'text' })
 	return vim.iter(ipairs(result[1]))
 		:map(function(i, entry)
 			return { entry.id, result[2][i], result[3][i] }
