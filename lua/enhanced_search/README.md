@@ -1,9 +1,9 @@
-# Generic picker
+# Enhanced search
 
-`require('picker')` selects arbitrary Lua values using a command-area prompt,
+`require('enhanced_search')` selects arbitrary Lua values using a command-area prompt,
 a list of matches, fuzzy filtering, marking, and optional previews. Requires
 Neovim 0.12+ with ui2 enabled. This repository enables ui2 in `lua/ui.lua`;
-when using the module in another configuration, enable it before opening a picker:
+when using the module in another configuration, enable it before opening a search:
 
 ```lua
 require('vim._core.ui2').enable({})
@@ -16,8 +16,8 @@ terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
 ## Static values
 
 ```lua
-local picker = require 'picker'
-picker.pick {
+local search = require 'enhanced_search'
+search.pick {
     prompt = 'Environment',
     source = {
         { name = 'Development', url = 'http://localhost:3000' },
@@ -48,8 +48,8 @@ The returned list must contain the original values; `format_item` supplies their
 display labels, and `on_choice` receives the selected value without copying it.
 
 ```lua
-local picker = require 'picker'
-picker.pick {
+local search = require 'enhanced_search'
+search.pick {
     prompt = 'Buffers',
     source = function()
         return vim.tbl_filter(function(buf) return vim.bo[buf].buflisted end,
@@ -65,8 +65,8 @@ picker.pick {
 ## Async/live sources
 
 ```lua
-local picker = require 'picker'
-picker.pick {
+local search = require 'enhanced_search'
+search.pick {
     prompt = 'Tracked files',
     debounce = 50,
     source = function(query, emit, ctx)
@@ -89,7 +89,7 @@ picker.pick {
 Return `nil` when using `emit`, or return a cancellation function to stop pending
 work. Each `emit(items, err?)` replaces the complete list; multiple emissions are
 allowed. Emissions are scheduled onto Neovim's main loop, including when called
-from a fast event. Results from old queries and closed pickers are ignored.
+from a fast event. Results from old queries and closed searches are ignored.
 `ctx.cancelled()` reports whether that request has become obsolete. Provider
 requests are debounced by 30 ms by default; the initial request runs immediately.
 Providers must schedule any Neovim API calls themselves when doing work in a
@@ -116,15 +116,15 @@ filtering of its latest results, with separate prompt text for each mode.
 
 `on_choice(value, source_index, marked_values, handle)` runs after restoring the
 editor. Marked values are returned in source order, including hidden matches.
-`on_cancel(handle)` runs once on Escape, leaving the picker, or opening another
-picker. Accepting an empty list leaves the prompt open. `handle:close()` silently
-closes without a choice/cancel callback. Only one picker can be open at a time.
+`on_cancel(handle)` runs once on Escape, leaving the search, or opening another
+search. Accepting an empty list leaves the prompt open. `handle:close()` silently
+closes without a choice/cancel callback. Only one search can be open at a time.
 
 Additional hooks:
 
 - `preview_item(value, index, handle)` returns `{ buf, pos?, pos_end? }` or nil.
   Positions are `{ one_based_line, zero_based_byte_column }`. Buffers belong to
-  the caller and are not deleted; the preview window is closed on picker exit.
+  the caller and are not deleted; the preview window is closed on search exit.
 - `get_icon(entry)` returns `icon, highlight_group`; `entry` is
   `{ id = source_index, v = original_value, text = formatted_label }`.
   For files, this can call `require('mini.icons').get('file', entry.v)`.
@@ -133,7 +133,7 @@ Additional hooks:
   require this conversion before Ctrl-q can operate.
 - `sorter(entries, query)` returns an ordered list of
   `{ source_index, zero_based_character_positions, score }` matches.
-  Use `picker.sorter` for the default pattern + fuzzy matcher.
+  Use `search.sorter` for the default pattern + fuzzy matcher.
 - `actions = { name = function(handle) ... end }` supplies custom actions or
   overrides defaults. `handle:getcurrent()` returns the selected entry;
   `handle:getmarked()` returns marked original values. Use `handle:close()`
@@ -144,12 +144,12 @@ Additional hooks:
 
 ## UI configuration
 
-`picker.setup` sets defaults; each `pick` call can override them. Mapping
+`search.setup` sets defaults; each `pick` call can override them. Mapping
 changes merge with defaults; set a mapping to `false` to disable it.
 
 ```lua
-local picker = require 'picker'
-picker.setup {
+local search = require 'enhanced_search'
+search.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
         promptprefix = '', prompt_title = true, pointer = '', marker = '│',
@@ -162,14 +162,14 @@ picker.setup {
 
 Height may be a fraction of the editor (0 < height <= 1) or a number of rows.
 `win.preview_opts(view)` can return Neovim floating window options. Highlight
-groups use the `Picker` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
+groups use the `EnhancedSearch` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
 `Mark`, and `MarkLine`. The module uses experimental `vim._core.ui2` internals,
 so future Neovim changes may require updating the renderer.
 
 Opt into the standard selection interface explicitly:
 
 ```lua
-vim.ui.select = require('picker').select
+vim.ui.select = require('enhanced_search').select
 ```
 
 No keymaps or selection overrides are installed globally. Buffer-local mappings
@@ -180,5 +180,5 @@ and editor options are restored on exit.
 Run the integration tests from the repository root:
 
 ```sh
-nvim --headless -u NONE -i NONE -l tests/picker.lua
+nvim --headless -u NONE -i NONE -l tests/enhanced_search.lua
 ```

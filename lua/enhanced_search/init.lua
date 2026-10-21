@@ -1,13 +1,13 @@
--- Generic ui2 picker. Licensed under EUPL-1.2; see LICENSE and NOTICE in this directory.
+-- Enhanced search using ui2. Licensed under EUPL-1.2; see LICENSE and NOTICE in this directory.
 local M = {}
----@class picker.Picker: picker.Options
----@field items picker.Entry[]
+---@class enhanced_search.EnhancedSearch: enhanced_search.Options
+---@field items enhanced_search.Entry[]
 ---@field matches table[] Ordered {source_index, zero_based_character_positions, score} matches
 ---@field idx integer 1-based match position; 0 means no selection
 ---@field closed boolean
----@field view picker.View
-local Picker = {}
-Picker.__index = Picker
+---@field view enhanced_search.View
+local EnhancedSearch = {}
+EnhancedSearch.__index = EnhancedSearch
 local active
 local defaults = {
 	opts = {
@@ -37,34 +37,34 @@ local defaults = {
 }
 local config = {}
 
----@alias picker.Highlight {[1]: {[1]: integer, [2]: integer}, [2]: string} Byte range {start, end_exclusive} and highlight group
+---@alias enhanced_search.Highlight {[1]: {[1]: integer, [2]: integer}, [2]: string} Byte range {start, end_exclusive} and highlight group
 
----@class picker.Entry
+---@class enhanced_search.Entry
 ---@field id integer 1-based original source index
 ---@field v any Original source value (never copied)
 ---@field text string Single-line display and search text
 ---@field icon? string
 ---@field icon_hl? string
----@field hls? picker.Highlight[] Byte ranges relative to the formatted label
+---@field hls? enhanced_search.Highlight[] Byte ranges relative to the formatted label
 
----@class picker.Options
+---@class enhanced_search.Options
 ---@field source table|fun(query: string, emit: fun(items: table?, err?: any), ctx: table): table|function|nil
 ---@field format_item? fun(item: any, index: integer): string
----@field on_choice? fun(item: any, index: integer, marked: table, picker: table)
----@field on_cancel? fun(picker: table)
----@field preview_item? fun(item: any, index: integer, picker: table): table? {buf, pos?, pos_end?}
----@field get_icon? fun(entry: picker.Entry): string?, string?
----@field hl_item? fun(entry: picker.Entry): table[]?
+---@field on_choice? fun(item: any, index: integer, marked: table, search: table)
+---@field on_cancel? fun(search: table)
+---@field preview_item? fun(item: any, index: integer, search: table): table? {buf, pos?, pos_end?}
+---@field get_icon? fun(entry: enhanced_search.Entry): string?, string?
+---@field hl_item? fun(entry: enhanced_search.Entry): table[]?
 ---@field to_quickfix? fun(item: any, index: integer): table
----@field sorter? fun(entries: picker.Entry[], query: string): table[] {index, character_positions, score}
----@field actions? table<string, fun(picker: table)>
+---@field sorter? fun(entries: enhanced_search.Entry[], query: string): table[] {index, character_positions, score}
+---@field actions? table<string, fun(search: table)>
 ---@field mappings? table<string, string|false>
 ---@field prompt? string
 ---@field defaulttext? string
 ---@field live? boolean Default: true for providers, false for lists
 ---@field debounce? integer Provider delay in milliseconds (default 30)
 ---@field opts? table Prompt, selection, marking, and match-count display options
----@field win? table Picker height, statusline visibility, and preview-window options
+---@field win? table EnhancedSearch height, statusline visibility, and preview-window options
 
 function M.setup(opts)
 	config = vim.deepcopy(opts or {})
@@ -92,23 +92,23 @@ function M.sorter(entries, query)
 	return matches
 end
 
-function Picker:report(err)
+function EnhancedSearch:report(err)
 	vim.schedule(function()
-		vim.notify('picker: ' .. tostring(err), vim.log.levels.ERROR)
+		vim.notify('search: ' .. tostring(err), vim.log.levels.ERROR)
 	end)
 end
 
-function Picker:fix()
+function EnhancedSearch:fix()
 	self.idx = math.min(#self.matches, math.max(self.opts.preselect and 1 or 0, self.idx))
 end
 
-function Picker:getcurrent(index)
+function EnhancedSearch:getcurrent(index)
 	index = index or (self.matches[self.idx] and self.matches[self.idx][1])
 	return index and self.items[index] or nil
 end
 
 -- Marked values stay in source order, including values hidden by fuzzy filtering.
-function Picker:getmarked()
+function EnhancedSearch:getmarked()
 	local values = {}
 	for _, entry in ipairs(self.items) do
 		if self.marked[entry.id] then
@@ -118,7 +118,7 @@ function Picker:getmarked()
 	return values
 end
 
-function Picker:filter()
+function EnhancedSearch:filter()
 	if self.closed then
 		return
 	end
@@ -138,7 +138,7 @@ function Picker:filter()
 	end
 end
 
-function Picker:replace(items)
+function EnhancedSearch:replace(items)
 	assert(type(items) == 'table' and vim.islist(items), 'source must produce a list')
 	local entries = {}
 	for index, value in ipairs(items) do
@@ -150,7 +150,7 @@ function Picker:replace(items)
 	self:filter()
 end
 
-function Picker:invalidate()
+function EnhancedSearch:invalidate()
 	self.generation = self.generation + 1
 	if self.pending_cancel then
 		local cancel = self.pending_cancel
@@ -162,7 +162,7 @@ function Picker:invalidate()
 	end
 end
 
-function Picker:refresh(immediate)
+function EnhancedSearch:refresh(immediate)
 	if self.closed then
 		return
 	end
@@ -192,7 +192,7 @@ function Picker:refresh(immediate)
 			return
 		end
 		local ok, result = pcall(self.source, query, emit, {
-			picker = self,
+			search = self,
 			cancelled = function()
 				return not current()
 			end,
@@ -219,7 +219,7 @@ function Picker:refresh(immediate)
 	end
 end
 
-function Picker:set_query(query)
+function EnhancedSearch:set_query(query)
 	assert(type(query) == 'string', 'query must be a string')
 	if self.closed then
 		return
@@ -238,7 +238,7 @@ function Picker:set_query(query)
 	end
 end
 
-function Picker:togglelive()
+function EnhancedSearch:togglelive()
 	if type(self.source) ~= 'function' then
 		return
 	end
@@ -253,7 +253,7 @@ function Picker:togglelive()
 	self.view:trigger_show()
 end
 
-function Picker:close()
+function EnhancedSearch:close()
 	if self.closed then
 		return
 	end
@@ -275,7 +275,7 @@ function Picker:close()
 	end
 end
 
-function Picker:cancel()
+function EnhancedSearch:cancel()
 	if self.closed then
 		return
 	end
@@ -287,7 +287,7 @@ function Picker:cancel()
 	end
 end
 
-function Picker:accept()
+function EnhancedSearch:accept()
 	if self.closed then
 		return
 	end
@@ -304,7 +304,7 @@ function Picker:accept()
 	end
 end
 
-function Picker:setqflist()
+function EnhancedSearch:setqflist()
 	if not self.to_quickfix then
 		return
 	end
@@ -330,7 +330,7 @@ function Picker:setqflist()
 	end)
 end
 
-function Picker:action(name)
+function EnhancedSearch:action(name)
 	if self.closed then
 		return
 	end
@@ -364,13 +364,13 @@ local function highlights()
 	local cursor = vim.api.nvim_get_hl(0, { name = 'Cursor' })
 	local cursorline = vim.api.nvim_get_hl(0, { name = 'CursorLine' })
 	local groups = {
-		PickerNormal = { fg = normal.fg, bg = msg.bg },
-		PickerPrompt = { link = 'Title' },
-		PickerSel = { fg = cursor.bg, bg = cursorline.bg },
-		PickerPointer = { fg = cursor.bg },
-		PickerMatch = { link = 'PmenuMatch' },
-		PickerMark = { link = 'DiagnosticWarn' },
-		PickerMarkLine = { link = 'Visual' },
+		EnhancedSearchNormal = { fg = normal.fg, bg = msg.bg },
+		EnhancedSearchPrompt = { link = 'Title' },
+		EnhancedSearchSel = { fg = cursor.bg, bg = cursorline.bg },
+		EnhancedSearchPointer = { fg = cursor.bg },
+		EnhancedSearchMatch = { link = 'PmenuMatch' },
+		EnhancedSearchMark = { link = 'DiagnosticWarn' },
+		EnhancedSearchMarkLine = { link = 'Visual' },
 	}
 	for name, spec in pairs(groups) do
 		spec.default = true
@@ -378,17 +378,17 @@ local function highlights()
 	end
 end
 
----@param options picker.Options
----@return table picker Handle: set_query, refresh, getcurrent, getmarked, action, accept, cancel
+---@param options enhanced_search.Options
+---@return table search Handle: set_query, refresh, getcurrent, getmarked, action, accept, cancel
 function M.pick(options)
 	assert(type(options) == 'table', 'pick expects an options table')
 	assert(
 		type(options.source) == 'function' or (type(options.source) == 'table' and vim.islist(options.source)),
 		'source must be a list or provider function'
 	)
-	assert(vim.fn.has 'nvim-0.12' == 1, 'picker requires Neovim >= 0.12 with ui2 enabled')
+	assert(vim.fn.has 'nvim-0.12' == 1, 'search requires Neovim >= 0.12 with ui2 enabled')
 	local ui2 = require 'vim._core.ui2'
-	assert(ui2.msg and ui2.cfg.enable, "enable require('vim._core.ui2').enable({}) before opening a picker")
+	assert(ui2.msg and ui2.cfg.enable, "enable require('vim._core.ui2').enable({}) before opening a search")
 	local overrides = vim.tbl_extend('force', {}, options)
 	overrides.source = nil
 	local opts = vim.tbl_deep_extend('force', defaults, config, overrides)
@@ -411,7 +411,7 @@ function M.pick(options)
 		or opts.opts.promptprefix
 	opts.input = opts.live and '' or (opts.defaulttext or '')
 	opts.liveinput = opts.live and (opts.defaulttext or '') or ''
-	local self = setmetatable(opts, Picker)
+	local self = setmetatable(opts, EnhancedSearch)
 	if type(self.source) == 'table' then
 		self:replace(self.source)
 	end
@@ -423,7 +423,7 @@ function M.pick(options)
 	highlights()
 	self.buf = ui2.bufs.cmd
 	self.keys, self.saved_maps = {}, {}
-	self.view = require('picker.view'):new(self)
+	self.view = require('enhanced_search.view'):new(self)
 	local ok, err = pcall(function()
 		self.view:open()
 		for key, action in pairs(self.mappings) do

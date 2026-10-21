@@ -4,25 +4,25 @@
 local cmdline = require 'vim._core.ui2.cmdline'
 local ui2 = require 'vim._core.ui2'
 
----@alias picker.CmdContent {[1]: integer, [2]: string}[] Highlight ID and text chunks
+---@alias enhanced_search.CmdContent {[1]: integer, [2]: string}[] Highlight ID and text chunks
 
-local view_ns = vim.api.nvim_create_namespace '@picker.view.ns'
-local prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'PickerPrompt'
+local view_ns = vim.api.nvim_create_namespace '@enhanced_search.view.ns'
+local prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'EnhancedSearchPrompt'
 
----@class picker.View
----@field picker picker.Picker
+---@class enhanced_search.View
+---@field search enhanced_search.EnhancedSearch
 ---@field closed boolean
 ---@field opts table<'win'|'buf'|'g',table<string,any>>
 ---@field marks table<string|integer, integer>
----@field win picker.View.win
+---@field win enhanced_search.View.win
 ---@field preview_win integer
 local View = {}
 View.__index = View
 
----@param picker picker.Picker
-function View:new(picker)
+---@param search enhanced_search.EnhancedSearch
+function View:new(search)
 	return setmetatable({
-		picker = picker,
+		search = search,
 		closed = false,
 		opts = {},
 		marks = {},
@@ -32,7 +32,7 @@ function View:new(picker)
 	}, View)
 end
 
----@class picker.View.win
+---@class enhanced_search.View.win
 ---@field height integer
 
 local prompthl_id = -1
@@ -42,7 +42,7 @@ local promptlen = 0 -- Byte length of the prompt prefix, excluding query text.
 local promptidx = 0
 --- Concatenate content chunks and set the text for the current row in the cmdline buffer.
 ---
----@param content picker.CmdContent
+---@param content enhanced_search.CmdContent
 ---@param prompt string
 function View:setprompttext(content, prompt)
 	local lines = {} ---@type string[]
@@ -69,7 +69,7 @@ end
 
 --- Set the cmdline buffer text and cursor position.
 ---
----@param content picker.CmdContent
+---@param content enhanced_search.CmdContent
 ---@param pos? integer
 ---@param firstc string
 ---@param prompt string
@@ -112,13 +112,13 @@ function View:win_config(win, hide, height)
 		vim.api.nvim_win_set_height(win, height)
 	end
 
-	if not hide and self.picker.win.hidestatusline then
+	if not hide and self.search.win.hidestatusline then
 		height = 0
 	end
 
 	if vim.o.cmdheight ~= height then
 		-- Preserve the editor view and prevent ui2's OptionSet handler from
-		-- replacing its saved cmdheight with the picker's temporary height.
+		-- replacing its saved cmdheight with the search's temporary height.
 		vim._with({ noautocmd = true, o = { splitkeep = 'screen' } }, function()
 			vim.o.cmdheight = height
 		end)
@@ -154,12 +154,12 @@ function View:setopts(restore)
 	local opts = {
 		win = {
 			eventignorewin = 'all,-FileType,-InsertCharPre,-TextChangedI,-CursorMovedI,-InsertLeave,-BufLeave,-WinLeave',
-			winhighlight = 'Normal:PickerNormal,' .. ext_winhl,
+			winhighlight = 'Normal:EnhancedSearchNormal,' .. ext_winhl,
 			signcolumn = 'no',
 			wrap = false,
 		},
 		buf = {
-			filetype = 'generic-picker',
+			filetype = 'enhanced-search',
 			buftype = 'prompt',
 			autocomplete = false,
 		},
@@ -193,10 +193,10 @@ end
 local maxlistheight = 1 -- Max height of the matches list (`self.win.height - 1`)
 
 function View:on_resized()
-	if self.picker.win.height > 1 then
-		self.win.height = self.picker.win.height
+	if self.search.win.height > 1 then
+		self.win.height = self.search.win.height
 	else
-		self.win.height = vim.o.lines * self.picker.win.height
+		self.win.height = vim.o.lines * self.search.win.height
 	end
 	self.win.height = math.min(math.max(math.ceil(self.win.height), 2), math.max(2, vim.o.lines - 2))
 
@@ -204,7 +204,7 @@ function View:on_resized()
 end
 
 function View:open()
-	self.augroup = vim.api.nvim_create_augroup('@picker.view', { clear = true })
+	self.augroup = vim.api.nvim_create_augroup('@enhanced_search.view', { clear = true })
 	self:saveview()
 	self.saved_prompt = vim.fn.prompt_getprompt(ui2.bufs.cmd)
 	self:on_resized()
@@ -243,14 +243,14 @@ function View:open()
 		group = self.augroup,
 		pattern = 'i:*',
 		callback = function()
-			self.picker:cancel()
+			self.search:cancel()
 		end,
 	})
 	vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave' }, {
 		group = self.augroup,
 		buffer = ui2.bufs.cmd,
 		callback = function()
-			self.picker:cancel()
+			self.search:cancel()
 		end,
 	})
 end
@@ -285,12 +285,12 @@ end
 
 function View:trigger_show()
 	local input
-	if self.picker.live then
-		input = self.picker.liveinput
+	if self.search.live then
+		input = self.search.liveinput
 	else
-		input = self.picker.input
+		input = self.search.input
 	end
-	self:show({ { 0, input } }, -1, '', self.picker.prompttext, cmdline.indent, cmdline.level, prompt_hl_id)
+	self:show({ { 0, input } }, -1, '', self.search.prompttext, cmdline.indent, cmdline.level, prompt_hl_id)
 end
 
 function View:update()
@@ -299,8 +299,8 @@ function View:update()
 	end
 	local text = vim.api.nvim_buf_get_lines(ui2.bufs.cmd, promptidx, promptidx + 1, false)[1] or ''
 	text = text:sub(promptlen + 1)
-	if text ~= (self.picker.live and self.picker.liveinput or self.picker.input) then
-		self.picker:set_query(text)
+	if text ~= (self.search.live and self.search.liveinput or self.search.input) then
+		self.search:set_query(text)
 	end
 end
 
@@ -332,7 +332,7 @@ function View:updatecursor(pos)
 	vim._with({ noautocmd = true }, function()
 		local ok, _ = pcall(vim.api.nvim_win_set_cursor, ui2.wins.cmd, self.curpos)
 		if not ok then
-			self.picker:report(('Failed to set cursor %d:%d'):format(self.curpos[1], self.curpos[2]))
+			self.search:report(('Failed to set cursor %d:%d'):format(self.curpos[1], self.curpos[2]))
 		end
 	end)
 end
@@ -340,7 +340,7 @@ end
 local srow = 0
 
 function View:clear()
-	srow = self.picker.opts.bottom and 0 or 1
+	srow = self.search.opts.bottom and 0 or 1
 	cmdline.erow = srow
 	vim.api.nvim_buf_clear_namespace(ui2.bufs.cmd, view_ns, 0, -1)
 	self.marks = {}
@@ -348,7 +348,7 @@ function View:clear()
 end
 
 function View:promptpos()
-	promptidx = self.picker.opts.bottom and cmdline.erow or 0
+	promptidx = self.search.opts.bottom and cmdline.erow or 0
 end
 
 function View:setlines(posstart, posend, lines)
@@ -394,7 +394,7 @@ function View:mark(id, line, col, opts)
 		ok, result = pcall(vim.api.nvim_buf_set_extmark, ui2.bufs.cmd, view_ns, line, col, opts)
 	end)
 	if not ok then
-		self.picker:report(('Failed to add extmark %d:%d\n\t%s'):format(line, col, result))
+		self.search:report(('Failed to add extmark %d:%d\n\t%s'):format(line, col, result))
 		return -1
 	end
 
@@ -405,7 +405,7 @@ function View:mark(id, line, col, opts)
 	return result
 end
 
----@param p picker.Picker
+---@param p enhanced_search.EnhancedSearch
 ---@param info 'index'|'list'|string
 ---@return string
 local function getpromptinfo(p, info)
@@ -430,9 +430,9 @@ function View:drawprompt()
 			virt_text = {
 				{
 					table.concat(
-						vim.iter(self.picker.opts.infolist)
+						vim.iter(self.search.opts.infolist)
 							:map(function(info)
-								return getpromptinfo(self.picker, info)
+								return getpromptinfo(self.search, info)
 							end)
 							:totable(),
 						' '
@@ -449,30 +449,30 @@ end
 local offset = 0
 
 function View:updateoffset()
-	self.picker:fix()
-	if self.picker.idx == 0 then
+	self.search:fix()
+	if self.search.idx == 0 then
 		offset = 0
 		return
 	end
 
-	local _offset = self.picker.idx - maxlistheight
+	local _offset = self.search.idx - maxlistheight
 	if _offset > offset then
 		offset = _offset
-	elseif self.picker.idx <= offset then
-		offset = self.picker.idx - 1
+	elseif self.search.idx <= offset then
+		offset = self.search.idx - 1
 	end
 
-	offset = math.min(math.max(0, offset), math.max(0, #self.picker.matches - maxlistheight))
+	offset = math.min(math.max(0, offset), math.max(0, #self.search.matches - maxlistheight))
 end
 
 local icon_pad = 2
 
 function View:showmatches()
-	local indent = vim.fn.strdisplaywidth(self.picker.opts.pointer) + 1
+	local indent = vim.fn.strdisplaywidth(self.search.opts.pointer) + 1
 	local prefix = (' '):rep(indent)
 	local icon_pad_str = (' '):rep(icon_pad)
 
-	if self.picker.idx <= 1 then
+	if self.search.idx <= 1 then
 		offset = 0
 	end
 	self:updateoffset()
@@ -480,34 +480,34 @@ function View:showmatches()
 	local lines = {} ---@type string[]
 	local hls = {}
 	local icons = {} ---@type ([string, string]|false)[]
-	local custom_hls = {} ---@type (picker.Highlight[]|false)[]
+	local custom_hls = {} ---@type (enhanced_search.Highlight[]|false)[]
 	local marks = {} ---@type boolean[]
-	for i = 1 + offset, math.min(#self.picker.matches, maxlistheight + offset) do
-		local match = self.picker.matches[i]
-		local item = self.picker.items[match[1]]
+	for i = 1 + offset, math.min(#self.search.matches, maxlistheight + offset) do
+		local match = self.search.matches[i]
+		local item = self.search.items[match[1]]
 
 		local icon, icon_hl = item.icon, item.icon_hl
-		if not (icon and icon_hl) and vim.is_callable(self.picker.get_icon) then
-			icon, icon_hl = self.picker.get_icon(item)
+		if not (icon and icon_hl) and vim.is_callable(self.search.get_icon) then
+			icon, icon_hl = self.search.get_icon(item)
 			item.icon, item.icon_hl = icon, icon_hl
 		end
 		icons[#icons + 1] = icon and { icon, icon_hl } or false
 		icon = icon and ('%s%s'):format(item.icon, icon_pad_str) or ''
 
 		local hl = item.hls
-		if not hl and vim.is_callable(self.picker.hl_item) then
-			hl = self.picker.hl_item(item)
+		if not hl and vim.is_callable(self.search.hl_item) then
+			hl = self.search.hl_item(item)
 			item.hls = hl
 		end
 		custom_hls[#custom_hls + 1] = hl or false
 
-		marks[#marks + 1] = self.picker.marked[item.id] or false
+		marks[#marks + 1] = self.search.marked[item.id] or false
 
 		lines[#lines + 1] = ('%s%s%s'):format(prefix, icon, item.text)
 		hls[#hls + 1] = match[2]
 	end
 
-	if not self.picker.opts.shrink then
+	if not self.search.opts.shrink then
 		for _ = 1, (maxlistheight - #lines) do
 			lines[#lines + 1] = ''
 		end
@@ -541,12 +541,12 @@ function View:showmatches()
 
 		if marks[i] then
 			self:mark(nil, srow + i - 1, indent - 1, {
-				virt_text = { { self.picker.opts.marker, 'PickerMark' } },
+				virt_text = { { self.search.opts.marker, 'EnhancedSearchMark' } },
 				virt_text_pos = 'overlay',
 				priority = ext_priority.marker,
 			})
 			self:mark(nil, srow + i - 1, 0, {
-				hl_group = 'PickerMarkLine',
+				hl_group = 'EnhancedSearchMarkLine',
 				hl_eol = true,
 				end_row = srow + i,
 				end_col = 0,
@@ -557,12 +557,12 @@ function View:showmatches()
 
 		if hls[i] then
 			for j = 1, #hls[i] do
-				local text = self.picker.items[self.picker.matches[offset + i][1]].text
+				local text = self.search.items[self.search.matches[offset + i][1]].text
 				local byte = vim.fn.byteidx(text, hls[i][j])
 				local nextbyte = vim.fn.byteidx(text, hls[i][j] + 1)
 				local col = indent + icon_indent + byte
 				self:mark(nil, srow + i - 1, col, {
-					hl_group = 'PickerMatch',
+					hl_group = 'EnhancedSearchMatch',
 					end_col = indent + icon_indent + (nextbyte < 0 and #text or nextbyte),
 					priority = ext_priority.match,
 				})
@@ -574,8 +574,8 @@ end
 function View:hlselect()
 	self:softupdatepreview()
 
-	self.picker:fix()
-	local idx = self.picker.idx
+	self.search:fix()
+	local idx = self.search.idx
 	if idx == 0 then
 		return
 	end
@@ -584,10 +584,10 @@ function View:hlselect()
 	local row = math.max(0, math.min(srow + (idx - offset), cmdline.erow) - 1)
 
 	self:mark('hlselect', row, 0, {
-		virt_text = { { self.picker.opts.pointer, 'PickerPointer' } },
+		virt_text = { { self.search.opts.pointer, 'EnhancedSearchPointer' } },
 		virt_text_pos = 'overlay',
 
-		hl_group = 'PickerSel',
+		hl_group = 'EnhancedSearchSel',
 		hl_eol = true,
 		end_row = row + 1,
 		end_col = 0,
@@ -607,29 +607,29 @@ end
 
 ---@return {buf?:integer, pos?:[integer,integer], pos_end?:[integer,integer]}?
 function View:openpreview()
-	if self.picker.idx == 0 then
+	if self.search.idx == 0 then
 		return
 	end
 
-	local match = self.picker.matches[self.picker.idx]
-	local item = self.picker.items[match[1]]
+	local match = self.search.matches[self.search.idx]
+	local item = self.search.items[match[1]]
 
-	if not item or not (self.picker.preview_item and vim.is_callable(self.picker.preview_item)) then
+	if not item or not (self.search.preview_item and vim.is_callable(self.search.preview_item)) then
 		return
 	end
 
-	local ok, result = pcall(self.picker.preview_item, item.v, item.id, self.picker)
+	local ok, result = pcall(self.search.preview_item, item.v, item.id, self.search)
 	if not ok then
-		self.picker:report(result)
+		self.search:report(result)
 		return
 	end
 	return result
 end
 
 function View:previewconfig()
-	local previewopts = self.picker.win.preview_opts
-		and vim.is_callable(self.picker.win.preview_opts)
-		and self.picker.win.preview_opts(self)
+	local previewopts = self.search.win.preview_opts
+		and vim.is_callable(self.search.win.preview_opts)
+		and self.search.win.preview_opts(self)
 	local cmdheight = vim.api.nvim_win_get_height(ui2.wins.cmd)
 
 	local winborder = previewopts and previewopts.border or vim.o.winborder
@@ -642,7 +642,7 @@ function View:previewconfig()
 		row = vim.o.lines
 			- (self.win.height + cmdheight)
 			- ((winborder == 'none' or winborder == '') and 0 or 2)
-			- (self.picker.win.hidestatusline and 0 or 1),
+			- (self.search.win.hidestatusline and 0 or 1),
 	}, previewopts or {})
 end
 
@@ -674,7 +674,7 @@ function View:updatepreview()
 end
 
 function View:softupdatepreview()
-	if self.picker.idx == 0 then
+	if self.search.idx == 0 then
 		self:closepreview()
 	end
 
