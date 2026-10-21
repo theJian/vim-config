@@ -112,13 +112,14 @@ end
 
 -- Marked values stay in source order, including values hidden by fuzzy filtering.
 function EnhancedSearch:get_marked()
-	local values = {}
-	for _, entry in ipairs(self.items) do
-		if self.marked[entry.id] then
-			values[#values + 1] = entry.v
-		end
-	end
-	return values
+	return vim.iter(self.items)
+		:filter(function(entry)
+			return self.marked[entry.id]
+		end)
+		:map(function(entry)
+			return entry.v
+		end)
+		:totable()
 end
 
 function EnhancedSearch:filter()
