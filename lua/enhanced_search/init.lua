@@ -14,22 +14,22 @@ local defaults = {
 		preselect = true,
 		bottom = true,
 		shrink = true,
-		promptprefix = '',
+		prompt_prefix = '',
 		prompt_title = true,
 		pointer = '',
 		marker = '│',
-		infolist = { 'list' },
+		info_list = { 'list' },
 	},
-	win = { height = 0.4, hidestatusline = false },
+	win = { height = 0.4, hide_statusline = false },
 	mappings = {
 		['<Down>'] = 'down',
 		['<Up>'] = 'up',
 		['<CR>'] = 'accept',
 		['<Esc>'] = 'cancel',
 		['<Tab>'] = 'mark',
-		['<C-g>'] = 'togglelive',
-		['<C-l>'] = 'togglepreview',
-		['<C-q>'] = 'setqflist',
+		['<C-g>'] = 'toggle_live',
+		['<C-l>'] = 'toggle_preview',
+		['<C-q>'] = 'set_quickfix',
 		['<C-s>'] = 'split',
 		['<C-v>'] = 'vsplit',
 		['<C-t>'] = 'tabnew',
@@ -60,7 +60,7 @@ local config = {}
 ---@field actions? table<string, fun(search: table)>
 ---@field mappings? table<string, string|false>
 ---@field prompt? string
----@field defaulttext? string
+---@field default_text? string
 ---@field live? boolean Default: true for providers, false for lists
 ---@field debounce? integer Provider delay in milliseconds (default 30)
 ---@field opts? table Prompt, selection, marking, and match-count display options
@@ -105,13 +105,13 @@ function EnhancedSearch:fix()
 	self.idx = math.min(#self.matches, math.max(self.opts.preselect and 1 or 0, self.idx))
 end
 
-function EnhancedSearch:getcurrent(index)
+function EnhancedSearch:get_current(index)
 	index = index or (self.matches[self.idx] and self.matches[self.idx][1])
 	return index and self.items[index] or nil
 end
 
 -- Marked values stay in source order, including values hidden by fuzzy filtering.
-function EnhancedSearch:getmarked()
+function EnhancedSearch:get_marked()
 	local values = {}
 	for _, entry in ipairs(self.items) do
 		if self.marked[entry.id] then
@@ -171,7 +171,7 @@ function EnhancedSearch:refresh(immediate)
 	end
 	self:invalidate()
 	local generation = self.generation
-	local query = self.live and self.liveinput or ''
+	local query = self.live and self.live_input or ''
 	local function current()
 		return not self.closed and self.generation == generation
 	end
@@ -229,7 +229,7 @@ function EnhancedSearch:set_query(query)
 	end
 	self.idx = 0
 	if self.live then
-		self.liveinput = query
+		self.live_input = query
 		self.items, self.matches, self.marked = {}, {}, {}
 		self:refresh()
 	else
@@ -241,7 +241,7 @@ function EnhancedSearch:set_query(query)
 	end
 end
 
-function EnhancedSearch:togglelive()
+function EnhancedSearch:toggle_live()
 	if type(self.source) ~= 'function' then
 		return
 	end
@@ -294,11 +294,11 @@ function EnhancedSearch:accept()
 	if self.closed then
 		return
 	end
-	local entry = self:getcurrent()
+	local entry = self:get_current()
 	if not entry then
 		return
 	end
-	local marked = self:getmarked()
+	local marked = self:get_marked()
 	self:close()
 	if self.on_choice then
 		vim.schedule(function()
@@ -307,7 +307,7 @@ function EnhancedSearch:accept()
 	end
 end
 
-function EnhancedSearch:setqflist()
+function EnhancedSearch:set_quickfix()
 	if not self.to_quickfix then
 		return
 	end
@@ -345,14 +345,14 @@ function EnhancedSearch:action(name)
 			self:fix()
 			self.view:trigger_show()
 		elseif name == 'mark' then
-			local entry = self:getcurrent()
+			local entry = self:get_current()
 			if entry then
 				self.marked[entry.id] = not self.marked[entry.id] or nil
 				self.view:trigger_show()
 			end
-		elseif name == 'togglepreview' then
-			self.view:togglepreview()
-		elseif name == 'accept' or name == 'cancel' or name == 'togglelive' or name == 'setqflist' then
+		elseif name == 'toggle_preview' then
+			self.view:toggle_preview()
+		elseif name == 'accept' or name == 'cancel' or name == 'toggle_live' or name == 'set_quickfix' then
 			self[name](self)
 		end
 	end)
@@ -382,7 +382,7 @@ local function highlights()
 end
 
 ---@param options enhanced_search.Options
----@return table search Handle: set_query, refresh, getcurrent, getmarked, action, accept, cancel
+---@return table search Handle: set_query, refresh, get_current, get_marked, action, accept, cancel
 function M.pick(options)
 	assert(type(options) == 'table', 'pick expects an options table')
 	assert(
@@ -410,10 +410,10 @@ function M.pick(options)
 	assert(type(opts.debounce) == 'number' and opts.debounce >= 0, 'debounce must be nonnegative')
 	assert(type(opts.win.height) == 'number' and opts.win.height > 0, 'win.height must be positive')
 	opts.prompt = opts.prompt or ''
-	opts.prompttext = opts.opts.prompt_title and (opts.prompt .. ' ' .. opts.opts.promptprefix)
-		or opts.opts.promptprefix
-	opts.input = opts.live and '' or (opts.defaulttext or '')
-	opts.liveinput = opts.live and (opts.defaulttext or '') or ''
+	opts.prompt_text = opts.opts.prompt_title and (opts.prompt .. ' ' .. opts.opts.prompt_prefix)
+		or opts.opts.prompt_prefix
+	opts.input = opts.live and '' or (opts.default_text or '')
+	opts.live_input = opts.live and (opts.default_text or '') or ''
 	local self = setmetatable(opts, EnhancedSearch)
 	if type(self.source) == 'table' then
 		self:replace(self.source)

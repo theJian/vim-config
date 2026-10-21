@@ -68,7 +68,7 @@ test('returns original object identity and source index after fuzzy filtering', 
 		end,
 	}
 	p:set_query 'bn'
-	assert(#p.matches == 1 and p:getcurrent().v == b)
+	assert(#p.matches == 1 and p:get_current().v == b)
 	p:accept()
 	flush()
 	assert(chosen == b and index == 2)
@@ -151,10 +151,10 @@ test('synchronous provider and live/fuzzy toggle use separate queries', function
 	}
 	flush()
 	assert(#p.matches == 2)
-	p:togglelive()
+	p:toggle_live()
 	p:set_query 'bn'
-	assert(calls == 1 and #p.matches == 1 and p:getcurrent().v == 'banana')
-	p:togglelive()
+	assert(calls == 1 and #p.matches == 1 and p:get_current().v == 'banana')
+	p:toggle_live()
 	flush()
 	assert(calls == 2 and #p.matches == 2)
 end)
@@ -189,7 +189,7 @@ test('preview without a position works and closes with the search', function()
 			return { buf = buf }
 		end,
 	}
-	p:action 'togglepreview'
+	p:action 'toggle_preview'
 	local preview = p.view.preview_win
 	assert(preview and vim.api.nvim_win_is_valid(preview))
 	p:cancel()
@@ -234,7 +234,7 @@ end)
 test('top prompt, fixed height, no preselection, scrolling and default text', function()
 	local p = open {
 		source = { 'a1', 'a2', 'a3', 'a4', 'a5' },
-		defaulttext = 'a',
+		default_text = 'a',
 		opts = { bottom = false, shrink = false, preselect = false },
 		win = { height = 3 },
 	}
@@ -245,7 +245,7 @@ test('top prompt, fixed height, no preselection, scrolling and default text', fu
 	for _ = 1, 5 do
 		p:action 'down'
 	end
-	assert(p:getcurrent().v == 'a5')
+	assert(p:get_current().v == 'a5')
 	lines = vim.api.nvim_buf_get_lines(p.buf, 0, -1, false)
 	assert(lines[3]:find('a5', 1, true))
 	p:set_query 'missing'
@@ -266,7 +266,7 @@ test('quickfix converts marked original values including hidden matches', functi
 	p:action 'mark'
 	p:action 'mark'
 	p:set_query 'banana'
-	p:setqflist()
+	p:set_quickfix()
 	flush()
 	assert(p.closed)
 	local entries = vim.fn.getqflist()

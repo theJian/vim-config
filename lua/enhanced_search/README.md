@@ -135,12 +135,12 @@ Additional hooks:
   `{ source_index, zero_based_character_positions, score }` matches.
   Use `search.sorter` for the default pattern + fuzzy matcher.
 - `actions = { name = function(handle) ... end }` supplies custom actions or
-  overrides defaults. `handle:getcurrent()` returns the selected entry;
-  `handle:getmarked()` returns marked original values. Use `handle:close()`
+  overrides defaults. `handle:get_current()` returns the selected entry;
+  `handle:get_marked()` returns marked original values. Use `handle:close()`
   before changing editor windows from a custom action.
 
 `pick` returns a handle with `set_query(query)`, `refresh()`, `action(name)`,
-`getcurrent()`, `getmarked()`, `accept()`, `cancel()`, and `close()`.
+`get_current()`, `get_marked()`, `accept()`, `cancel()`, and `close()`.
 
 ## UI configuration
 
@@ -152,10 +152,10 @@ local search = require 'enhanced_search'
 search.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
-        promptprefix = '', prompt_title = true, pointer = '', marker = '│',
-        infolist = { 'list' }, -- 'list' gives (matches/items); 'index' gives [selection]
+        prompt_prefix = '', prompt_title = true, pointer = '', marker = '│',
+        info_list = { 'list' }, -- 'list' gives (matches/items); 'index' gives [selection]
     },
-    win = { height = 0.4, hidestatusline = false },
+    win = { height = 0.4, hide_statusline = false },
     mappings = { ['<C-n>'] = 'down', ['<C-p>'] = 'up' },
 }
 ```
