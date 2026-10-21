@@ -449,7 +449,7 @@ end
 local offset = 0
 
 function View:update_offset()
-	self.search:fix()
+	self.search:clamp()
 	if self.search.idx == 0 then
 		offset = 0
 		return
@@ -574,7 +574,7 @@ end
 function View:highlight_selection()
 	self:soft_update_preview()
 
-	self.search:fix()
+	self.search:clamp()
 	local idx = self.search.idx
 	if idx == 0 then
 		return

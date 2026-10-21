@@ -101,7 +101,7 @@ function EnhancedSelect:report(err)
 	end)
 end
 
-function EnhancedSelect:fix()
+function EnhancedSelect:clamp()
 	self.idx = math.min(#self.matches, math.max(self.opts.preselect and 1 or 0, self.idx))
 end
 
@@ -136,7 +136,7 @@ function EnhancedSelect:filter()
 		return
 	end
 	self.matches = matches
-	self:fix()
+	self:clamp()
 	if self.view then
 		self.view:trigger_show()
 	end
@@ -346,7 +346,7 @@ function EnhancedSelect:action(name)
 			self.actions[name](self)
 		elseif name == 'down' or name == 'up' then
 			self.idx = self.idx + (name == 'down' and 1 or -1)
-			self:fix()
+			self:clamp()
 			self.view:trigger_show()
 		elseif name == 'mark' then
 			local entry = self:get_current()
