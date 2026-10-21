@@ -1,6 +1,6 @@
-# Enhanced search
+# Enhanced select
 
-`require('enhanced_search')` selects arbitrary Lua values using a command-area prompt,
+`require('enhanced_select')` selects arbitrary Lua values using a command-area prompt,
 a list of matches, fuzzy filtering, marking, and optional previews. Requires
 Neovim 0.12+ with ui2 enabled. This repository enables ui2 in `lua/ui.lua`;
 when using the module in another configuration, enable it before opening a search:
@@ -16,7 +16,7 @@ terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
 ## Static values
 
 ```lua
-local search = require 'enhanced_search'
+local search = require 'enhanced_select'
 search.pick {
     prompt = 'Environment',
     source = {
@@ -48,7 +48,7 @@ The returned list must contain the original values; `format_item` supplies their
 display labels, and `on_choice` receives the selected value without copying it.
 
 ```lua
-local search = require 'enhanced_search'
+local search = require 'enhanced_select'
 search.pick {
     prompt = 'Buffers',
     source = function()
@@ -65,7 +65,7 @@ search.pick {
 ## Async/live sources
 
 ```lua
-local search = require 'enhanced_search'
+local search = require 'enhanced_select'
 search.pick {
     prompt = 'Tracked files',
     debounce = 50,
@@ -148,7 +148,7 @@ Additional hooks:
 changes merge with defaults; set a mapping to `false` to disable it.
 
 ```lua
-local search = require 'enhanced_search'
+local search = require 'enhanced_select'
 search.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
@@ -162,14 +162,14 @@ search.setup {
 
 Height may be a fraction of the editor (0 < height <= 1) or a number of rows.
 `win.preview_opts(view)` can return Neovim floating window options. Highlight
-groups use the `EnhancedSearch` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
+groups use the `EnhancedSelect` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
 `Mark`, and `MarkLine`. The module uses experimental `vim._core.ui2` internals,
 so future Neovim changes may require updating the renderer.
 
 Opt into the standard selection interface explicitly:
 
 ```lua
-vim.ui.select = require('enhanced_search').select
+vim.ui.select = require('enhanced_select').select
 ```
 
 No keymaps or selection overrides are installed globally. Buffer-local mappings
@@ -180,5 +180,5 @@ and editor options are restored on exit.
 Run the integration tests from the repository root:
 
 ```sh
-nvim --headless -u NONE -i NONE -l tests/enhanced_search.lua
+nvim --headless -u NONE -i NONE -l tests/enhanced_select.lua
 ```

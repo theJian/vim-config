@@ -4,22 +4,22 @@
 local cmdline = require 'vim._core.ui2.cmdline'
 local ui2 = require 'vim._core.ui2'
 
----@alias enhanced_search.CmdContent {[1]: integer, [2]: string}[] Highlight ID and text chunks
+---@alias enhanced_select.CmdContent {[1]: integer, [2]: string}[] Highlight ID and text chunks
 
-local view_ns = vim.api.nvim_create_namespace '@enhanced_search.view.ns'
-local prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'EnhancedSearchPrompt'
+local view_ns = vim.api.nvim_create_namespace '@enhanced_select.view.ns'
+local prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'EnhancedSelectPrompt'
 
----@class enhanced_search.View
----@field search enhanced_search.EnhancedSearch
+---@class enhanced_select.View
+---@field search enhanced_select.EnhancedSelect
 ---@field closed boolean
 ---@field opts table<'win'|'buf'|'g',table<string,any>>
 ---@field marks table<string|integer, integer>
----@field win enhanced_search.View.win
+---@field win enhanced_select.View.win
 ---@field preview_win integer
 local View = {}
 View.__index = View
 
----@param search enhanced_search.EnhancedSearch
+---@param search enhanced_select.EnhancedSelect
 function View:new(search)
 	return setmetatable({
 		search = search,
@@ -32,7 +32,7 @@ function View:new(search)
 	}, View)
 end
 
----@class enhanced_search.View.win
+---@class enhanced_select.View.win
 ---@field height integer
 
 local active_prompt_hl_id = -1
@@ -42,7 +42,7 @@ local prompt_length = 0 -- Byte length of the prompt prefix, excluding query tex
 local prompt_row = 0
 --- Concatenate content chunks and set the text for the current row in the cmdline buffer.
 ---
----@param content enhanced_search.CmdContent
+---@param content enhanced_select.CmdContent
 ---@param prompt string
 function View:set_prompt_text(content, prompt)
 	local lines = {} ---@type string[]
@@ -69,7 +69,7 @@ end
 
 --- Set the cmdline buffer text and cursor position.
 ---
----@param content enhanced_search.CmdContent
+---@param content enhanced_select.CmdContent
 ---@param pos? integer
 ---@param first_char string
 ---@param prompt string
@@ -154,12 +154,12 @@ function View:set_opts(restore)
 	local opts = {
 		win = {
 			eventignorewin = 'all,-FileType,-InsertCharPre,-TextChangedI,-CursorMovedI,-InsertLeave,-BufLeave,-WinLeave',
-			winhighlight = 'Normal:EnhancedSearchNormal,' .. extra_win_highlights,
+			winhighlight = 'Normal:EnhancedSelectNormal,' .. extra_win_highlights,
 			signcolumn = 'no',
 			wrap = false,
 		},
 		buf = {
-			filetype = 'enhanced-search',
+			filetype = 'enhanced-select',
 			buftype = 'prompt',
 			autocomplete = false,
 		},
@@ -204,7 +204,7 @@ function View:on_resized()
 end
 
 function View:open()
-	self.augroup = vim.api.nvim_create_augroup('@enhanced_search.view', { clear = true })
+	self.augroup = vim.api.nvim_create_augroup('@enhanced_select.view', { clear = true })
 	self:save_view()
 	self.saved_prompt = vim.fn.prompt_getprompt(ui2.bufs.cmd)
 	self:on_resized()
@@ -405,7 +405,7 @@ function View:mark(id, line, col, opts)
 	return result
 end
 
----@param p enhanced_search.EnhancedSearch
+---@param p enhanced_select.EnhancedSelect
 ---@param info 'index'|'list'|string
 ---@return string
 local function get_prompt_info(p, info)
@@ -480,7 +480,7 @@ function View:show_matches()
 	local lines = {} ---@type string[]
 	local hls = {}
 	local icons = {} ---@type ([string, string]|false)[]
-	local custom_hls = {} ---@type (enhanced_search.Highlight[]|false)[]
+	local custom_hls = {} ---@type (enhanced_select.Highlight[]|false)[]
 	local marks = {} ---@type boolean[]
 	for i = 1 + offset, math.min(#self.search.matches, max_list_height + offset) do
 		local match = self.search.matches[i]
@@ -541,12 +541,12 @@ function View:show_matches()
 
 		if marks[i] then
 			self:mark(nil, start_row + i - 1, indent - 1, {
-				virt_text = { { self.search.opts.marker, 'EnhancedSearchMark' } },
+				virt_text = { { self.search.opts.marker, 'EnhancedSelectMark' } },
 				virt_text_pos = 'overlay',
 				priority = ext_priority.marker,
 			})
 			self:mark(nil, start_row + i - 1, 0, {
-				hl_group = 'EnhancedSearchMarkLine',
+				hl_group = 'EnhancedSelectMarkLine',
 				hl_eol = true,
 				end_row = start_row + i,
 				end_col = 0,
@@ -562,7 +562,7 @@ function View:show_matches()
 				local next_byte = vim.fn.byteidx(text, hls[i][j] + 1)
 				local col = indent + icon_indent + byte
 				self:mark(nil, start_row + i - 1, col, {
-					hl_group = 'EnhancedSearchMatch',
+					hl_group = 'EnhancedSelectMatch',
 					end_col = indent + icon_indent + (next_byte < 0 and #text or next_byte),
 					priority = ext_priority.match,
 				})
@@ -584,10 +584,10 @@ function View:highlight_selection()
 	local row = math.max(0, math.min(start_row + (idx - offset), cmdline.erow) - 1)
 
 	self:mark('highlight_selection', row, 0, {
-		virt_text = { { self.search.opts.pointer, 'EnhancedSearchPointer' } },
+		virt_text = { { self.search.opts.pointer, 'EnhancedSelectPointer' } },
 		virt_text_pos = 'overlay',
 
-		hl_group = 'EnhancedSearchSel',
+		hl_group = 'EnhancedSelectSel',
 		hl_eol = true,
 		end_row = row + 1,
 		end_col = 0,

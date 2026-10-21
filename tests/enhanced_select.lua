@@ -1,4 +1,4 @@
--- Run from the repository root: nvim --headless -u NONE -i NONE -l tests/enhanced_search.lua
+-- Run from the repository root: nvim --headless -u NONE -i NONE -l tests/enhanced_select.lua
 vim.opt.rtp:prepend(vim.fn.getcwd())
 local ui2 = require 'vim._core.ui2'
 -- vim._core.ui2.enable() does nothing without an attached UI, so initialize
@@ -6,7 +6,7 @@ local ui2 = require 'vim._core.ui2'
 ui2.cmd = require 'vim._core.ui2.cmdline'
 ui2.msg = require 'vim._core.ui2.messages'
 ui2.check_targets()
-local search = require 'enhanced_search'
+local search = require 'enhanced_select'
 local failures = {}
 local handles = {}
 local function open(opts)
@@ -165,14 +165,14 @@ test('pattern filtering and multibyte match highlights use whole characters', fu
 	assert(#p.matches == 1)
 	local marks = vim.api.nvim_buf_get_extmarks(
 		ui2.bufs.cmd,
-		vim.api.nvim_create_namespace '@enhanced_search.view.ns',
+		vim.api.nvim_create_namespace '@enhanced_select.view.ns',
 		0,
 		-1,
 		{ details = true }
 	)
 	local found = false
 	for _, mark in ipairs(marks) do
-		if mark[4].hl_group == 'EnhancedSearchMatch' then
+		if mark[4].hl_group == 'EnhancedSelectMatch' then
 			assert(mark[4].end_col - mark[3] == 3, vim.inspect(mark))
 			found = true
 		end

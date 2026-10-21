@@ -1,13 +1,13 @@
--- Enhanced search using ui2. Licensed under EUPL-1.2; see LICENSE and NOTICE in this directory.
+-- Enhanced select using ui2. Licensed under EUPL-1.2; see LICENSE and NOTICE in this directory.
 local M = {}
----@class enhanced_search.EnhancedSearch: enhanced_search.Options
----@field items enhanced_search.Entry[]
+---@class enhanced_select.EnhancedSelect: enhanced_select.Options
+---@field items enhanced_select.Entry[]
 ---@field matches table[] Ordered {source_index, zero_based_character_positions, score} matches
 ---@field idx integer 1-based match position; 0 means no selection
 ---@field closed boolean
----@field view enhanced_search.View
-local EnhancedSearch = {}
-EnhancedSearch.__index = EnhancedSearch
+---@field view enhanced_select.View
+local EnhancedSelect = {}
+EnhancedSelect.__index = EnhancedSelect
 local active
 local defaults = {
 	opts = {
@@ -37,26 +37,26 @@ local defaults = {
 }
 local config = {}
 
----@alias enhanced_search.Highlight {[1]: {[1]: integer, [2]: integer}, [2]: string} Byte range {start, end_exclusive} and highlight group
+---@alias enhanced_select.Highlight {[1]: {[1]: integer, [2]: integer}, [2]: string} Byte range {start, end_exclusive} and highlight group
 
----@class enhanced_search.Entry
+---@class enhanced_select.Entry
 ---@field id integer 1-based original source index
 ---@field v any Original source value (never copied)
 ---@field text string Single-line display and search text
 ---@field icon? string
 ---@field icon_hl? string
----@field hls? enhanced_search.Highlight[] Byte ranges relative to the formatted label
+---@field hls? enhanced_select.Highlight[] Byte ranges relative to the formatted label
 
----@class enhanced_search.Options
+---@class enhanced_select.Options
 ---@field source table|fun(query: string, emit: fun(items: table?, err?: any), ctx: table): table|function|nil
 ---@field format_item? fun(item: any, index: integer): string
 ---@field on_choice? fun(item: any, index: integer, marked: table, search: table)
 ---@field on_cancel? fun(search: table)
 ---@field preview_item? fun(item: any, index: integer, search: table): table? {buf, pos?, pos_end?}
----@field get_icon? fun(entry: enhanced_search.Entry): string?, string?
----@field hl_item? fun(entry: enhanced_search.Entry): table[]?
+---@field get_icon? fun(entry: enhanced_select.Entry): string?, string?
+---@field hl_item? fun(entry: enhanced_select.Entry): table[]?
 ---@field to_quickfix? fun(item: any, index: integer): table
----@field sorter? fun(entries: enhanced_search.Entry[], query: string): table[] {index, character_positions, score}
+---@field sorter? fun(entries: enhanced_select.Entry[], query: string): table[] {index, character_positions, score}
 ---@field actions? table<string, fun(search: table)>
 ---@field mappings? table<string, string|false>
 ---@field prompt? string
@@ -64,7 +64,7 @@ local config = {}
 ---@field live? boolean Default: true for providers, false for lists
 ---@field debounce? integer Provider delay in milliseconds (default 30)
 ---@field opts? table Prompt, selection, marking, and match-count display options
----@field win? table EnhancedSearch height, statusline visibility, and preview-window options
+---@field win? table EnhancedSelect height, statusline visibility, and preview-window options
 
 function M.setup(opts)
 	config = vim.deepcopy(opts or {})
@@ -95,23 +95,23 @@ function M.sorter(entries, query)
 		:totable()
 end
 
-function EnhancedSearch:report(err)
+function EnhancedSelect:report(err)
 	vim.schedule(function()
 		vim.notify('search: ' .. tostring(err), vim.log.levels.ERROR)
 	end)
 end
 
-function EnhancedSearch:fix()
+function EnhancedSelect:fix()
 	self.idx = math.min(#self.matches, math.max(self.opts.preselect and 1 or 0, self.idx))
 end
 
-function EnhancedSearch:get_current(index)
+function EnhancedSelect:get_current(index)
 	index = index or (self.matches[self.idx] and self.matches[self.idx][1])
 	return index and self.items[index] or nil
 end
 
 -- Marked values stay in source order, including values hidden by fuzzy filtering.
-function EnhancedSearch:get_marked()
+function EnhancedSelect:get_marked()
 	return vim.iter(self.items)
 		:filter(function(entry)
 			return self.marked[entry.id]
@@ -122,7 +122,7 @@ function EnhancedSearch:get_marked()
 		:totable()
 end
 
-function EnhancedSearch:filter()
+function EnhancedSelect:filter()
 	if self.closed then
 		return
 	end
@@ -142,7 +142,7 @@ function EnhancedSearch:filter()
 	end
 end
 
-function EnhancedSearch:replace(items)
+function EnhancedSelect:replace(items)
 	assert(type(items) == 'table' and vim.islist(items), 'source must produce a list')
 	local entries = {}
 	for index, value in ipairs(items) do
@@ -154,7 +154,7 @@ function EnhancedSearch:replace(items)
 	self:filter()
 end
 
-function EnhancedSearch:invalidate()
+function EnhancedSelect:invalidate()
 	self.generation = self.generation + 1
 	if self.pending_cancel then
 		local cancel = self.pending_cancel
@@ -166,7 +166,7 @@ function EnhancedSearch:invalidate()
 	end
 end
 
-function EnhancedSearch:refresh(immediate)
+function EnhancedSelect:refresh(immediate)
 	if self.closed then
 		return
 	end
@@ -223,7 +223,7 @@ function EnhancedSearch:refresh(immediate)
 	end
 end
 
-function EnhancedSearch:set_query(query)
+function EnhancedSelect:set_query(query)
 	assert(type(query) == 'string', 'query must be a string')
 	if self.closed then
 		return
@@ -242,7 +242,7 @@ function EnhancedSearch:set_query(query)
 	end
 end
 
-function EnhancedSearch:toggle_live()
+function EnhancedSelect:toggle_live()
 	if type(self.source) ~= 'function' then
 		return
 	end
@@ -257,7 +257,7 @@ function EnhancedSearch:toggle_live()
 	self.view:trigger_show()
 end
 
-function EnhancedSearch:close()
+function EnhancedSelect:close()
 	if self.closed then
 		return
 	end
@@ -279,7 +279,7 @@ function EnhancedSearch:close()
 	end
 end
 
-function EnhancedSearch:cancel()
+function EnhancedSelect:cancel()
 	if self.closed then
 		return
 	end
@@ -291,7 +291,7 @@ function EnhancedSearch:cancel()
 	end
 end
 
-function EnhancedSearch:accept()
+function EnhancedSelect:accept()
 	if self.closed then
 		return
 	end
@@ -308,7 +308,7 @@ function EnhancedSearch:accept()
 	end
 end
 
-function EnhancedSearch:set_quickfix()
+function EnhancedSelect:set_quickfix()
 	if not self.to_quickfix then
 		return
 	end
@@ -334,7 +334,7 @@ function EnhancedSearch:set_quickfix()
 	end)
 end
 
-function EnhancedSearch:action(name)
+function EnhancedSelect:action(name)
 	if self.closed then
 		return
 	end
@@ -368,13 +368,13 @@ local function highlights()
 	local cursor = vim.api.nvim_get_hl(0, { name = 'Cursor' })
 	local cursorline = vim.api.nvim_get_hl(0, { name = 'CursorLine' })
 	local groups = {
-		EnhancedSearchNormal = { fg = normal.fg, bg = msg.bg },
-		EnhancedSearchPrompt = { link = 'Title' },
-		EnhancedSearchSel = { fg = cursor.bg, bg = cursorline.bg },
-		EnhancedSearchPointer = { fg = cursor.bg },
-		EnhancedSearchMatch = { link = 'PmenuMatch' },
-		EnhancedSearchMark = { link = 'DiagnosticWarn' },
-		EnhancedSearchMarkLine = { link = 'Visual' },
+		EnhancedSelectNormal = { fg = normal.fg, bg = msg.bg },
+		EnhancedSelectPrompt = { link = 'Title' },
+		EnhancedSelectSel = { fg = cursor.bg, bg = cursorline.bg },
+		EnhancedSelectPointer = { fg = cursor.bg },
+		EnhancedSelectMatch = { link = 'PmenuMatch' },
+		EnhancedSelectMark = { link = 'DiagnosticWarn' },
+		EnhancedSelectMarkLine = { link = 'Visual' },
 	}
 	for name, spec in pairs(groups) do
 		spec.default = true
@@ -382,7 +382,7 @@ local function highlights()
 	end
 end
 
----@param options enhanced_search.Options
+---@param options enhanced_select.Options
 ---@return table search Handle: set_query, refresh, get_current, get_marked, action, accept, cancel
 function M.pick(options)
 	assert(type(options) == 'table', 'pick expects an options table')
@@ -415,7 +415,7 @@ function M.pick(options)
 		or opts.opts.prompt_prefix
 	opts.input = opts.live and '' or (opts.default_text or '')
 	opts.live_input = opts.live and (opts.default_text or '') or ''
-	local self = setmetatable(opts, EnhancedSearch)
+	local self = setmetatable(opts, EnhancedSelect)
 	if type(self.source) == 'table' then
 		self:replace(self.source)
 	end
@@ -427,7 +427,7 @@ function M.pick(options)
 	highlights()
 	self.buf = ui2.bufs.cmd
 	self.keys, self.saved_maps = {}, {}
-	self.view = require('enhanced_search.view'):new(self)
+	self.view = require('enhanced_select.view'):new(self)
 	local ok, err = pcall(function()
 		self.view:open()
 		for key, action in pairs(self.mappings) do
