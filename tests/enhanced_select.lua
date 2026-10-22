@@ -34,6 +34,16 @@ local function test(name, callback)
 	end
 end
 
+test('initializes highlights on load and restores default links after colorscheme changes', function()
+	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')
+	vim.cmd.colorscheme 'default'
+	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')
+	vim.api.nvim_set_hl(0, 'EnhancedSelectMark', { fg = 0x123456 })
+	vim.api.nvim_exec_autocmds('ColorScheme', {})
+	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectMark' }).fg == 0x123456)
+	vim.api.nvim_set_hl(0, 'EnhancedSelectMark', { link = 'Special', default = true, force = true })
+end)
+
 test('renders immediately and restores ui2 options, cursor, mappings and height', function()
 	local win = vim.api.nvim_get_current_win()
 	local height, showmode = vim.o.cmdheight, vim.o.showmode
