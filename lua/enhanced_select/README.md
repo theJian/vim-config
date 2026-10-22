@@ -152,7 +152,7 @@ local search = require 'enhanced_select'
 search.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
-        prompt_prefix = '', prompt_title = true, pointer = '', marker = '│',
+        prompt_prefix = '›', prompt_title = true, pointer = '', marker = '│',
         info_list = { 'list' }, -- 'list' gives (matches/items); 'index' gives [selection]
     },
     win = { height = 0.4, hide_statusline = false },
