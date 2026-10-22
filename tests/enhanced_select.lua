@@ -34,7 +34,28 @@ local function test(name, callback)
 	end
 end
 
-test('initializes highlights on load and restores default links after colorscheme changes', function()
+test('initializes highlights once on first open and preserves colorscheme handling', function()
+	assert(vim.fn.hlexists 'EnhancedSelectPrompt' == 0)
+	local set_hl = vim.api.nvim_set_hl
+	local calls = 0
+	vim.api.nvim_set_hl = function(ns, name, spec)
+		if name:match '^EnhancedSelect' then
+			calls = calls + 1
+		end
+		return set_hl(ns, name, spec)
+	end
+	local ok, err = pcall(function()
+		open({ source = { 'first' } }):close()
+		assert(calls == 9)
+		open({ source = { 'second' } }):close()
+		assert(calls == 9)
+	end)
+	vim.api.nvim_set_hl = set_hl
+	assert(ok, err)
+	assert(#vim.api.nvim_get_autocmds {
+		group = 'enhanced_select.highlights',
+		event = 'ColorScheme',
+	} == 1)
 	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')
 	vim.cmd.colorscheme 'default'
 	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')

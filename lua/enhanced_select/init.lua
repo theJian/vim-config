@@ -383,11 +383,20 @@ local function highlights()
 	end
 end
 
-highlights()
-vim.api.nvim_create_autocmd('ColorScheme', {
-	group = vim.api.nvim_create_augroup('enhanced_select.highlights', { clear = true }),
-	callback = highlights,
-})
+local highlights_initialized = false
+
+local function init_highlights()
+	if highlights_initialized then
+		return
+	end
+
+	highlights()
+	vim.api.nvim_create_autocmd('ColorScheme', {
+		group = vim.api.nvim_create_augroup('enhanced_select.highlights', { clear = true }),
+		callback = highlights,
+	})
+	highlights_initialized = true
+end
 
 ---@param options enhanced_select.Options
 ---@return table search Handle: set_query, refresh, get_current, get_marked, action, accept, cancel
@@ -431,6 +440,7 @@ function M.open(options)
 	end
 	active = self
 	ui2.check_targets()
+	init_highlights()
 	self.buf = ui2.bufs.cmd
 	self.keys, self.saved_maps = {}, {}
 	self.view = require('enhanced_select.view'):new(self)
