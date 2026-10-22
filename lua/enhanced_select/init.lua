@@ -16,7 +16,7 @@ local defaults = {
 		shrink = true,
 		prompt_prefix = '›',
 		prompt_title = true,
-		pointer = '',
+		pointer = '»',
 		marker = '│',
 		info_list = { 'list' },
 	},
