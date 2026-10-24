@@ -89,7 +89,7 @@ function View:render(content, pos, first_char, prompt, indent, level, hl_id)
 	self:clear()
 	active_prompt_hl_id = hl_id
 
-	self:show_matches()
+	self:draw_matches()
 
 	self:set_prompt_text(content, ('%s%s%s'):format(first_char, prompt, (' '):rep(indent)))
 	self:sync_cursor(pos)
@@ -467,7 +467,7 @@ end
 
 local icon_pad = 2
 
-function View:show_matches()
+function View:draw_matches()
 	local indent = vim.fn.strdisplaywidth(self.search.opts.pointer) + 1
 	local prefix = (' '):rep(indent)
 	local icon_pad_str = (' '):rep(icon_pad)
