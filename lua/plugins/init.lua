@@ -1,4 +1,5 @@
 require 'packman'
+vim.cmd.packadd 'nvim.undotree'
 require('colorizer').setup()
 require('nvim-surround').setup()
 require('nvim-paredit').setup()
