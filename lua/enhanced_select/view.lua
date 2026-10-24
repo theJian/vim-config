@@ -147,14 +147,12 @@ function View:restore_view()
 	vim.fn.winrestview(self.save)
 end
 
-local extra_win_highlights = 'Search:,CurSearch:,IncSearch:'
-
 ---@param restore? boolean
 function View:set_opts(restore)
 	local opts = {
 		win = {
 			eventignorewin = 'all,-FileType,-InsertCharPre,-TextChangedI,-CursorMovedI,-InsertLeave,-BufLeave,-WinLeave',
-			winhighlight = 'Normal:EnhancedSelectNormal,' .. extra_win_highlights,
+			winhighlight = 'Normal:EnhancedSelectNormal,Search:,CurSearch:,IncSearch:',
 			signcolumn = 'no',
 			wrap = false,
 		},
