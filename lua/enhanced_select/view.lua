@@ -92,7 +92,7 @@ function View:render(content, pos, first_char, prompt, indent, level, hl_id)
 	self:show_matches()
 
 	self:set_prompt_text(content, ('%s%s%s'):format(first_char, prompt, (' '):rep(indent)))
-	self:update_cursor(pos)
+	self:sync_cursor(pos)
 
 	self:update_win_height()
 
@@ -212,7 +212,7 @@ function View:open()
 		vim.api.nvim_set_current_win(ui2.wins.cmd)
 	end)
 	self:set_opts()
-	self:update_cursor(#query_text)
+	self:sync_cursor(#query_text)
 	vim._with({ noautocmd = true }, function()
 		vim.cmd.startinsert { bang = true }
 	end)
@@ -220,14 +220,14 @@ function View:open()
 		group = self.augroup,
 		buffer = ui2.bufs.cmd,
 		callback = function()
-			self:update()
+			self:sync_query()
 		end,
 	})
 	vim.api.nvim_create_autocmd('CursorMovedI', {
 		group = self.augroup,
 		buffer = ui2.bufs.cmd,
 		callback = function()
-			self:update_cursor()
+			self:sync_cursor()
 		end,
 	})
 	vim.api.nvim_create_autocmd('VimResized', {
@@ -293,7 +293,7 @@ function View:redraw()
 	)
 end
 
-function View:update()
+function View:sync_query()
 	if self.closed then
 		return
 	end
@@ -305,7 +305,7 @@ function View:update()
 end
 
 ---@param pos? integer Zero-based query byte offset; nil or negative preserves the cursor position
-function View:update_cursor(pos)
+function View:sync_cursor(pos)
 	self.cursor_pos = self.cursor_pos or { 0, 0 }
 
 	self:update_prompt_position()
