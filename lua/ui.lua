@@ -74,4 +74,9 @@ vim.o.inccommand = 'nosplit'
 vim.o.pumheight = 5
 
 -- New UI opt-in
-require('vim._core.ui2').enable({})
+require('vim._core.ui2').enable({
+	enable = true,
+	msg = {
+		target = 'msg'
+	}
+})
