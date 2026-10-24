@@ -472,9 +472,6 @@ function View:show_matches()
 	local prefix = (' '):rep(indent)
 	local icon_pad_str = (' '):rep(icon_pad)
 
-	if self.search.idx <= 1 then
-		offset = 0
-	end
 	self:update_offset()
 
 	local lines = {} ---@type string[]
