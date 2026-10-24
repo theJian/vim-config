@@ -1,6 +1,6 @@
-# Enhanced select
+# Better select
 
-`require('enhanced_select')` selects arbitrary Lua values using a command-area prompt,
+`require('better_select')` selects arbitrary Lua values using a command-area prompt,
 a list of matches, fuzzy filtering, marking, and optional previews. Requires
 Neovim 0.12+ with ui2 enabled. This repository enables ui2 in `lua/ui.lua`;
 when using the module in another configuration, enable it before opening a search:
@@ -13,10 +13,13 @@ The renderer is adapted from [artio.nvim](https://github.com/comfysage/artio.nvi
 at revision `ebf5ed35bf17babeee20b04129ce60a382214687`; attribution and EUPL-1.2
 terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
 
+The implementation is self-contained in `lua/better_select.lua`; copy that file and
+the accompanying license notices to use it in another configuration.
+
 ## Static values
 
 ```lua
-local search = require 'enhanced_select'
+local search = require 'better_select'
 search.open {
     prompt = 'Environment',
     source = {
@@ -48,7 +51,7 @@ The returned list must contain the original values; `format_item` supplies their
 display labels, and `on_choice` receives the selected value without copying it.
 
 ```lua
-local search = require 'enhanced_select'
+local search = require 'better_select'
 search.open {
     prompt = 'Buffers',
     source = function()
@@ -65,7 +68,7 @@ search.open {
 ## Async/live sources
 
 ```lua
-local search = require 'enhanced_select'
+local search = require 'better_select'
 search.open {
     prompt = 'Tracked files',
     debounce = 50,
@@ -148,7 +151,7 @@ Additional hooks:
 changes merge with defaults; set a mapping to `false` to disable it.
 
 ```lua
-local search = require 'enhanced_select'
+local search = require 'better_select'
 search.setup {
     opts = {
         preselect = true, bottom = true, shrink = true,
@@ -162,14 +165,14 @@ search.setup {
 
 Height may be a fraction of the editor (0 < height <= 1) or a number of rows.
 `win.preview_opts(view)` can return Neovim floating window options. Highlight
-groups use the `EnhancedSelect` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
+groups use the `BetterSelect` prefix: `Normal`, `Prompt`, `Sel`, `Pointer`, `Match`,
 `MatchSel`, `Info`, `Mark`, and `MarkLine`. The module uses experimental `vim._core.ui2` internals,
 so future Neovim changes may require updating the renderer.
 
 Opt into the standard selection interface explicitly:
 
 ```lua
-vim.ui.select = require('enhanced_select').select
+vim.ui.select = require('better_select').select
 ```
 
 No keymaps or selection overrides are installed globally. Buffer-local mappings
@@ -180,5 +183,5 @@ and editor options are restored on exit.
 Run the integration tests from the repository root:
 
 ```sh
-nvim --headless -u NONE -i NONE -l tests/enhanced_select.lua
+nvim --headless -u NONE -i NONE -l tests/better_select.lua
 ```

@@ -1,4 +1,4 @@
--- Run from the repository root: nvim --headless -u NONE -i NONE -l tests/enhanced_select.lua
+-- Run from the repository root: nvim --headless -u NONE -i NONE -l tests/better_select.lua
 vim.opt.rtp:prepend(vim.fn.getcwd())
 local ui2 = require 'vim._core.ui2'
 -- vim._core.ui2.enable() does nothing without an attached UI, so initialize
@@ -6,7 +6,7 @@ local ui2 = require 'vim._core.ui2'
 ui2.cmd = require 'vim._core.ui2.cmdline'
 ui2.msg = require 'vim._core.ui2.messages'
 ui2.check_targets()
-local search = require 'enhanced_select'
+local search = require 'better_select'
 local failures = {}
 local handles = {}
 local function open(opts)
@@ -35,11 +35,11 @@ local function test(name, callback)
 end
 
 test('initializes highlights once on first open and preserves colorscheme handling', function()
-	assert(vim.fn.hlexists 'EnhancedSelectPrompt' == 0)
+	assert(vim.fn.hlexists 'BetterSelectPrompt' == 0)
 	local set_hl = vim.api.nvim_set_hl
 	local calls = 0
 	vim.api.nvim_set_hl = function(ns, name, spec)
-		if name:match '^EnhancedSelect' then
+		if name:match '^BetterSelect' then
 			calls = calls + 1
 		end
 		return set_hl(ns, name, spec)
@@ -53,16 +53,16 @@ test('initializes highlights once on first open and preserves colorscheme handli
 	vim.api.nvim_set_hl = set_hl
 	assert(ok, err)
 	assert(#vim.api.nvim_get_autocmds {
-		group = 'enhanced_select.highlights',
+		group = 'better_select.highlights',
 		event = 'ColorScheme',
 	} == 1)
-	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')
+	assert(vim.api.nvim_get_hl(0, { name = 'BetterSelectPrompt' }).link == 'Question')
 	vim.cmd.colorscheme 'default'
-	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectPrompt' }).link == 'Question')
-	vim.api.nvim_set_hl(0, 'EnhancedSelectMark', { fg = 0x123456 })
+	assert(vim.api.nvim_get_hl(0, { name = 'BetterSelectPrompt' }).link == 'Question')
+	vim.api.nvim_set_hl(0, 'BetterSelectMark', { fg = 0x123456 })
 	vim.api.nvim_exec_autocmds('ColorScheme', {})
-	assert(vim.api.nvim_get_hl(0, { name = 'EnhancedSelectMark' }).fg == 0x123456)
-	vim.api.nvim_set_hl(0, 'EnhancedSelectMark', { link = 'Special', default = true, force = true })
+	assert(vim.api.nvim_get_hl(0, { name = 'BetterSelectMark' }).fg == 0x123456)
+	vim.api.nvim_set_hl(0, 'BetterSelectMark', { link = 'Special', default = true, force = true })
 end)
 
 test('renders immediately and restores ui2 options, cursor, mappings and height', function()
@@ -268,14 +268,14 @@ test('pattern filtering and multibyte match highlights use whole characters', fu
 	assert(#p.matches == 1)
 	local marks = vim.api.nvim_buf_get_extmarks(
 		ui2.bufs.cmd,
-		vim.api.nvim_create_namespace '@enhanced_select.view.ns',
+		vim.api.nvim_create_namespace '@better_select.view.ns',
 		0,
 		-1,
 		{ details = true }
 	)
 	local found = false
 	for _, mark in ipairs(marks) do
-		if mark[4].hl_group == 'EnhancedSelectMatchSel' then
+		if mark[4].hl_group == 'BetterSelectMatchSel' then
 			assert(mark[4].end_col - mark[3] == 3, vim.inspect(mark))
 			found = true
 		end
@@ -375,6 +375,64 @@ test('quickfix converts marked original values including hidden matches', functi
 	local entries = vim.fn.getqflist()
 	assert(#entries == 1 and entries[1].text == 'apple')
 	vim.cmd.cclose()
+end)
+
+test('icons, custom highlights and marks survive redraw without duplicate extmarks', function()
+	local icon_calls, highlight_calls = 0, 0
+	local p = open {
+		source = { 'é猫', 'other' },
+		get_icon = function()
+			icon_calls = icon_calls + 1
+			return '猫', 'Special'
+		end,
+		hl_item = function()
+			highlight_calls = highlight_calls + 1
+			return { { { 0, 2 }, 'Title' } }
+		end,
+	}
+	p:set_query 'é'
+	p:action 'mark'
+	local ns = vim.api.nvim_create_namespace '@better_select.view.ns'
+	local function marks()
+		return vim.api.nvim_buf_get_extmarks(p.buf, ns, 0, -1, { details = true })
+	end
+	local before = #marks()
+	p.view:redraw()
+	assert(#marks() == before and icon_calls == 2 and highlight_calls == 2)
+	local groups = {}
+	for _, mark in ipairs(marks()) do
+		local details = mark[4]
+		groups[details.hl_group or ''] = true
+		if details.hl_group == 'Title' then
+			assert(mark[3] == 7 and details.end_col == 9, vim.inspect(mark))
+		end
+	end
+	assert(groups.Special and groups.Title and groups.BetterSelectMarkLine and groups.BetterSelectMatchSel)
+	assert(vim.api.nvim_buf_get_lines(p.buf, 0, 1, false)[1] == '  猫  é猫')
+end)
+
+test('prompt edits update filtering and keep the cursor outside the prefix', function()
+	local p = open { source = { 'apple', 'banana' }, prompt = 'Fruit' }
+	local row = p.view.prompt_row
+	local prefix = p.view.prompt_length
+	local line = vim.api.nvim_buf_get_lines(p.buf, row, row + 1, false)[1]
+	vim.api.nvim_buf_set_lines(p.buf, row, row + 1, false, { line:sub(1, prefix) .. 'bn' })
+	vim.api.nvim_exec_autocmds('TextChangedI', { buffer = p.buf })
+	assert(p.query == 'bn' and p:get_current().v == 'banana')
+	vim.api.nvim_win_set_cursor(ui2.wins.cmd, { p.view.prompt_row + 1, 0 })
+	vim.api.nvim_exec_autocmds('CursorMovedI', { buffer = p.buf })
+	assert(vim.api.nvim_win_get_cursor(ui2.wins.cmd)[2] >= prefix)
+end)
+
+test('replacement searches start with a fresh scroll position', function()
+	local p = open { source = { 'one', 'two', 'three', 'four' }, win = { height = 2 } }
+	for _ = 1, 3 do
+		p:action 'down'
+	end
+	assert(p.view.offset == 3)
+	local next_search = open { source = { 'first', 'second' }, win = { height = 2 } }
+	assert(next_search.view.offset == 0 and next_search:get_current().v == 'first')
+	assert(vim.api.nvim_buf_get_lines(next_search.buf, 0, 1, false)[1]:find('first', 1, true))
 end)
 
 if #failures > 0 then
