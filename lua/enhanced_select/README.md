@@ -99,7 +99,7 @@ Marks survive local filtering. Replacing the source list clears marks and
 selection because the same index can now refer to a different value. While a
 new live query is pending, the old results are removed to prevent accepting a
 stale value. `<C-g>` switches a provider between live querying and local fuzzy
-filtering of its latest results, with separate prompt text for each mode.
+filtering of its latest results, preserving the current query when switching modes.
 
 ## Interaction and hooks
 

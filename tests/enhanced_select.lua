@@ -172,22 +172,94 @@ test('provider debounces and drops stale results after query changes and closure
 	assert(p.items[1].v == 'latest' and cancellations == 2)
 end)
 
-test('synchronous provider and live/fuzzy toggle use separate queries', function()
-	local calls = 0
+test('mode toggles preserve the query and render the same prompt text', function()
+	local calls = {}
 	local p = open {
-		source = function()
-			calls = calls + 1
+		default_text = 'ap',
+		source = function(query)
+			calls[#calls + 1] = query
+			return { 'apple', 'banana' }
+		end,
+	}
+	local function assert_query(query)
+		assert(p.query == query)
+		local lines = vim.api.nvim_buf_get_lines(p.buf, 0, -1, false)
+		assert(lines[#lines]:sub(-#query) == query, vim.inspect(lines))
+	end
+	flush()
+	assert_query 'ap'
+	assert(#p.matches == 2 and vim.deep_equal(calls, { 'ap' }))
+	p:toggle_live()
+	assert_query 'ap'
+	assert(#calls == 1 and #p.matches == 1 and p:get_current().v == 'apple')
+	p:set_query 'bn'
+	assert_query 'bn'
+	assert(#calls == 1 and #p.matches == 1 and p:get_current().v == 'banana')
+	p:toggle_live()
+	assert_query 'bn'
+	flush()
+	assert(vim.deep_equal(calls, { 'ap', 'bn' }) and #p.matches == 2)
+	p:toggle_live()
+	assert_query 'bn'
+	assert(#p.matches == 1 and p:get_current().v == 'banana')
+end)
+
+test('local providers load the full source with an empty query and filter using the shared query', function()
+	local calls = {}
+	local p = open {
+		live = false,
+		default_text = 'bn',
+		source = function(query)
+			calls[#calls + 1] = query
 			return { 'apple', 'banana' }
 		end,
 	}
 	flush()
-	assert(#p.matches == 2)
-	p:toggle_live()
-	p:set_query 'bn'
-	assert(calls == 1 and #p.matches == 1 and p:get_current().v == 'banana')
+	assert(vim.deep_equal(calls, { '' }) and p.query == 'bn')
+	assert(#p.matches == 1 and p:get_current().v == 'banana')
+	p:set_query 'ap'
+	assert(#calls == 1 and p.query == 'ap' and p:get_current().v == 'apple')
+	p:refresh(true)
+	flush()
+	assert(vim.deep_equal(calls, { '', '' }) and p.query == 'ap')
+	assert(#p.matches == 1 and p:get_current().v == 'apple')
 	p:toggle_live()
 	flush()
-	assert(calls == 2 and #p.matches == 2)
+	assert(vim.deep_equal(calls, { '', '', 'ap' }) and p.query == 'ap')
+end)
+
+test('switching to local mode cancels pending live work and ignores late results', function()
+	local emits, contexts, calls = {}, {}, {}
+	local cancellations = 0
+	local p = open {
+		debounce = 0,
+		source = function(query, emit, ctx)
+			calls[#calls + 1] = query
+			emits[#emits + 1], contexts[#contexts + 1] = emit, ctx
+			return function()
+				cancellations = cancellations + 1
+			end
+		end,
+	}
+	emits[1] { 'apple', 'banana' }
+	flush()
+	p:set_query 'bn'
+	p:toggle_live()
+	assert(not p.live and p.query == 'bn' and contexts[2].cancelled())
+	assert(cancellations == 2)
+	emits[2] { 'stale' }
+	flush()
+	assert(#p.items == 0)
+	p:refresh(true)
+	assert(vim.deep_equal(calls, { '', 'bn', '' }))
+	emits[3] { 'apple', 'banana' }
+	flush()
+	assert(p.query == 'bn' and #p.matches == 1 and p:get_current().v == 'banana')
+	p:toggle_live()
+	assert(calls[4] == 'bn' and p.query == 'bn')
+	emits[4] { 'banana' }
+	flush()
+	assert(#p.matches == 1 and p:get_current().v == 'banana')
 end)
 
 test('pattern filtering and multibyte match highlights use whole characters', function()

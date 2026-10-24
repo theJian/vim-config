@@ -282,13 +282,15 @@ function View:hide()
 end
 
 function View:redraw()
-	local input
-	if self.search.live then
-		input = self.search.live_input
-	else
-		input = self.search.input
-	end
-	self:render({ { 0, input } }, -1, '', self.search.prompt_text, cmdline.indent, cmdline.level, prompt_hl_id)
+	self:render(
+		{ { 0, self.search.query } },
+		-1,
+		'',
+		self.search.prompt_text,
+		cmdline.indent,
+		cmdline.level,
+		prompt_hl_id
+	)
 end
 
 function View:update()
@@ -297,7 +299,7 @@ function View:update()
 	end
 	local text = vim.api.nvim_buf_get_lines(ui2.bufs.cmd, prompt_row, prompt_row + 1, false)[1] or ''
 	text = text:sub(prompt_length + 1)
-	if text ~= (self.search.live and self.search.live_input or self.search.input) then
+	if text ~= self.search.query then
 		self.search:set_query(text)
 	end
 end

@@ -4,6 +4,7 @@ local M = {}
 ---@field items enhanced_select.Entry[]
 ---@field matches table[] Ordered {source_index, zero_based_character_positions, score} matches
 ---@field idx integer 1-based match position; 0 means no selection
+---@field query string Current search text, shared by local and live modes
 ---@field closed boolean
 ---@field view enhanced_select.View
 local EnhancedSelect = {}
@@ -130,7 +131,7 @@ function EnhancedSelect:filter()
 		return vim.tbl_map(function(entry)
 			return { entry.id, {}, 0 }
 		end, entries)
-	end or self.sorter, self.items, self.input)
+	end or self.sorter, self.items, self.query)
 	if not ok then
 		self:report(matches)
 		return
@@ -172,7 +173,7 @@ function EnhancedSelect:refresh(immediate)
 	end
 	self:invalidate()
 	local generation = self.generation
-	local query = self.live and self.live_input or ''
+	local query = self.live and self.query or ''
 	local function current()
 		return not self.closed and self.generation == generation
 	end
@@ -228,13 +229,11 @@ function EnhancedSelect:set_query(query)
 	if self.closed then
 		return
 	end
-	self.idx = 0
+	self.idx, self.query = 0, query
 	if self.live then
-		self.live_input = query
 		self.items, self.matches, self.marked = {}, {}, {}
 		self:refresh()
 	else
-		self.input = query
 		self:filter()
 	end
 	if self.view then
@@ -248,7 +247,7 @@ function EnhancedSelect:toggle_live()
 	end
 	self:invalidate()
 	self.live = not self.live
-	self.input, self.idx = '', 0
+	self.idx = 0
 	if self.live then
 		self:refresh(true)
 	else
@@ -429,8 +428,7 @@ function M.open(options)
 	opts.prompt = opts.prompt or ''
 	opts.prompt_text = opts.opts.prompt_title and (opts.prompt .. ' ' .. opts.opts.prompt_prefix)
 		or opts.opts.prompt_prefix
-	opts.input = opts.live and '' or (opts.default_text or '')
-	opts.live_input = opts.live and (opts.default_text or '') or ''
+	opts.query = opts.default_text or ''
 	local self = setmetatable(opts, EnhancedSelect)
 	if type(self.source) == 'table' then
 		self:replace(self.source)
