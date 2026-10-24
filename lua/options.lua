@@ -77,9 +77,7 @@ vim.o.shell = 'fish'
 -- Control how often lualine updates
 vim.o.updatetime = 30
 
--- Enable spell check
 vim.opt.spelllang = 'en_us'
-vim.opt.spell = true
 
 -- Disable showing mode like -- INSERT -- or -- VISUAL --
 vim.o.showmode = false
