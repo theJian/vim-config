@@ -8,6 +8,12 @@ ui2.msg = require 'vim._core.ui2.messages'
 ui2.check_targets()
 local search = require 'better_select'
 local failures = {}
+local reported_errors = {}
+vim.notify = function(message, level)
+	if level == vim.log.levels.ERROR then
+		reported_errors[#reported_errors + 1] = tostring(message)
+	end
+end
 local handles = {}
 local function open(opts)
 	local handle = search.open(opts)
@@ -26,6 +32,10 @@ local function test(name, callback)
 	end
 	handles = {}
 	flush()
+	if #reported_errors > 0 then
+		ok, err = false, table.concat(reported_errors, '\n')
+		reported_errors = {}
+	end
 	if ok then
 		print('PASS: ' .. name)
 	else
@@ -397,7 +407,7 @@ test('icons, custom highlights and marks survive redraw without duplicate extmar
 		return vim.api.nvim_buf_get_extmarks(p.buf, ns, 0, -1, { details = true })
 	end
 	local before = #marks()
-	p.view:redraw()
+	p:action 'up'
 	assert(#marks() == before and icon_calls == 2 and highlight_calls == 2)
 	local groups = {}
 	for _, mark in ipairs(marks()) do
@@ -433,6 +443,88 @@ test('replacement searches start with a fresh scroll position', function()
 	local next_search = open { source = { 'first', 'second' }, win = { height = 2 } }
 	assert(next_search.view.offset == 0 and next_search:get_current().v == 'first')
 	assert(vim.api.nvim_buf_get_lines(next_search.buf, 0, 1, false)[1]:find('first', 1, true))
+end)
+
+test('fractional layout resizes while keeping the selected item visible', function()
+	local lines = vim.o.lines
+	local p = open {
+		source = vim.fn.range(1, 40),
+		win = { height = 0.5 },
+		opts = { bottom = false, shrink = false },
+	}
+	for _ = 1, 30 do
+		p:action 'down'
+	end
+	local value = p:get_current().v
+	local ok, err = pcall(function()
+		vim.o.lines = lines - 4
+		vim.api.nvim_exec_autocmds('VimResized', {})
+		local rendered = vim.api.nvim_buf_get_lines(p.buf, 0, -1, false)
+		assert(#rendered == math.ceil(vim.o.lines * 0.5))
+		assert(p:get_current().v == value)
+		assert(vim.tbl_contains(rendered, '  ' .. value), vim.inspect(rendered))
+	end)
+	vim.o.lines = lines
+	assert(ok, err)
+end)
+
+test('hidden statusline keeps the command list visible and restores its configuration', function()
+	local height = vim.o.cmdheight
+	local config = vim.api.nvim_win_get_config(ui2.wins.cmd)
+	local p = open { source = { 'a', 'b' }, win = { height = 4, hide_statusline = true } }
+	assert(vim.o.cmdheight == 0)
+	assert(not vim.api.nvim_win_get_config(ui2.wins.cmd).hide)
+	assert(vim.api.nvim_win_get_height(ui2.wins.cmd) == 3)
+	p:close()
+	local restored = vim.api.nvim_win_get_config(ui2.wins.cmd)
+	assert(vim.o.cmdheight == height and restored.height == config.height and restored.hide == config.hide)
+end)
+
+test('preview follows selection, updates options and closes when the caller has no content', function()
+	local a, b = vim.api.nvim_create_buf(false, true), vim.api.nvim_create_buf(false, true)
+	for _, buf in ipairs { a, b } do
+		vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'first', 'second' })
+	end
+	local p = open {
+		source = { a, b, false },
+		preview_item = function(buf)
+			return buf and { buf = buf, pos = { 2, 0 }, pos_end = { 2, 1 } } or nil
+		end,
+		win = {
+			height = 4,
+			preview_opts = function(view)
+				assert(view.search and view.win.height == 4)
+				return { width = 30, height = 2, border = 'none' }
+			end,
+		},
+	}
+	p:action 'toggle_preview'
+	local preview = p.view.preview_win
+	assert(vim.api.nvim_win_get_buf(preview) == a and vim.wo[preview].cursorline)
+	assert(vim.deep_equal(vim.api.nvim_win_get_cursor(preview), { 2, 0 }))
+	p:action 'down'
+	assert(vim.api.nvim_win_get_buf(preview) == b)
+	assert(vim.api.nvim_win_get_width(preview) == 30 and vim.api.nvim_win_get_height(preview) == 2)
+	p:action 'down'
+	assert(not vim.api.nvim_win_is_valid(preview))
+	p:close()
+	vim.api.nvim_buf_delete(a, { force = true })
+	vim.api.nvim_buf_delete(b, { force = true })
+end)
+
+test('failed opening restores the editor and allows a subsequent search', function()
+	local win, height, showmode = vim.api.nvim_get_current_win(), vim.o.cmdheight, vim.o.showmode
+	local filetype, buftype = vim.bo[ui2.bufs.cmd].filetype, vim.bo[ui2.bufs.cmd].buftype
+	local ok, err = pcall(search.open, {
+		source = { 'a' },
+		get_icon = function()
+			error 'broken icon provider'
+		end,
+	})
+	assert(not ok and tostring(err):find('broken icon provider', 1, true))
+	assert(vim.api.nvim_get_current_win() == win and vim.o.cmdheight == height and vim.o.showmode == showmode)
+	assert(vim.bo[ui2.bufs.cmd].filetype == filetype and vim.bo[ui2.bufs.cmd].buftype == buftype)
+	assert(open({ source = { 'next' } }):get_current().v == 'next')
 end)
 
 if #failures > 0 then

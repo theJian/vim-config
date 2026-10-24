@@ -9,12 +9,17 @@ when using the module in another configuration, enable it before opening a searc
 require('vim._core.ui2').enable({})
 ```
 
-The renderer is adapted from [artio.nvim](https://github.com/comfysage/artio.nvim)
+The original renderer was adapted from [artio.nvim](https://github.com/comfysage/artio.nvim)
 at revision `ebf5ed35bf17babeee20b04129ce60a382214687`; attribution and EUPL-1.2
 terms are included in [NOTICE](NOTICE) and [LICENSE](LICENSE).
 
 The implementation is self-contained in `lua/better_select.lua`; copy that file and
 the accompanying license notices to use it in another configuration.
+
+The renderer builds the prompt and visible matches together, writes the command
+buffer once per update, and keeps scrolling, cursor position, and cleanup state
+in one UI session. Prompts and item labels display control characters as escaped
+text, keeping each on a single row.
 
 ## Static values
 
@@ -184,4 +189,11 @@ Run the integration tests from the repository root:
 
 ```sh
 nvim --headless -u NONE -i NONE -l tests/better_select.lua
+```
+
+To check actual typing, cursor editing, marking, and acceptance with ui2 attached,
+run this from a terminal (it exits automatically):
+
+```sh
+nvim -u NONE -i NONE -c 'luafile tests/better_select_ui.lua'
 ```

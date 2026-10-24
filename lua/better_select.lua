@@ -1,585 +1,320 @@
 -- Better select using Neovim ui2.
--- Renderer adapted from comfysage/artio.nvim, revision ebf5ed35bf17babeee20b04129ce60a382214687.
--- Modified 2026-10-06: generic sources, synchronous cleanup, and UTF-8 highlights.
--- Modified 2026-10-24: consolidated module and simplified rendering.
--- Licensed under EUPL-1.2; see better_select/LICENSE and better_select/NOTICE.
+-- Originally adapted from comfysage/artio.nvim (EUPL-1.2).
+-- Modified 2026-10-24: replaced the renderer with whole-buffer rendering and scoped UI sessions.
+-- See better_select/LICENSE and better_select/NOTICE for provenance and terms.
 local cmdline = require 'vim._core.ui2.cmdline'
 local ui2 = require 'vim._core.ui2'
-
 local view_ns = vim.api.nvim_create_namespace '@better_select.view.ns'
-local prompt_hl_id
 
 ---@class better_select.View
 ---@field search better_select.BetterSelect
----@field closed boolean
----@field opts table<'win'|'buf'|'g',table<string,any>>
----@field win better_select.View.win
----@field preview_win integer
-local View = {}
-View.__index = View
+---@field win {height: integer}
+---@field preview_win? integer
+---@field prompt_row integer
+---@field prompt_length integer
+---@field offset integer
+---@field cursor_offset integer
+---@field restore function[]
 
----@param search better_select.BetterSelect
-function View:new(search)
-	return setmetatable({
-		search = search,
-		closed = false,
-		opts = {},
-		prompt_length = 0,
-		prompt_row = 0,
-		max_list_height = 1,
-		start_row = 0,
-		offset = 0,
-		win = {
-			height = 1,
-		},
-	}, View)
-end
-
----@class better_select.View.win
----@field height integer
-
-function View:draw_prompt_text()
-	local lines = {}
-	for line in (self.search.prompt_text .. (' '):rep(cmdline.indent) .. '\n'):gmatch '(.-)\n' do
-		lines[#lines + 1] = vim.fn.strtrans(line)
-	end
-	local prompt = lines[#lines]
-	self.prompt_length = #prompt
-	lines[#lines] = prompt .. vim.fn.strtrans(self.search.query)
-	self:update_prompt_position()
-	self:set_lines(self.prompt_row, self.prompt_row + 1, lines)
-	if vim.fn.prompt_getprompt(ui2.bufs.cmd) ~= prompt then
-		vim.fn.prompt_setprompt(ui2.bufs.cmd, prompt)
-	end
-	pcall(vim.api.nvim_buf_set_mark, ui2.bufs.cmd, ':', self.prompt_row + 1, self.prompt_length, {})
-end
-
---- Set the 'cmd_height' and cmdline window height. Reposition message windows.
----
----@param win integer Cmdline window in the current tabpage.
----@param hidden boolean Whether to hide the window.
----@param height integer (Text)height of the cmdline window.
-function View:configure_window(win, hidden, height)
-	if ui2.cmdheight == 0 and vim.api.nvim_win_get_config(win).hide ~= hidden then
-		vim.api.nvim_win_set_config(win, { hide = hidden, height = not hidden and height or nil })
-	elseif vim.api.nvim_win_get_height(win) ~= height then
-		vim.api.nvim_win_set_height(win, height)
-	end
-
-	if not hidden and self.search.win.hide_statusline then
-		height = 0
-	end
-
-	if vim.o.cmdheight ~= height then
-		-- Preserve the editor view and prevent ui2's OptionSet handler from
-		-- replacing its saved cmd_height with the search's temporary height.
-		vim._with({ noautocmd = true, o = { splitkeep = 'screen' } }, function()
-			vim.o.cmdheight = height
-		end)
-		ui2.msg.set_pos()
-	end
-
-	if self.preview_win and vim.api.nvim_win_is_valid(self.preview_win) then
-		vim.api.nvim_win_set_config(self.preview_win, self:get_preview_window_options())
+local function close_preview(search)
+	local view = search.view
+	if view.preview_win then
+		pcall(vim.api.nvim_win_close, view.preview_win, true)
+		view.preview_win = nil
 	end
 end
 
----@param predicted? integer The predicted height of the cmdline window
-function View:update_window_height(predicted)
-	local height = math.max(1, predicted or vim.api.nvim_win_text_height(ui2.wins.cmd, {}).all)
-	height = math.min(height, self.win.height)
-	self:configure_window(ui2.wins.cmd, false, height)
-end
-
-function View:save_editor_view()
-	self.save = vim.fn.winsaveview()
-	self.previous_win = vim.api.nvim_get_current_win()
-end
-
-function View:restore_editor_view()
-	vim.api.nvim_set_current_win(self.previous_win)
-	vim.fn.winrestview(self.save)
-end
-
----@param restore? boolean
-function View:configure_editor_options(restore)
-	local opts = {
-		win = {
-			eventignorewin = 'all,-FileType,-InsertCharPre,-TextChangedI,-CursorMovedI,-InsertLeave,-BufLeave,-WinLeave',
-			winhighlight = 'Normal:BetterSelectNormal,Search:,CurSearch:,IncSearch:',
-			signcolumn = 'no',
-			wrap = false,
-		},
-		buf = {
-			filetype = 'better-select',
-			buftype = 'prompt',
-			autocomplete = false,
-		},
-		g = {
-			showmode = false,
-			showcmd = false,
-		},
-	}
-
-	for level, o in pairs(opts) do
-		self.opts[level] = self.opts[level] or {}
-		local props = {
-			scope = level == 'g' and 'global' or 'local',
-			buf = level == 'buf' and ui2.bufs.cmd or nil,
-			win = level == 'win' and ui2.wins.cmd or nil,
-		}
-
-		for name, value in pairs(o) do
-			if restore then
-				if self.opts[level][name] ~= nil then
-					vim.api.nvim_set_option_value(name, self.opts[level][name], props)
-				end
-			else
-				self.opts[level][name] = vim.api.nvim_get_option_value(name, props)
-				vim.api.nvim_set_option_value(name, value, props)
-			end
-		end
+local function update_preview(search)
+	local view = search.view
+	local entry = search:get_current()
+	local ok, preview = true, nil
+	if entry and vim.is_callable(search.preview_item) then
+		ok, preview = pcall(search.preview_item, entry.v, entry.id, search)
 	end
-end
-
-function View:update_layout()
-	if self.search.win.height > 1 then
-		self.win.height = self.search.win.height
-	else
-		self.win.height = vim.o.lines * self.search.win.height
+	if not ok then
+		search:report_error(preview)
 	end
-	self.win.height = math.min(math.max(math.ceil(self.win.height), 2), math.max(2, vim.o.lines - 2))
-
-	self.max_list_height = math.max(self.win.height - 1, 1)
-end
-
-function View:open()
-	self.augroup = vim.api.nvim_create_augroup('@better_select.view', { clear = true })
-	self:save_editor_view()
-	self.saved_prompt = vim.fn.prompt_getprompt(ui2.bufs.cmd)
-	self:update_layout()
-	cmdline.prompt, cmdline.srow, cmdline.indent, cmdline.level = false, 0, 1, 1
-	self:redraw()
-	vim._with({ noautocmd = true }, function()
-		vim.api.nvim_set_current_win(ui2.wins.cmd)
-	end)
-	self:configure_editor_options()
-	self:position_prompt_cursor(#vim.fn.strtrans(self.search.query))
-	vim._with({ noautocmd = true }, function()
-		vim.cmd.startinsert { bang = true }
-	end)
-	vim.api.nvim_create_autocmd('TextChangedI', {
-		group = self.augroup,
-		buffer = ui2.bufs.cmd,
-		callback = function()
-			self:read_prompt_query()
-		end,
-	})
-	vim.api.nvim_create_autocmd('CursorMovedI', {
-		group = self.augroup,
-		buffer = ui2.bufs.cmd,
-		callback = function()
-			self:position_prompt_cursor()
-		end,
-	})
-	vim.api.nvim_create_autocmd('VimResized', {
-		group = self.augroup,
-		callback = function()
-			self:update_layout()
-			self:redraw()
-		end,
-	})
-	vim.api.nvim_create_autocmd('ModeChanged', {
-		group = self.augroup,
-		pattern = 'i:*',
-		callback = function()
-			self.search:cancel()
-		end,
-	})
-	vim.api.nvim_create_autocmd({ 'InsertLeave', 'BufLeave', 'WinLeave' }, {
-		group = self.augroup,
-		buffer = ui2.bufs.cmd,
-		callback = function()
-			self.search:cancel()
-		end,
-	})
-end
-
-function View:close()
-	if self.closed then
+	if not ok or not preview or not preview.buf or not vim.api.nvim_buf_is_valid(preview.buf) then
+		close_preview(search)
 		return
 	end
-	self.closed = true
-	pcall(vim.api.nvim_del_augroup_by_id, self.augroup)
-	self:close_preview()
-	vim.cmd.stopinsert()
-	vim.fn.prompt_setprompt(ui2.bufs.cmd, self.saved_prompt or '')
-	self:configure_editor_options(true)
-	self:clear_rendered_lines()
-	cmdline.srow, cmdline.erow = 0, 0
-	self:hide_command_window()
-	if vim.api.nvim_win_is_valid(self.previous_win) then
-		self:restore_editor_view()
+	local overrides = (vim.is_callable(search.win.preview_opts) and search.win.preview_opts(view)) or {}
+	local border = overrides.border or vim.o.winborder
+	local options = vim.tbl_extend('force', {
+		relative = 'editor',
+		focusable = false,
+		col = 0,
+		width = vim.o.columns,
+		height = view.win.height,
+		row = vim.o.lines
+			- vim.api.nvim_win_get_height(ui2.wins.cmd)
+			- view.win.height
+			- ((border == '' or border == 'none') and 0 or 2)
+			- (search.win.hide_statusline and 0 or 1),
+	}, overrides)
+	vim.fn.bufload(preview.buf)
+	if view.preview_win and vim.api.nvim_win_is_valid(view.preview_win) then
+		vim.api.nvim_win_set_buf(view.preview_win, preview.buf)
+		vim.api.nvim_win_set_config(view.preview_win, options)
+	else
+		view.preview_win = vim.api.nvim_open_win(preview.buf, false, options)
+	end
+	vim.wo[view.preview_win].previewwindow = true
+	vim.wo[view.preview_win].eventignorewin = 'all,-FileType'
+	vim.wo[view.preview_win].cursorline = preview.pos ~= nil
+		and (preview.pos_end == nil or preview.pos_end[1] == preview.pos[1])
+	if preview.pos then
+		vim.api.nvim_win_set_cursor(view.preview_win, preview.pos)
 	end
 end
 
-function View:hide_command_window()
-	vim.fn.clearmatches(ui2.wins.cmd) -- Clear matchparen highlights.
-	vim.api.nvim_win_set_cursor(ui2.wins.cmd, { 1, 0 })
-	vim.api.nvim_buf_set_lines(ui2.bufs.cmd, 0, -1, false, {})
-
-	cmdline.prompt, cmdline.level = false, 0
-	self:configure_window(ui2.wins.cmd, true, ui2.cmdheight)
+local function set_command_area(rows, height, hidden)
+	-- ui2 must retain the user's cmdheight while the picker borrows its window.
+	vim._with({ noautocmd = true, o = { splitkeep = 'screen' } }, function()
+		vim.api.nvim_win_set_config(ui2.wins.cmd, { height = math.max(1, rows), hide = hidden })
+		vim.o.cmdheight = height
+	end)
+	ui2.msg.set_pos()
 end
 
-function View:redraw()
+local function position_prompt_cursor(search, offset)
+	local view = search.view
+	if offset == nil then
+		local cursor = vim.api.nvim_win_get_cursor(ui2.wins.cmd)
+		offset = cursor[1] == view.prompt_row + 1 and cursor[2] - view.prompt_length or -1
+	end
+	if offset < 0 then
+		offset = view.cursor_offset
+	end
+	local line = vim.api.nvim_buf_get_lines(search.buf, view.prompt_row, view.prompt_row + 1, false)[1] or ''
+	view.cursor_offset = math.min(math.max(0, offset), math.max(0, #line - view.prompt_length))
+	vim._with({ noautocmd = true }, function()
+		vim.api.nvim_win_set_cursor(ui2.wins.cmd, { view.prompt_row + 1, view.prompt_length + view.cursor_offset })
+	end)
+end
+
+local function add_highlight(search, row, col, group, options)
+	options = options or {}
+	options.hl_group, options.hl_mode = group, 'combine'
+	local ok, err = pcall(vim.api.nvim_buf_set_extmark, search.buf, view_ns, row, col, options)
+	if not ok then
+		search:report_error(err)
+	end
+end
+
+local function highlight_match(search, index, row)
+	local match = search.matches[index]
+	local entry = search.items[match[1]]
+	local indent = vim.fn.strdisplaywidth(search.opts.pointer) + 1
+	local text_col = indent + (entry.icon and #entry.icon + 2 or 0)
+	if index == search.idx then
+		add_highlight(search, row, 0, 'BetterSelectSel', {
+			hl_eol = true,
+			end_row = row + 1,
+			end_col = 0,
+			priority = 10,
+			virt_text = { { search.opts.pointer, 'BetterSelectPointer' } },
+			virt_text_pos = 'overlay',
+		})
+	end
+	if search.marked[entry.id] then
+		add_highlight(search, row, 0, 'BetterSelectMarkLine', {
+			hl_eol = true,
+			end_row = row + 1,
+			end_col = 0,
+			priority = 20,
+		})
+		add_highlight(search, row, indent - 1, nil, {
+			virt_text = { { search.opts.marker, 'BetterSelectMark' } },
+			virt_text_pos = 'overlay',
+			priority = 20,
+		})
+	end
+	if entry.icon and entry.icon_hl then
+		add_highlight(search, row, indent, entry.icon_hl, { end_col = text_col, priority = 40 })
+	end
+	for _, highlight in ipairs(entry.hls or {}) do
+		add_highlight(search, row, text_col + highlight[1][1], highlight[2], {
+			end_col = text_col + highlight[1][2],
+			priority = 30,
+		})
+	end
+	for _, character in ipairs(match[2] or {}) do
+		local first = vim.fn.byteidx(entry.text, character)
+		local last = vim.fn.byteidx(entry.text, character + 1)
+		add_highlight(
+			search,
+			row,
+			text_col + first,
+			index == search.idx and 'BetterSelectMatchSel' or 'BetterSelectMatch',
+			{
+				end_col = text_col + (last < 0 and #entry.text or last),
+				priority = 50,
+			}
+		)
+	end
+end
+
+local function render(search)
+	local view = search.view
+	search:clamp_selection()
+	local requested = search.win.height <= 1 and vim.o.lines * search.win.height or search.win.height
+	view.win.height = math.max(2, math.min(math.ceil(requested), vim.o.lines - 2))
+	local capacity = view.win.height - 1
+	local first = math.max(1, math.min(view.offset + 1, math.max(1, #search.matches - capacity + 1)))
+	if search.idx == 0 then
+		first = 1
+	elseif search.idx < first then
+		first = search.idx
+	elseif search.idx >= first + capacity then
+		first = search.idx - capacity + 1
+	end
+	view.offset = first - 1
+	local count = math.min(capacity, #search.matches)
+	local list_height = search.opts.shrink and count or capacity
+	view.prompt_row = search.opts.bottom and list_height or 0
+	local list_row = search.opts.bottom and 0 or 1
+	local prefix = vim.fn.strtrans(search.prompt_text .. ' ')
+	view.prompt_length = #prefix
+	local lines = {}
+	for _ = 1, list_height + 1 do
+		lines[#lines + 1] = ''
+	end
+	lines[view.prompt_row + 1] = prefix .. vim.fn.strtrans(search.query)
+	for index = first, first + count - 1 do
+		local entry = search.items[search.matches[index][1]]
+		if not (entry.icon and entry.icon_hl) and vim.is_callable(search.get_icon) then
+			entry.icon, entry.icon_hl = search.get_icon(entry)
+		end
+		if not entry.hls and vim.is_callable(search.hl_item) then
+			entry.hls = search.hl_item(entry)
+		end
+		lines[list_row + index - first + 1] = (' '):rep(vim.fn.strdisplaywidth(search.opts.pointer) + 1)
+			.. (entry.icon and entry.icon .. '  ' or '')
+			.. entry.text
+	end
+
 	if cmdline.highlighter and cmdline.highlighter.active then
-		cmdline.highlighter.active[ui2.bufs.cmd] = nil
+		cmdline.highlighter.active[search.buf] = nil
 	end
 	if ui2.msg.cmd.msg_row ~= -1 then
 		ui2.msg.msg_clear()
 	end
 	ui2.msg.virt.last = { {}, {}, {}, {} }
-	self:clear_rendered_lines()
-	self:draw_matches()
-	self:draw_prompt_text()
-	self:position_prompt_cursor()
-	self:update_window_height()
-	self:draw_prompt()
-	self:highlight_selection()
-end
-
-function View:read_prompt_query()
-	if self.closed then
-		return
+	-- Resize before writing so the prompt cannot scroll out of the command area.
+	set_command_area(#lines, search.win.hide_statusline and 0 or #lines, false)
+	vim.api.nvim_buf_clear_namespace(search.buf, view_ns, 0, -1)
+	if vim.fn.prompt_getprompt(search.buf) ~= prefix then
+		vim.fn.prompt_setprompt(search.buf, prefix)
 	end
-	local text = vim.api.nvim_buf_get_lines(ui2.bufs.cmd, self.prompt_row, self.prompt_row + 1, false)[1] or ''
-	text = text:sub(self.prompt_length + 1)
-	if text ~= self.search.query then
-		self.search:set_query(text)
-	end
-end
-
----@param pos? integer Zero-based query byte offset; nil or negative preserves the cursor position
-function View:position_prompt_cursor(pos)
-	self.cursor_pos = self.cursor_pos or { 0, 0 }
-
-	self:update_prompt_position()
-
-	if not pos or pos < 0 then
-		local cursor_pos = vim.api.nvim_win_get_cursor(ui2.wins.cmd)
-		pos = cursor_pos[2] - self.prompt_length
-	end
-
-	-- Keep the cursor out of the noneditable prompt prefix.
-	self.cursor_pos[2] = math.max(self.cursor_pos[2], self.prompt_length)
-
-	if self.cursor_pos[1] == self.prompt_row + 1 and self.cursor_pos[2] == self.prompt_length + pos then
-		return
-	end
-
-	if pos < 0 then
-		-- Reuse the last query position when the cursor enters the prompt prefix.
-		pos = self.cursor_pos[2] - self.prompt_length
-	end
-
-	self.cursor_pos[1], self.cursor_pos[2] = self.prompt_row + 1, self.prompt_length + pos
-
-	vim._with({ noautocmd = true }, function()
-		local ok, _ = pcall(vim.api.nvim_win_set_cursor, ui2.wins.cmd, self.cursor_pos)
-		if not ok then
-			self.search:report_error(('Failed to set cursor %d:%d'):format(self.cursor_pos[1], self.cursor_pos[2]))
-		end
-	end)
-end
-
-function View:clear_rendered_lines()
-	self.start_row = self.search.opts.bottom and 0 or 1
-	cmdline.erow = self.start_row
-	vim.api.nvim_buf_clear_namespace(ui2.bufs.cmd, view_ns, 0, -1)
-	self:set_lines(0, -1, {})
-end
-
-function View:update_prompt_position()
-	self.prompt_row = self.search.opts.bottom and cmdline.erow or 0
-end
-
-function View:set_lines(start_pos, end_pos, lines)
-	-- Grow the window before adding rows so the prompt stays visible.
-	local diff = #lines - (end_pos - start_pos)
-	if diff ~= 0 then
-		local height = vim.api.nvim_win_text_height(ui2.wins.cmd, {}).all
-		local predicted = height + diff
-		self:update_window_height(predicted)
-	end
-
-	vim.api.nvim_buf_set_lines(ui2.bufs.cmd, start_pos, end_pos, false, lines)
-end
-
-local ext_priority = {
-	prompt = 1,
-	info = 2,
-	select = 4,
-	marker = 8,
-	hl = 16,
-	icon = 32,
-	match = 64,
-}
-
----@param row integer Zero-based buffer row
----@param col integer Zero-based byte column
----@param opts vim.api.keyset.set_extmark
-function View:add_highlight(row, col, opts)
-	opts.hl_mode = 'combine'
-	opts.invalidate = true
-	local ok, err = pcall(vim.api.nvim_buf_set_extmark, ui2.bufs.cmd, view_ns, row, col, opts)
-	if not ok then
-		self.search:report_error(('Failed to add extmark %d:%d\n\t%s'):format(row, col, err))
-	end
-end
-
----@param p better_select.BetterSelect
----@param info 'index'|'list'|string
----@return string
-local function format_prompt_info(p, info)
-	if info == 'index' then
-		return ('[%d]'):format(p.idx)
-	elseif info == 'list' then
-		return ('(%d/%d)'):format(#p.matches, p.items and #p.items or 0)
-	end
-	return ''
-end
-
-function View:draw_prompt()
-	self:update_prompt_position()
-	if self.prompt_length > 0 and prompt_hl_id > 0 then
-		self:add_highlight(
-			self.prompt_row,
-			0,
-			{ hl_group = prompt_hl_id, end_col = self.prompt_length, priority = ext_priority.prompt }
-		)
-		self:add_highlight(self.prompt_row, 0, {
-			virt_text = {
-				{
-					table.concat(
-						vim.iter(self.search.opts.info_list)
-							:map(function(info)
-								return format_prompt_info(self.search, info)
-							end)
-							:totable(),
-						' '
-					),
-					'BetterSelectInfo',
-				},
-			},
-			virt_text_pos = 'eol_right_align',
-			priority = ext_priority.info,
-		})
-	end
-end
-
-function View:scroll_to_selection()
-	self.search:clamp_selection()
-	if self.search.idx == 0 then
-		self.offset = 0
-		return
-	end
-
-	local minimum_offset = self.search.idx - self.max_list_height
-	if minimum_offset > self.offset then
-		self.offset = minimum_offset
-	elseif self.search.idx <= self.offset then
-		self.offset = self.search.idx - 1
-	end
-
-	self.offset = math.min(math.max(0, self.offset), math.max(0, #self.search.matches - self.max_list_height))
-end
-
-local icon_pad = 2
-
-function View:draw_matches()
-	local indent = vim.fn.strdisplaywidth(self.search.opts.pointer) + 1
-	local prefix = (' '):rep(indent)
-	self:scroll_to_selection()
-	local lines = {}
-	local last_match = math.min(#self.search.matches, self.max_list_height + self.offset)
-	for index = self.offset + 1, last_match do
-		local entry = self.search.items[self.search.matches[index][1]]
-		if not (entry.icon and entry.icon_hl) and vim.is_callable(self.search.get_icon) then
-			entry.icon, entry.icon_hl = self.search.get_icon(entry)
-		end
-		if not entry.hls and vim.is_callable(self.search.hl_item) then
-			entry.hls = self.search.hl_item(entry)
-		end
-		local icon = entry.icon and (entry.icon .. (' '):rep(icon_pad)) or ''
-		lines[#lines + 1] = prefix .. icon .. entry.text
-	end
-	if not self.search.opts.shrink then
-		for _ = #lines + 1, self.max_list_height do
-			lines[#lines + 1] = ''
-		end
-	end
-	self:set_lines(self.start_row, cmdline.erow, lines)
-	cmdline.erow = self.start_row + #lines
-
-	for index = self.offset + 1, last_match do
-		local match = self.search.matches[index]
-		local entry = self.search.items[match[1]]
-		local row = self.start_row + index - self.offset - 1
-		local text_col = indent + (entry.icon and (#entry.icon + icon_pad) or 0)
-		if entry.icon and entry.icon_hl then
-			self:add_highlight(row, indent, {
-				end_col = text_col,
-				hl_group = entry.icon_hl,
-				priority = ext_priority.icon,
-			})
-		end
-		for _, highlight in ipairs(entry.hls or {}) do
-			self:add_highlight(row, text_col + highlight[1][1], {
-				end_col = text_col + highlight[1][2],
-				hl_group = highlight[2],
-				priority = ext_priority.hl,
-			})
-		end
-		if self.search.marked[entry.id] then
-			self:add_highlight(row, indent - 1, {
-				virt_text = { { self.search.opts.marker, 'BetterSelectMark' } },
-				virt_text_pos = 'overlay',
-				priority = ext_priority.marker,
-			})
-			self:add_highlight(row, 0, {
-				hl_group = 'BetterSelectMarkLine',
-				hl_eol = true,
-				end_row = row + 1,
-				end_col = 0,
-				priority = ext_priority.marker,
-			})
-		end
-		for _, position in ipairs(match[2] or {}) do
-			local byte = vim.fn.byteidx(entry.text, position)
-			local next_byte = vim.fn.byteidx(entry.text, position + 1)
-			self:add_highlight(row, text_col + byte, {
-				hl_group = index == self.search.idx and 'BetterSelectMatchSel' or 'BetterSelectMatch',
-				end_col = text_col + (next_byte < 0 and #entry.text or next_byte),
-				priority = ext_priority.match,
-			})
-		end
-	end
-end
-
-function View:highlight_selection()
-	if self.search.idx == 0 then
-		self:close_preview()
-	elseif self.preview_win then
-		self:update_preview()
-	end
-
-	self.search:clamp_selection()
-	local idx = self.search.idx
-	if idx == 0 then
-		return
-	end
-
-	self:scroll_to_selection()
-	local row = math.max(0, math.min(self.start_row + (idx - self.offset), cmdline.erow) - 1)
-
-	self:add_highlight(row, 0, {
-		virt_text = { { self.search.opts.pointer, 'BetterSelectPointer' } },
-		virt_text_pos = 'overlay',
-
-		hl_group = 'BetterSelectSel',
-		hl_eol = true,
-		end_row = row + 1,
-		end_col = 0,
-
-		priority = ext_priority.select,
+	vim.api.nvim_buf_set_lines(search.buf, 0, -1, false, lines)
+	cmdline.srow, cmdline.erow, cmdline.level = 0, #lines, 1
+	vim.api.nvim_buf_set_mark(search.buf, ':', view.prompt_row + 1, #prefix, {})
+	position_prompt_cursor(search, view.cursor_offset)
+	add_highlight(search, view.prompt_row, 0, 'BetterSelectPrompt', { end_col = #prefix })
+	local info = { index = ('[%d]'):format(search.idx), list = ('(%d/%d)'):format(#search.matches, #search.items) }
+	local labels = vim.tbl_map(function(name)
+		return info[name] or ''
+	end, search.opts.info_list)
+	add_highlight(search, view.prompt_row, 0, nil, {
+		virt_text = { { table.concat(labels, ' '), 'BetterSelectInfo' } },
+		virt_text_pos = 'eol_right_align',
 	})
+	for index = first, first + count - 1 do
+		highlight_match(search, index, list_row + index - first)
+	end
+	if view.preview_win then
+		update_preview(search)
+	end
 end
 
-function View:toggle_preview()
-	if self.preview_win then
-		self:close_preview()
-		return
-	end
-
-	self:update_preview()
-end
-
----@return {buf?:integer, pos?:[integer,integer], pos_end?:[integer,integer]}?
-function View:get_preview_content()
-	if self.search.idx == 0 then
-		return
-	end
-
-	local match = self.search.matches[self.search.idx]
-	local item = self.search.items[match[1]]
-
-	if not item or not (self.search.preview_item and vim.is_callable(self.search.preview_item)) then
-		return
-	end
-
-	local ok, result = pcall(self.search.preview_item, item.v, item.id, self.search)
-	if not ok then
-		self.search:report_error(result)
-		return
-	end
-	return result
-end
-
-function View:get_preview_window_options()
-	local preview_opts = self.search.win.preview_opts
-		and vim.is_callable(self.search.win.preview_opts)
-		and self.search.win.preview_opts(self)
-	local cmd_height = vim.api.nvim_win_get_height(ui2.wins.cmd)
-
-	local win_border = preview_opts and preview_opts.border or vim.o.winborder
-	return vim.tbl_extend('force', {
-		relative = 'editor',
-		focusable = false,
-		width = vim.o.columns,
-		height = self.win.height,
-		col = 0,
-		row = vim.o.lines
-			- (self.win.height + cmd_height)
-			- ((win_border == 'none' or win_border == '') and 0 or 2)
-			- (self.search.win.hide_statusline and 0 or 1),
-	}, preview_opts or {})
-end
-
-function View:update_preview()
-	local pr = self:get_preview_content()
-	if not pr or not pr.buf or not vim.api.nvim_buf_is_valid(pr.buf) then
-		self:close_preview()
-		return
-	end
-	vim.fn.bufload(pr.buf)
-
-	if not self.preview_win then
-		self.preview_win = vim.api.nvim_open_win(pr.buf, false, self:get_preview_window_options())
-	else
-		vim.api.nvim_win_set_buf(self.preview_win, pr.buf)
-	end
-
-	vim._with({ win = self.preview_win, noautocmd = true }, function()
-		vim.api.nvim_set_option_value('previewwindow', true, { scope = 'local' })
-		vim.api.nvim_set_option_value('eventignorewin', 'all,-FileType', { scope = 'local' })
-
-		local same_line = pr.pos ~= nil and (pr.pos_end == nil or pr.pos_end[1] == pr.pos[1])
-		vim.api.nvim_set_option_value('cursorline', same_line, { scope = 'local' })
-
-		if pr.pos then
-			vim.api.nvim_win_set_cursor(self.preview_win, pr.pos)
+local function use_options(view, target, values)
+	for name, value in pairs(values) do
+		local saved = vim.api.nvim_get_option_value(name, target)
+		view.restore[#view.restore + 1] = function()
+			vim.api.nvim_set_option_value(name, saved, target)
 		end
+		vim.api.nvim_set_option_value(name, value, target)
+	end
+end
+
+local function open_dialog(search)
+	local view = search.view
+	view.previous_win = vim.api.nvim_get_current_win()
+	view.previous_view = vim.fn.winsaveview()
+	view.previous_prompt = vim.fn.prompt_getprompt(search.buf)
+	view.previous_height = vim.o.cmdheight
+	view.previous_config = vim.api.nvim_win_get_config(ui2.wins.cmd)
+	view.augroup = vim.api.nvim_create_augroup('better_select.dialog', { clear = true })
+	vim._with({ noautocmd = true }, function()
+		use_options(view, { win = ui2.wins.cmd, scope = 'local' }, {
+			eventignorewin = 'all,-FileType,-InsertCharPre,-TextChangedI,-CursorMovedI,-InsertLeave,-BufLeave,-WinLeave',
+			winhighlight = 'Normal:BetterSelectNormal,Search:,CurSearch:,IncSearch:',
+			wrap = false,
+			signcolumn = 'no',
+		})
+		use_options(
+			view,
+			{ buf = search.buf },
+			{ buftype = 'prompt', autocomplete = false, filetype = 'better-select' }
+		)
+		use_options(view, { scope = 'global' }, { showmode = false, showcmd = false })
+		cmdline.prompt = false
+		render(search)
+		vim.api.nvim_set_current_win(ui2.wins.cmd)
+		vim.cmd.startinsert { bang = true }
+	end)
+	local function watch(events, options, callback)
+		vim.api.nvim_create_autocmd(
+			events,
+			vim.tbl_extend('force', options, { group = view.augroup, callback = callback })
+		)
+	end
+	watch('TextChangedI', { buffer = search.buf }, function()
+		local line = vim.api.nvim_buf_get_lines(search.buf, view.prompt_row, view.prompt_row + 1, false)[1] or ''
+		local query = line:sub(view.prompt_length + 1)
+		if query ~= search.query then
+			position_prompt_cursor(search)
+			search:set_query(query)
+		end
+	end)
+	watch('CursorMovedI', { buffer = search.buf }, function()
+		position_prompt_cursor(search)
+	end)
+	watch('VimResized', {}, function()
+		render(search)
+	end)
+	watch('ModeChanged', { pattern = 'i:*' }, function()
+		search:cancel()
+	end)
+	watch({ 'InsertLeave', 'BufLeave', 'WinLeave' }, { buffer = search.buf }, function()
+		search:cancel()
 	end)
 end
 
-function View:close_preview()
-	if not self.preview_win then
-		return
+local function close_dialog(search)
+	local view = search.view
+	if view.augroup then
+		vim.api.nvim_del_augroup_by_id(view.augroup)
 	end
-
-	pcall(vim.api.nvim_win_close, self.preview_win, true)
-	self.preview_win = nil
+	close_preview(search)
+	vim._with({ noautocmd = true }, function()
+		vim.cmd.stopinsert()
+		vim.api.nvim_buf_clear_namespace(search.buf, view_ns, 0, -1)
+		vim.api.nvim_buf_set_lines(search.buf, 0, -1, false, {})
+		vim.fn.prompt_setprompt(search.buf, view.previous_prompt or '')
+		for index = #view.restore, 1, -1 do
+			pcall(view.restore[index])
+		end
+		cmdline.srow, cmdline.erow, cmdline.level, cmdline.prompt = 0, 0, 0, false
+		if view.previous_height then
+			set_command_area(view.previous_config.height, view.previous_height, view.previous_config.hide)
+		end
+		if view.previous_win and vim.api.nvim_win_is_valid(view.previous_win) then
+			vim.api.nvim_set_current_win(view.previous_win)
+			vim.fn.winrestview(view.previous_view)
+		end
+	end)
 end
 
 local M = {}
@@ -722,7 +457,7 @@ function BetterSelect:update_matches()
 	self.matches = matches
 	self:clamp_selection()
 	if self.view then
-		self.view:redraw()
+		render(self)
 	end
 end
 
@@ -816,7 +551,7 @@ function BetterSelect:set_query(query)
 	if self.live then
 		self.items, self.matches, self.marked = {}, {}, {}
 		self:refresh()
-		self.view:redraw()
+		render(self)
 	else
 		self:update_matches()
 	end
@@ -830,7 +565,7 @@ function BetterSelect:toggle_live()
 	self.idx = 0
 	if self.live then
 		self:refresh(true)
-		self.view:redraw()
+		render(self)
 	else
 		self:cancel_pending_request()
 		self:update_matches()
@@ -852,7 +587,7 @@ function BetterSelect:close()
 				end)
 			end
 		end
-		self.view:close()
+		close_dialog(self)
 	end
 	if active == self then
 		active = nil
@@ -927,15 +662,19 @@ function BetterSelect:action(name)
 		elseif name == 'down' or name == 'up' then
 			self.idx = self.idx + (name == 'down' and 1 or -1)
 			self:clamp_selection()
-			self.view:redraw()
+			render(self)
 		elseif name == 'mark' then
 			local entry = self:get_current()
 			if entry then
 				self.marked[entry.id] = not self.marked[entry.id] or nil
-				self.view:redraw()
+				render(self)
 			end
 		elseif name == 'toggle_preview' then
-			self.view:toggle_preview()
+			if self.view.preview_win then
+				close_preview(self)
+			else
+				update_preview(self)
+			end
 		elseif name == 'accept' or name == 'cancel' or name == 'toggle_live' or name == 'set_quickfix' then
 			self[name](self)
 		end
@@ -971,7 +710,6 @@ local function initialize_highlights()
 	end
 
 	define_highlights()
-	prompt_hl_id = vim.api.nvim_get_hl_id_by_name 'BetterSelectPrompt'
 	vim.api.nvim_create_autocmd('ColorScheme', {
 		group = vim.api.nvim_create_augroup('better_select.highlights', { clear = true }),
 		callback = define_highlights,
@@ -1022,9 +760,17 @@ function M.open(options)
 	initialize_highlights()
 	self.buf = ui2.bufs.cmd
 	self.keys, self.saved_maps = {}, {}
-	self.view = View:new(self)
+	self.view = {
+		search = self,
+		win = {},
+		restore = {},
+		offset = 0,
+		prompt_row = 0,
+		prompt_length = 0,
+		cursor_offset = #vim.fn.strtrans(self.query),
+	}
 	local ok, err = pcall(function()
-		self.view:open()
+		open_dialog(self)
 		for key, action in pairs(self.mappings) do
 			if action then
 				local previous = vim.fn.maparg(key, 'i', false, true)
