@@ -1,7 +1,4 @@
 -- Better select using Neovim ui2.
--- Originally adapted from comfysage/artio.nvim (EUPL-1.2).
--- Modified 2026-10-24: replaced the renderer with whole-buffer rendering and scoped UI sessions.
--- See better_select/LICENSE and better_select/NOTICE for provenance and terms.
 local cmdline = require 'vim._core.ui2.cmdline'
 local ui2 = require 'vim._core.ui2'
 local view_ns = vim.api.nvim_create_namespace '@better_select.view.ns'
