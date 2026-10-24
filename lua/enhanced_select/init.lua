@@ -138,7 +138,7 @@ function EnhancedSelect:filter()
 	self.matches = matches
 	self:clamp()
 	if self.view then
-		self.view:trigger_show()
+		self.view:redraw()
 	end
 end
 
@@ -238,7 +238,7 @@ function EnhancedSelect:set_query(query)
 		self:filter()
 	end
 	if self.view then
-		self.view:trigger_show()
+		self.view:redraw()
 	end
 end
 
@@ -254,7 +254,7 @@ function EnhancedSelect:toggle_live()
 	else
 		self:filter()
 	end
-	self.view:trigger_show()
+	self.view:redraw()
 end
 
 function EnhancedSelect:close()
@@ -347,12 +347,12 @@ function EnhancedSelect:action(name)
 		elseif name == 'down' or name == 'up' then
 			self.idx = self.idx + (name == 'down' and 1 or -1)
 			self:clamp()
-			self.view:trigger_show()
+			self.view:redraw()
 		elseif name == 'mark' then
 			local entry = self:get_current()
 			if entry then
 				self.marked[entry.id] = not self.marked[entry.id] or nil
-				self.view:trigger_show()
+				self.view:redraw()
 			end
 		elseif name == 'toggle_preview' then
 			self.view:toggle_preview()

@@ -76,7 +76,7 @@ end
 ---@param indent integer
 ---@param level integer
 ---@param hl_id integer
-function View:show(content, pos, first_char, prompt, indent, level, hl_id)
+function View:render(content, pos, first_char, prompt, indent, level, hl_id)
 	cmdline.level, cmdline.indent = level, indent
 	if cmdline.highlighter and cmdline.highlighter.active then
 		cmdline.highlighter.active[ui2.bufs.cmd] = nil
@@ -207,7 +207,7 @@ function View:open()
 	self.saved_prompt = vim.fn.prompt_getprompt(ui2.bufs.cmd)
 	self:on_resized()
 	cmdline.prompt, cmdline.srow, cmdline.indent, cmdline.level = false, 0, 1, 1
-	self:trigger_show()
+	self:redraw()
 	vim._with({ noautocmd = true }, function()
 		vim.api.nvim_set_current_win(ui2.wins.cmd)
 	end)
@@ -234,7 +234,7 @@ function View:open()
 		group = self.augroup,
 		callback = function()
 			self:on_resized()
-			self:trigger_show()
+			self:redraw()
 		end,
 	})
 	vim.api.nvim_create_autocmd('ModeChanged', {
@@ -281,14 +281,14 @@ function View:hide()
 	self:win_config(ui2.wins.cmd, true, ui2.cmdheight)
 end
 
-function View:trigger_show()
+function View:redraw()
 	local input
 	if self.search.live then
 		input = self.search.live_input
 	else
 		input = self.search.input
 	end
-	self:show({ { 0, input } }, -1, '', self.search.prompt_text, cmdline.indent, cmdline.level, prompt_hl_id)
+	self:render({ { 0, input } }, -1, '', self.search.prompt_text, cmdline.indent, cmdline.level, prompt_hl_id)
 end
 
 function View:update()
