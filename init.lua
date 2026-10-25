@@ -1,6 +1,7 @@
 vim.loader.enable()
 
 require 'options'
+require 'packages'
 vim.pack.add {
 	'git@github.com:theJian/nvim-moonwalk.git',
 }

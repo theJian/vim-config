@@ -1,16 +1,128 @@
 {
   "plugins": {
+    "LuaSnip": {
+      "rev": "3732756842a2f7e0e76a7b0487e9692072857277",
+      "src": "https://github.com/L3MON4D3/LuaSnip"
+    },
+    "blink.pairs": {
+      "rev": "65978aadaf9b7d6cae59c1c51cf2b366b370546e",
+      "src": "https://github.com/saghen/blink.pairs"
+    },
     "fff.nvim": {
       "rev": "1bcbce2bc67d1eca5a6b2f540b5c0bf8a3fdeb2c",
       "src": "https://github.com/dmtrKovalenko/fff.nvim"
+    },
+    "formatter.nvim": {
+      "rev": "b9d7f853da1197b83b8edb4cc4952f7ad3a42e41",
+      "src": "https://github.com/mhartington/formatter.nvim"
+    },
+    "gitsigns.nvim": {
+      "rev": "130beacf8a51f00aede9c31064c749136679a321",
+      "src": "https://github.com/lewis6991/gitsigns.nvim.git"
+    },
+    "grug-far.nvim": {
+      "rev": "74eef260e1142264ab994fb9c88e4f420e9486d7",
+      "src": "https://github.com/MagicDuck/grug-far.nvim.git"
+    },
+    "indent-blankline.nvim": {
+      "rev": "005b56001b2cb30bfa61b7986bc50657816ba4ba",
+      "src": "https://github.com/lukas-reineke/indent-blankline.nvim"
+    },
+    "live-command.nvim": {
+      "rev": "fc8c36d7e5b96945fbc52af7029facc317a47377",
+      "src": "https://github.com/smjonas/live-command.nvim"
+    },
+    "lualine.nvim": {
+      "rev": "47f91c416daef12db467145e16bed5bbfe00add8",
+      "src": "https://github.com/nvim-lualine/lualine.nvim"
+    },
+    "mason-lspconfig.nvim": {
+      "rev": "4cfe411526a7a99c18281135e8b4765ae6330d15",
+      "src": "https://github.com/williamboman/mason-lspconfig.nvim"
+    },
+    "mason.nvim": {
+      "rev": "57e5a8addb8c71fb063ee4acda466c7cf6ad2800",
+      "src": "https://github.com/williamboman/mason.nvim"
+    },
+    "nvim-colorizer.lua": {
+      "rev": "a065833f35a3a7cc3ef137ac88b5381da2ba302e",
+      "src": "https://github.com/norcalli/nvim-colorizer.lua"
+    },
+    "nvim-dap": {
+      "rev": "818cd8787a77a97703eb1d9090543a374f79a9ac",
+      "src": "https://github.com/mfussenegger/nvim-dap"
+    },
+    "nvim-dap-go": {
+      "rev": "b4421153ead5d726603b02743ea40cf26a51ed5f",
+      "src": "https://github.com/leoluz/nvim-dap-go"
+    },
+    "nvim-dap-ui": {
+      "rev": "cf91d5e2d07c72903d052f5207511bf7ecdb7122",
+      "src": "https://github.com/rcarriga/nvim-dap-ui"
+    },
+    "nvim-dap-virtual-text": {
+      "rev": "fbdb48c2ed45f4a8293d0d483f7730d24467ccb6",
+      "src": "https://github.com/theHamsta/nvim-dap-virtual-text"
+    },
+    "nvim-lint": {
+      "rev": "1f19dacd945a7b1a57f29f32b2d7168384df3d36",
+      "src": "https://github.com/mfussenegger/nvim-lint"
+    },
+    "nvim-lspconfig": {
+      "rev": "45a3a444b710511c39abca3b60bb6e23a21e3de5",
+      "src": "https://github.com/neovim/nvim-lspconfig.git"
+    },
+    "nvim-luadev": {
+      "rev": "3ba0c02c378503739f1fdb95cff3ea2aad48db3e",
+      "src": "https://github.com/bfredl/nvim-luadev"
     },
     "nvim-moonwalk": {
       "rev": "a83feb17df5e999f1c0877cc3c4dd0e505574f67",
       "src": "git@github.com:theJian/nvim-moonwalk.git"
     },
+    "nvim-nio": {
+      "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
+      "src": "https://github.com/nvim-neotest/nvim-nio"
+    },
+    "nvim-paredit": {
+      "rev": "b6ba636874a3115d944e35746444724240568aca",
+      "src": "https://github.com/julienvincent/nvim-paredit.git"
+    },
+    "nvim-parinfer": {
+      "rev": "3968e669d9f02589aa311d33cb475b16b27c5fbb",
+      "src": "https://github.com/gpanders/nvim-parinfer.git"
+    },
+    "nvim-surround": {
+      "rev": "1098d7b3c34adcfa7feb3289ee434529abd4afd1",
+      "src": "https://github.com/kylechui/nvim-surround.git"
+    },
+    "nvim-treesitter": {
+      "rev": "36fcb4a4238928f0b627e1ab84ade0acc1facc2c",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "nvim-treesitter-context": {
+      "rev": "64dd4cf3f6fd0ab17622c5ce15c91fc539c3f24a",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
+    },
+    "oil.nvim": {
+      "rev": "bbfa7cba85967dc9dbfe0ca486fd4b17084bf846",
+      "src": "https://github.com/stevearc/oil.nvim.git"
+    },
+    "one-small-step-for-vimkind": {
+      "rev": "87eeca2bd4d90a94eed1ef0dbc66885117e7bacb",
+      "src": "https://github.com/jbyuki/one-small-step-for-vimkind"
+    },
     "parinfer-rust": {
       "rev": "7f13acea20f03228f72156cec4fa4e49f0d5d1e5",
       "src": "https://github.com/eraserhd/parinfer-rust"
+    },
+    "vim-fugitive": {
+      "rev": "61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4",
+      "src": "https://github.com/tpope/vim-fugitive.git"
+    },
+    "vim-markdown-composer": {
+      "rev": "4f53f1c6e41c8fb916c50b50e18284d923f0f3cd",
+      "src": "https://github.com/euclio/vim-markdown-composer"
     }
   }
 }

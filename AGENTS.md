@@ -1,10 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents working in this repository.
 
 ## Overview
 
-This is a minimalist Neovim configuration written in Lua that uses a custom plugin manager called `packman`. The configuration focuses on essential functionality while maintaining a clean, minimal setup.
+This is a minimalist Neovim configuration written in Lua that uses Neovim's built-in `vim.pack` (Neovim 0.12+). The configuration focuses on essential functionality while maintaining a clean, minimal setup.
 
 ## Architecture
 
@@ -14,7 +14,7 @@ This is a minimalist Neovim configuration written in Lua that uses a custom plug
 - `lua/keymaps.lua` - Keyboard mappings and leader key setup
 - `lua/autocmds.lua` - Automatic commands for file handling
 - `lua/ui.lua` - UI configuration including colorscheme and signcolumn
-- `lua/packman.lua` - Custom plugin manager (see Plugin Management below)
+- `lua/packages.lua` - Plugin specifications and native build hooks
 
 ### Plugin Configuration
 - `lua/plugins/init.lua` - Main plugin loader that initializes all plugins
@@ -27,28 +27,12 @@ This is a minimalist Neovim configuration written in Lua that uses a custom plug
   - `lint.lua` - Linting configuration
   - Other specialized plugin configs
 
-### Plugin Management (packman)
-This config uses a custom plugin manager called `packman` instead of common alternatives like Packer or Lazy. Key points:
-
-- Plugins are installed to `pack/packman/start/` (autoload) and `pack/packman/opt/` (optional)
-- Plugin definitions are stored in `lua/packfile` using the syntax: `Pack { "https://github.com/user/repo" }`
-- Use `:lua require('packman').install()` to install from packfile
-- Use `:lua require('packman').get('user/repo')` to install single plugins
-- Use `:lua require('packman').update()` to update plugins
-- Use `:lua require('packman').list()` to list installed plugins
-
-### Packfile Format
-The `lua/packfile` defines plugins using a custom DSL:
-```lua
-Pack {
-  "https://github.com/user/repo",
-}
-
-Pack {
-  "https://github.com/user/optional-plugin",
-  opt,  -- Mark as optional (goes to opt/ directory)
-}
-```
+### Plugin Management (vim.pack)
+- Plugin specifications are in `lua/packages.lua`; the colorscheme, fff.nvim, and parinfer-rust also use `vim.pack.add` in their existing modules.
+- Missing plugins install automatically; `nvim-pack-lock.json` preserves their revisions.
+- Plugins live in `stdpath('data')/site/pack/core/opt/`.
+- Native build hooks run on install and update; Cargo is required (blink.pairs requires nightly Rust).
+- When upgrading an existing checkout, move old `pack/packman/start/` plugins outside `pack/*/start/` to prevent duplicate loading. Keep any separately installed plugins you still use.
 
 ## Key Features
 
@@ -117,12 +101,10 @@ Pack {
 
 ### Plugin Management
 ```vim
-:lua require('packman').install()     " Install all plugins from packfile
-:lua require('packman').get('repo')   " Install single plugin
-:lua require('packman').update()      " Update all plugins
-:lua require('packman').list()        " List installed plugins
-:lua require('packman').remove()      " Remove plugin
-:lua require('packman').dump()        " Generate packfile from installed
+:lua vim.pack.add({ 'https://github.com/user/repo' }) " Also add to config to persist loading
+:lua vim.pack.update()                              " Review and update plugins
+:lua vim.print(vim.pack.get())                      " List managed plugins
+:lua vim.pack.del({ 'plugin-name' })                " Remove from config first
 ```
 
 ### LSP Operations
@@ -194,15 +176,11 @@ Auto-save is configured in `lua/autocmds.lua` with the following characteristics
 │   ├── keymaps.lua            # Keyboard mappings
 │   ├── autocmds.lua           # Auto commands
 │   ├── ui.lua                 # UI configuration
-│   ├── packman.lua            # Plugin manager
-│   ├── packfile               # Plugin definitions
+│   ├── packages.lua           # Plugin specifications and build hooks
 │   └── plugins/               # Plugin configurations
 │       ├── init.lua           # Plugin loader
 │       ├── lsp.lua            # LSP setup
 │       ├── treesitter.lua     # Syntax highlighting
 │       └── ...                # Other plugin configs
-└── pack/
-    └── packman/               # Plugin installation directory
-        ├── start/             # Auto-loaded plugins
-        └── opt/               # Optional plugins
+└── nvim-pack-lock.json        # Locked plugin revisions
 ```
