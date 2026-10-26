@@ -2,7 +2,7 @@
 
 This file provides guidance to coding agents working in this repository. Paths below are relative to the repository root.
 
-Keep Markdown documentation in `doc/`, except this `AGENTS.md`, which must remain at the repository root for agent instruction discovery.
+Keep Markdown documentation in `doc/`, except this `AGENTS.md`, which must remain at the repository root for agent instruction discovery. Write self-contained descriptions of this configuration and use Vim key notation such as `<leader>p` and `<leader><Tab>`; avoid comparisons with other editor configurations.
 
 ## Overview
 
@@ -23,12 +23,12 @@ This is a minimalist Neovim configuration written in Lua that uses Neovim's buil
 
 ### Native Projects and Workspaces
 
-- `lua/projects.lua` implements the `SPC p` project menu without additional plugins.
-- `lua/workspaces.lua` implements `SPC TAB` using named tabs, buffer membership, and session snapshots.
+- `lua/projects.lua` implements the `<leader>p` project menu without additional plugins.
+- `lua/workspaces.lua` implements `<leader><Tab>` using named tabs, buffer membership, and session snapshots.
 - `lua/workspace_store.lua` stores data-only JSON under `stdpath('state')/workspaces/` and routes lists through `better_select`.
 - Project-local settings use `.nvim-project.json`; recovered unsaved text is protected from auto-save until edited.
 - Preserve transactional restore, shared-buffer ownership, and the previous saved session when exiting an empty session.
-- Project commands follow the current file’s root; empty and special buffers fall back to the workspace root. Vim counts provide prefix variants such as workspace cloning.
+- Project commands follow the current file’s root; empty and special buffers fall back to the workspace root. Vim counts select alternate actions such as workspace cloning.
 - See `doc/projects-workspaces.md` for all bindings, persistence behavior, and test commands.
 
 ### Plugin Configuration

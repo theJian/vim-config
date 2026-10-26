@@ -75,7 +75,7 @@ file(alpha .. '/src/other.lua')
 file(beta .. '/.projectile', {})
 file(beta .. '/file.lua')
 
-test('every Doom project and workspace binding exists', function()
+test('every documented project and workspace binding exists', function()
 	for _, key in ipairs {
 		'.',
 		'>',
