@@ -31,11 +31,6 @@ keymap.set('n', '<leader>wv', '<Cmd>vsplit<CR>', { desc = 'Split window vertical
 
 -- Tabs
 keymap.set('n', '<leader>t', '<Cmd>tabnew<CR>', { desc = 'Open new tab' })
-for i = 1, 9 do
-	keymap.set('n', '<M-' .. i .. '>', i .. 'gt', { desc = 'Go to tab ' .. i })
-	keymap.set('i', '<M-' .. i .. '>', '<Cmd>tabn ' .. i .. '<CR>', { desc = 'Go to tab ' .. i })
-	keymap.set('t', '<M-' .. i .. '>', '<Cmd>tabn ' .. i .. '<CR>', { desc = 'Go to tab ' .. i })
-end
 
 -- Close buffer
 keymap.set('n', '<leader>x', '<Cmd>bp|bd #<CR>', { desc = 'Switch to previous buffer and delete current buffer' })
@@ -74,3 +69,107 @@ keymap.set('c', '<C-e>', '<End>', { desc = 'Go to end of command line' })
 -- Swap ;/:
 keymap.set({ 'n', 'v' }, ';', ':', { desc = 'Enter command line' })
 keymap.set({ 'n', 'v' }, ':', ';', { desc = 'Repeat last character search' })
+
+-- Workspaces
+for key, item in pairs {
+	['<Tab>'] = { 'list', 'Display workspaces' },
+	['.'] = { 'switch', 'Switch workspace' },
+	['`'] = { 'last', 'Switch to last workspace' },
+	['n'] = { 'new', 'New workspace' },
+	['N'] = { 'new-named', 'New named workspace' },
+	['l'] = { 'load', 'Load workspace from file' },
+	['s'] = { 'save', 'Save workspace to file' },
+	['x'] = { 'clear', 'Kill session' },
+	['d'] = { 'kill', 'Kill this workspace' },
+	['D'] = { 'delete-saved', 'Delete saved workspace' },
+	['r'] = { 'rename', 'Rename workspace' },
+	['R'] = { 'restore', 'Restore last session' },
+	[']'] = { 'next', 'Next workspace' },
+	['['] = { 'previous', 'Previous workspace' },
+} do
+	keymap.set(
+		'n',
+		'<leader><Tab>' .. key,
+		'<Plug>(acme-workspaces-' .. item[1] .. ')',
+		{ desc = item[2], unique = true }
+	)
+end
+
+-- Projects
+for key, item in pairs {
+	['.'] = { 'browse', 'Browse project' },
+	['>'] = { 'browse-other', 'Browse other project' },
+	['!'] = { 'shell', 'Run command in project root' },
+	['&'] = { 'async', 'Async command in project root' },
+	['a'] = { 'add', 'Add new project' },
+	['b'] = { 'buffers', 'Switch to project buffer' },
+	['c'] = { 'compile', 'Compile project' },
+	['C'] = { 'repeat', 'Repeat last project command' },
+	['d'] = { 'remove', 'Remove known project' },
+	['D'] = { 'discover', 'Discover projects in folder' },
+	['e'] = { 'edit-config', 'Edit project local configuration' },
+	['f'] = { 'find', 'Find file in project' },
+	['F'] = { 'find-other', 'Find file in other project' },
+	['g'] = { 'configure', 'Configure project' },
+	['i'] = { 'invalidate', 'Invalidate project cache' },
+	['k'] = { 'kill', 'Kill project buffers' },
+	['o'] = { 'sibling', 'Find sibling file' },
+	['p'] = { 'switch', 'Switch project' },
+	['r'] = { 'recent', 'Find recent project files' },
+	['R'] = { 'run', 'Run project' },
+	['s'] = { 'save', 'Save project files' },
+	['T'] = { 'test', 'Test project' },
+	['x'] = { 'scratch-toggle', 'Toggle project scratch buffer' },
+	['X'] = { 'scratch', 'Switch to project scratch buffer' },
+} do
+	keymap.set('n', '<leader>p' .. key, '<Plug>(acme-projects-' .. item[1] .. ')', { desc = item[2], unique = true })
+end
+
+for i = 0, 9 do
+	local plug = '<Plug>(acme-workspaces-' .. i .. ')'
+	keymap.set('n', '<leader><Tab>' .. i, plug, { desc = 'Switch workspace ' .. i, unique = true })
+	keymap.set({ 'n', 'i', 't' }, '<M-' .. i .. '>', plug, { desc = 'Switch workspace ' .. i, unique = true })
+end
+keymap.set('n', '<C-t>', '<Plug>(acme-workspaces-create)', { desc = 'New workspace', unique = true })
+for _, key in ipairs { '<leader>,', '<leader>bb' } do
+	keymap.set('n', key, '<Plug>(acme-workspaces-buffers)', { desc = 'Switch workspace buffer', unique = true })
+end
+
+-- Picker bindings exist only while better_select borrows the ui2 buffer.
+local picker_mappings = {
+	['<Down>'] = 'down',
+	['<Up>'] = 'up',
+	['<CR>'] = 'accept',
+	['<Esc>'] = 'cancel',
+	['<Tab>'] = 'mark',
+	['<C-g>'] = 'toggle_live',
+	['<C-l>'] = 'toggle_preview',
+	['<C-q>'] = 'set_quickfix',
+	['<C-s>'] = 'split',
+	['<C-v>'] = 'vsplit',
+	['<C-t>'] = 'tabnew',
+}
+require('better_select').setup {
+	on_open = function(search)
+		for key, action in pairs(picker_mappings) do
+			local plug = '<Plug>(acme-better-select-' .. action:gsub('_', '-') .. ')'
+			-- <unique> also checks global maps; picker-local keys intentionally shadow them.
+			local global = vim.iter(vim.api.nvim_get_keymap('i')):find(function(map)
+				return vim.keycode(map.lhs) == vim.keycode(key)
+			end)
+			if global then
+				keymap.del('i', key)
+			end
+			local ok, err = pcall(keymap.set, 'i', key, plug, { buffer = search.buf, nowait = true, unique = true })
+			if global then
+				vim.fn.mapset('i', false, global)
+			end
+			if not ok then
+				error(err)
+			end
+			search.view.restore[#search.view.restore + 1] = function()
+				keymap.del('i', key, { buffer = search.buf })
+			end
+		end
+	end,
+}

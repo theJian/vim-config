@@ -606,14 +606,18 @@ function M.setup()
 		end,
 	})
 	api.nvim_create_autocmd('VimLeavePre', { group = group, callback = persist })
+	if M.mappings_initialized then
+		return
+	end
+	M.mappings_initialized = true
 	local bindings = {
-		['.'] = {
+		['browse'] = {
 			'Browse project',
 			function()
 				M.browse()
 			end,
 		},
-		['>'] = {
+		['browse-other'] = {
 			'Browse other project',
 			function()
 				choose(function(root)
@@ -621,25 +625,25 @@ function M.setup()
 				end)
 			end,
 		},
-		['!'] = {
+		['shell'] = {
 			'Run command in project root',
 			function()
 				M.command 'shell'
 			end,
 		},
-		['&'] = {
+		['async'] = {
 			'Async command in project root',
 			function()
 				M.command 'async'
 			end,
 		},
-		a = {
+		['add'] = {
 			'Add new project',
 			function()
 				store.input('Project directory', vim.fn.getcwd(), M.add, 'dir')
 			end,
 		},
-		b = {
+		['buffers'] = {
 			'Switch to project buffer',
 			function()
 				store.pick('Project buffers', M.buffers(), function(buf)
@@ -647,38 +651,38 @@ function M.setup()
 				end, api.nvim_set_current_buf)
 			end,
 		},
-		c = {
+		['compile'] = {
 			'Compile project',
 			function()
 				M.command 'compile'
 			end,
 		},
-		C = {
+		['repeat'] = {
 			'Repeat last project command',
 			function()
 				M.command 'repeat'
 			end,
 		},
-		d = {
+		['remove'] = {
 			'Remove known project',
 			function()
 				choose(M.remove)
 			end,
 		},
-		D = {
+		['discover'] = {
 			'Discover projects in folder',
 			function()
 				store.input('Discover under', vim.fn.getcwd(), M.discover, 'dir')
 			end,
 		},
-		e = { 'Edit project local configuration', M.edit_config },
-		f = {
+		['edit-config'] = { 'Edit project local configuration', M.edit_config },
+		['find'] = {
 			'Find file in project',
 			function()
 				M.find()
 			end,
 		},
-		F = {
+		['find-other'] = {
 			'Find file in other project',
 			function()
 				choose(function(root)
@@ -686,26 +690,26 @@ function M.setup()
 				end)
 			end,
 		},
-		g = {
+		['configure'] = {
 			'Configure project',
 			function()
 				M.command 'configure'
 			end,
 		},
-		i = {
+		['invalidate'] = {
 			'Invalidate project cache',
 			function()
 				cache[M.root()] = nil
 			end,
 		},
-		k = {
+		['kill'] = {
 			'Kill project buffers',
 			function()
 				M.kill()
 			end,
 		},
-		o = { 'Find sibling file', M.sibling },
-		p = {
+		['sibling'] = { 'Find sibling file', M.sibling },
+		['switch'] = {
 			'Switch project',
 			function()
 				local skip = vim.v.count > 0
@@ -714,7 +718,7 @@ function M.setup()
 				end)
 			end,
 		},
-		r = {
+		['recent'] = {
 			'Find recent project files',
 			function()
 				local root, seen, files = M.root(), {}, {}
@@ -726,31 +730,31 @@ function M.setup()
 				file_picker(root, 'Recent project files', files)
 			end,
 		},
-		R = {
+		['run'] = {
 			'Run project',
 			function()
 				M.command 'run'
 			end,
 		},
-		s = {
+		['save'] = {
 			'Save project files',
 			function()
 				M.save()
 			end,
 		},
-		T = {
+		['test'] = {
 			'Test project',
 			function()
 				M.command 'test'
 			end,
 		},
-		x = {
+		['scratch-toggle'] = {
 			'Toggle project scratch buffer',
 			function()
 				M.scratch(true)
 			end,
 		},
-		X = {
+		['scratch'] = {
 			'Switch to project scratch buffer',
 			function()
 				M.scratch(false)
@@ -758,7 +762,7 @@ function M.setup()
 		},
 	}
 	for key, item in pairs(bindings) do
-		vim.keymap.set('n', '<leader>p' .. key, item[2], { desc = item[1] })
+		vim.keymap.set('n', '<Plug>(acme-projects-' .. key .. ')', item[2], { desc = item[1], unique = true })
 	end
 end
 

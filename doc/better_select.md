@@ -9,7 +9,7 @@ source indices.
 
 Requires Neovim 0.12 or newer with ui2 enabled. Copy `lua/better_select.lua` into
 your Neovim configuration's `lua/` directory, then enable ui2 in your startup
-configuration:
+configuration, and load your keyboard bindings from `lua/keymaps.lua`:
 
 ```lua
 require('vim._core.ui2').enable({})
@@ -138,8 +138,15 @@ before choice and cancellation callbacks run.
 ## Configuration
 
 `setup(options)` configures defaults. `open(options)` accepts per-picker overrides;
-`source` is required on each call. Mapping overrides merge with the defaults;
-set a key to `false` to disable its picker mapping.
+`source` is required on each call. Keyboard bindings are configured in
+`lua/keymaps.lua`, using buffer-local aliases to `<Plug>(acme-better-select-ACTION)`.
+Action names use hyphens, for example `<Plug>(acme-better-select-toggle-live)`.
+The module defines only these action mappings, including custom `actions`.
+The `on_open(search)` callback configures picker-local bindings after opening.
+`require('better_select').current()` returns the active handle.
+`keymaps.lua` installs aliases with `unique = true` and registers their cleanup
+in `search.view.restore`. Conflicting buffer-local mappings cause an error;
+global mappings remain intact and are shadowed while the picker is open.
 
 ```lua
 require('better_select').setup {
@@ -154,7 +161,6 @@ require('better_select').setup {
         info_list = { 'list' },
     },
     win = { height = 0.4, hide_statusline = false },
-    mappings = { ['<C-n>'] = 'down', ['<C-p>'] = 'up' },
 }
 ```
 

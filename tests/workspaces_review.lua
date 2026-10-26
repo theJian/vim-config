@@ -1,5 +1,6 @@
 -- nvim --headless -u NONE -i NONE -l tests/workspaces_review.lua
 vim.opt.rtp:prepend(vim.fn.getcwd())
+require 'keymaps'
 vim.g.mapleader = ' '
 vim.o.hidden, vim.o.swapfile = true, false
 vim.o.shell, vim.o.shellcmdflag = '/bin/sh', '-c'

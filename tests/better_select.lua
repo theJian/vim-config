@@ -325,11 +325,10 @@ test('replacing a search restores ui2 before the next opens', function()
 	assert(vim.api.nvim_buf_get_lines(ui2.bufs.cmd, 0, 1, false)[1]:find('new', 1, true))
 end)
 
-test('custom actions receive the handle and disabled mappings are omitted', function()
+test('custom actions expose Plug mappings without assigning physical keys', function()
 	local received
 	local p = open {
 		source = { 'a' },
-		mappings = { ['<Tab>'] = false, ['<C-x>'] = 'custom' },
 		actions = {
 			custom = function(handle)
 				received = handle
@@ -339,9 +338,30 @@ test('custom actions receive the handle and disabled mappings are omitted', func
 	p:action 'custom'
 	assert(received == p)
 	assert(vim.fn.maparg('<Tab>', 'i', false, true).buffer ~= 1)
-	local mapping = vim.fn.maparg('<C-x>', 'i', false, true)
+	local mapping = vim.fn.maparg('<Plug>(acme-better-select-custom)', 'i', false, true)
 	mapping.callback()
 	assert(received == p)
+end)
+
+test('central picker bindings preserve global maps and reject local conflicts', function()
+	require 'keymaps'
+	local global = function() end
+	vim.keymap.set('i', '<Tab>', global)
+	local p = open { source = { 'a' } }
+	assert(vim.fn.maparg('<Tab>', 'i') == '<Plug>(acme-better-select-mark)')
+	p:close()
+	assert(vim.fn.maparg('<Tab>', 'i', false, true).callback == global)
+	local local_callback = function() end
+	vim.keymap.set('i', '<Tab>', local_callback, { buffer = ui2.bufs.cmd })
+	local ok = pcall(open, { source = { 'a' } })
+	assert(not ok)
+	assert(search.current() == nil)
+	vim.api.nvim_buf_call(ui2.bufs.cmd, function()
+		assert(vim.fn.maparg('<Tab>', 'i', false, true).callback == local_callback)
+		assert(vim.fn.maparg('<Plug>(acme-better-select-mark)', 'i') == '')
+	end)
+	vim.keymap.del('i', '<Tab>', { buffer = ui2.bufs.cmd })
+	vim.keymap.del('i', '<Tab>')
 end)
 
 test('top prompt, fixed height, no preselection, scrolling and default text', function()

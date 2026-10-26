@@ -163,3 +163,13 @@ nvim -u NONE -i NONE -c 'luafile tests/workspaces_ui.lua'
 Tests isolate persistence in temporary directories and cover the entire binding
 inventory, project commands, Git ignores, workspace lifecycles, shared/dirty
 buffers, nested layouts, restart recovery, and real keyboard-driven picker use.
+
+## Mapping ownership
+
+`lua/keymaps.lua` assigns physical keys with `unique = true`, so existing
+bindings are never silently replaced. Project and workspace modules expose
+`<Plug>(acme-projects-ACTION)` and `<Plug>(acme-workspaces-ACTION)` mappings.
+For example, `<leader>pp` invokes `<Plug>(acme-projects-switch)` and
+`<leader><Tab>n` invokes `<Plug>(acme-workspaces-new)`. Counts pass through to
+the action. Numbered workspace targets (`0` through `9`) support normal,
+insert, and terminal modes. Module setup alone does not assign physical keys.

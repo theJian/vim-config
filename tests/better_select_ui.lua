@@ -1,5 +1,6 @@
 -- Run in a terminal: nvim -u NONE -i NONE -c 'luafile tests/better_select_ui.lua'
 vim.opt.rtp:prepend(vim.fn.getcwd())
+require 'keymaps'
 require('vim._core.ui2').enable {}
 local search = require 'better_select'
 local original_win, original_height = vim.api.nvim_get_current_win(), vim.o.cmdheight

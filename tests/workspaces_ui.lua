@@ -1,5 +1,6 @@
 -- Run with an attached terminal: nvim -u NONE -i NONE -c 'luafile tests/workspaces_ui.lua'
 vim.opt.rtp:prepend(vim.fn.getcwd())
+require 'keymaps'
 vim.g.mapleader = ' '
 vim.o.hidden, vim.o.swapfile = true, false
 require('vim._core.ui2').enable {}

@@ -627,8 +627,12 @@ function M.setup()
 			M.save_session()
 		end,
 	})
+	if M.mappings_initialized then
+		return
+	end
+	M.mappings_initialized = true
 	local bindings = {
-		['<Tab>'] = {
+		['list'] = {
 			'Display workspaces',
 			function()
 				local labels = vim.tbl_map(function(item)
@@ -637,7 +641,7 @@ function M.setup()
 				vim.api.nvim_echo({ { table.concat(labels, '  ') } }, false, {})
 			end,
 		},
-		['.'] = {
+		['switch'] = {
 			'Switch workspace',
 			function()
 				if vim.v.count > 0 then
@@ -651,8 +655,8 @@ function M.setup()
 				end)
 			end,
 		},
-		['`'] = { 'Switch to last workspace', M.other },
-		n = {
+		['last'] = { 'Switch to last workspace', M.other },
+		['new'] = {
 			'New workspace',
 			function()
 				if vim.v.count > 0 then
@@ -662,13 +666,13 @@ function M.setup()
 				end
 			end,
 		},
-		N = {
+		['new-named'] = {
 			'New named workspace',
 			function()
 				store.input('Workspace name', '', vim.v.count > 0 and M.clone or M.new)
 			end,
 		},
-		l = {
+		['load'] = {
 			'Load workspace from file',
 			function()
 				if vim.v.count > 0 then
@@ -678,7 +682,7 @@ function M.setup()
 				end
 			end,
 		},
-		s = {
+		['save'] = {
 			'Save workspace to file',
 			function()
 				if vim.v.count > 0 then
@@ -688,8 +692,8 @@ function M.setup()
 				end
 			end,
 		},
-		x = { 'Kill session', M.clear },
-		d = {
+		['clear'] = { 'Kill session', M.clear },
+		['kill'] = {
 			'Kill this workspace',
 			function()
 				if vim.v.count > 0 then
@@ -703,7 +707,7 @@ function M.setup()
 				end
 			end,
 		},
-		D = {
+		['delete-saved'] = {
 			'Delete saved workspace',
 			function()
 				choose_saved(function(name)
@@ -713,13 +717,13 @@ function M.setup()
 				end)
 			end,
 		},
-		r = {
+		['rename'] = {
 			'Rename workspace',
 			function()
 				store.input('Workspace name', M.current().name, M.rename)
 			end,
 		},
-		R = {
+		['restore'] = {
 			'Restore last session',
 			function()
 				local saved = store.read 'last-session'
@@ -730,13 +734,13 @@ function M.setup()
 				end
 			end,
 		},
-		[']'] = {
+		['next'] = {
 			'Next workspace',
 			function()
 				M.cycle(vim.v.count1)
 			end,
 		},
-		['['] = {
+		['previous'] = {
 			'Previous workspace',
 			function()
 				M.cycle(-vim.v.count1)
@@ -744,19 +748,16 @@ function M.setup()
 		},
 	}
 	for key, item in pairs(bindings) do
-		vim.keymap.set('n', '<leader><Tab>' .. key, item[2], { desc = item[1] })
+		vim.keymap.set('n', '<Plug>(acme-workspaces-' .. key .. ')', item[2], { desc = item[1], unique = true })
 	end
 	for i = 0, 9 do
-		vim.keymap.set('n', '<leader><Tab>' .. i, function()
+		vim.keymap.set({ 'n', 'i', 't' }, '<Plug>(acme-workspaces-' .. i .. ')', function()
 			M.number(i)
-		end, { desc = 'Switch workspace ' .. i })
-		vim.keymap.set({ 'n', 'i', 't' }, '<M-' .. i .. '>', function()
-			M.number(i)
-		end, { desc = 'Switch workspace ' .. i })
+		end, { desc = 'Switch workspace ' .. i, unique = true })
 	end
-	vim.keymap.set('n', '<C-t>', function()
+	vim.keymap.set('n', '<Plug>(acme-workspaces-create)', function()
 		M.new()
-	end, { desc = 'New workspace' })
+	end, { desc = 'New workspace', unique = true })
 	local function pick_buffers()
 		store.pick('Workspace buffers', M.buffers(), function(buf)
 			local name = api.nvim_buf_get_name(buf)
@@ -765,8 +766,12 @@ function M.setup()
 			api.nvim_set_current_buf(buf)
 		end)
 	end
-	vim.keymap.set('n', '<leader>,', pick_buffers, { desc = 'Switch workspace buffer' })
-	vim.keymap.set('n', '<leader>bb', pick_buffers, { desc = 'Switch workspace buffer' })
+	vim.keymap.set(
+		'n',
+		'<Plug>(acme-workspaces-buffers)',
+		pick_buffers,
+		{ desc = 'Switch workspace buffer', unique = true }
+	)
 end
 
 return M

@@ -1,5 +1,6 @@
 -- nvim --headless -u NONE -i NONE -l tests/workspaces.lua
 vim.opt.rtp:prepend(vim.fn.getcwd())
+require 'keymaps'
 vim.g.mapleader = ' '
 vim.o.hidden = true
 vim.o.swapfile = false
@@ -45,6 +46,7 @@ local function test(name, fn)
 end
 local function press(key)
 	local mapping = vim.fn.maparg('<leader>' .. key, 'n', false, true)
+	mapping = vim.fn.maparg(mapping.rhs, 'n', false, true)
 	assert(type(mapping.callback) == 'function', 'Missing mapping ' .. key)
 	mapping.callback()
 end

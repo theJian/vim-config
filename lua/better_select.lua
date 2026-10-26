@@ -335,6 +335,10 @@ local M = {}
 local BetterSelect = {}
 BetterSelect.__index = BetterSelect
 local active
+
+function M.current()
+	return active
+end
 local defaults = {
 	opts = {
 		preselect = true,
@@ -347,19 +351,6 @@ local defaults = {
 		info_list = { 'list' },
 	},
 	win = { height = 0.4, hide_statusline = false },
-	mappings = {
-		['<Down>'] = 'down',
-		['<Up>'] = 'up',
-		['<CR>'] = 'accept',
-		['<Esc>'] = 'cancel',
-		['<Tab>'] = 'mark',
-		['<C-g>'] = 'toggle_live',
-		['<C-l>'] = 'toggle_preview',
-		['<C-q>'] = 'set_quickfix',
-		['<C-s>'] = 'split',
-		['<C-v>'] = 'vsplit',
-		['<C-t>'] = 'tabnew',
-	},
 }
 local config = {}
 
@@ -377,6 +368,7 @@ local config = {}
 ---@field source table|fun(query: string, emit: fun(items: table?, err?: any), ctx: table): table|function|nil
 ---@field format_item? fun(item: any, index: integer): string
 ---@field on_choice? fun(item: any, index: integer, marked: table, search: table)
+---@field on_open? fun(search: table) Configure picker-local bindings after opening
 ---@field on_cancel? fun(search: table)
 ---@field preview_item? fun(item: any, index: integer, search: table): table? {buf, pos?, pos_end?}
 ---@field get_icon? fun(entry: better_select.Entry): string?, string?
@@ -384,7 +376,6 @@ local config = {}
 ---@field to_quickfix? fun(item: any, index: integer): table
 ---@field sorter? fun(entries: better_select.Entry[], query: string): table[] {index, character_positions, score}
 ---@field actions? table<string, fun(search: table)>
----@field mappings? table<string, string|false>
 ---@field prompt? string
 ---@field default_text? string
 ---@field live? boolean Default: true for providers, false for lists
@@ -588,11 +579,6 @@ function BetterSelect:close()
 	if self.view then
 		for _, key in ipairs(self.keys) do
 			pcall(vim.keymap.del, 'i', key, { buffer = self.buf })
-			if self.saved_maps[key] then
-				vim.api.nvim_buf_call(self.buf, function()
-					vim.fn.mapset('i', false, self.saved_maps[key])
-				end)
-			end
 		end
 		close_dialog(self)
 	end
@@ -775,7 +761,7 @@ function M.open(options)
 	ui2.check_targets()
 	initialize_highlights()
 	self.buf = ui2.bufs.cmd
-	self.keys, self.saved_maps = {}, {}
+	self.keys = {}
 	self.view = {
 		search = self,
 		win = {},
@@ -787,17 +773,33 @@ function M.open(options)
 	}
 	local ok, err = pcall(function()
 		open_dialog(self)
-		for key, action in pairs(self.mappings) do
-			if action then
-				local previous = vim.fn.maparg(key, 'i', false, true)
-				if previous.buffer == 1 then
-					self.saved_maps[key] = previous
-				end
-				self.keys[#self.keys + 1] = key
-				vim.keymap.set('i', key, function()
-					self:action(action)
-				end, { buffer = self.buf, nowait = true })
+		local actions = {
+			'down',
+			'up',
+			'accept',
+			'cancel',
+			'mark',
+			'toggle_live',
+			'toggle_preview',
+			'set_quickfix',
+			'split',
+			'vsplit',
+			'tabnew',
+		}
+		for name in pairs(self.actions) do
+			if not vim.list_contains(actions, name) then
+				actions[#actions + 1] = name
 			end
+		end
+		for _, action in ipairs(actions) do
+			local plug = '<Plug>(acme-better-select-' .. action:gsub('_', '-') .. ')'
+			vim.keymap.set('i', plug, function()
+				self:action(action)
+			end, { buffer = self.buf, nowait = true, unique = true })
+			self.keys[#self.keys + 1] = plug
+		end
+		if self.on_open then
+			self.on_open(self)
 		end
 	end)
 	if not ok then
