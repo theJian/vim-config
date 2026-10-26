@@ -238,6 +238,7 @@ end
 local function open_dialog(search)
 	local view = search.view
 	view.previous_win = vim.api.nvim_get_current_win()
+	view.previous_buf = vim.api.nvim_get_current_buf()
 	view.previous_view = vim.fn.winsaveview()
 	view.previous_prompt = vim.fn.prompt_getprompt(search.buf)
 	view.previous_height = vim.o.cmdheight
@@ -309,6 +310,15 @@ local function close_dialog(search)
 		end
 		if view.previous_win and vim.api.nvim_win_is_valid(view.previous_win) then
 			vim.api.nvim_set_current_win(view.previous_win)
+			vim.fn.winrestview(view.previous_view)
+		end
+	end)
+	-- stopinsert completes after this callback and can move the restored cursor left.
+	vim.schedule(function()
+		if
+			vim.api.nvim_get_current_win() == view.previous_win
+			and vim.api.nvim_get_current_buf() == view.previous_buf
+		then
 			vim.fn.winrestview(view.previous_view)
 		end
 	end)
@@ -606,6 +616,15 @@ end
 function BetterSelect:accept()
 	if self.closed then
 		return
+	end
+	-- TextChangedI can lag behind Enter when pasted/fast input arrives in one batch.
+	local line = vim.api.nvim_buf_get_lines(self.buf, self.view.prompt_row, self.view.prompt_row + 1, false)[1] or ''
+	local query = line:sub(self.view.prompt_length + 1)
+	if query ~= self.query then
+		self:set_query(query)
+		if self.live then
+			return
+		end -- Wait for results for the new query before accepting.
 	end
 	local entry = self:get_current()
 	if not entry then

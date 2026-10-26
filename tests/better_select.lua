@@ -527,6 +527,22 @@ test('failed opening restores the editor and allows a subsequent search', functi
 	assert(open({ source = { 'next' } }):get_current().v == 'next')
 end)
 
+test('accept filters prompt edits even before TextChangedI runs', function()
+	local selected
+	local p = open {
+		source = { 'alpha', 'beta' },
+		on_choice = function(value)
+			selected = value
+		end,
+	}
+	local row = p.view.prompt_row
+	local line = vim.api.nvim_buf_get_lines(p.buf, row, row + 1, false)[1]
+	vim.api.nvim_buf_set_lines(p.buf, row, row + 1, false, { line:sub(1, p.view.prompt_length) .. 'beta' })
+	p:accept()
+	flush()
+	assert(selected == 'beta')
+end)
+
 if #failures > 0 then
 	error(table.concat(failures, '\n'))
 end

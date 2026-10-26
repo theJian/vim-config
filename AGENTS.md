@@ -16,6 +16,13 @@ This is a minimalist Neovim configuration written in Lua that uses Neovim's buil
 - `lua/ui.lua` - UI configuration including colorscheme and signcolumn
 - `lua/packages.lua` - Plugin specifications and native build hooks
 
+### Native Projects and Workspaces
+- `lua/projects.lua` implements the `SPC p` project menu without additional plugins.
+- `lua/workspaces.lua` implements `SPC TAB` using named tabs, buffer membership, and session snapshots.
+- `lua/workspace_store.lua` stores data-only JSON under `stdpath('state')/workspaces/` and routes lists through `better_select`.
+- Project-local settings use `.nvim-project.json`; recovered unsaved text is protected from auto-save until edited.
+- See `docs/projects-workspaces.md` for all bindings, persistence behavior, and test commands.
+
 ### Plugin Configuration
 - `lua/plugins/init.lua` - Main plugin loader that initializes all plugins
 - `lua/plugins/*.lua` - Individual plugin configurations:

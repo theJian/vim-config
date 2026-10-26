@@ -7,4 +7,6 @@ vim.pack.add {
 }
 require 'ui'
 require 'keymaps'
+require('workspaces').setup()
+require('projects').setup()
 require 'autocmds'

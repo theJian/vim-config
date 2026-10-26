@@ -93,6 +93,11 @@ end
 
 local function save(ctx)
 	local buf = ctx.buf
+	-- Restoring a session is not an edit: don't overwrite disk with recovered text.
+	if vim.b[buf].workspace_restore_tick == api.nvim_buf_get_changedtick(buf) then
+		return
+	end
+	vim.b[buf].workspace_restore_tick = nil
 
 	if not vim.api.nvim_buf_get_name(buf) or vim.api.nvim_buf_get_name(buf) == '' then
 		return
