@@ -4,6 +4,15 @@ local keymap = vim.keymap
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Help buffer mappings
+vim.api.nvim_create_autocmd('FileType', {
+	group = vim.api.nvim_create_augroup('HelpKeymaps', { clear = true }),
+	pattern = 'help',
+	callback = function(args)
+		keymap.set('n', 'q', '<Cmd>close<CR>', { buffer = args.buf, desc = 'Close help', unique = true })
+	end,
+})
+
 -- Go to line header and end
 keymap.set('n', 'gh', '^', { desc = 'Go to first nonblank character' })
 keymap.set('n', 'gl', 'g_', { desc = 'Go to last nonblank character' })

@@ -30,7 +30,6 @@ api.nvim_create_autocmd('BufWinEnter', {
 			col = math.floor((vim.o.columns - width - 2) / 2),
 			border = 'rounded',
 		})
-		vim.keymap.set('n', 'q', '<Cmd>close<CR>', { buffer = args.buf, desc = 'Close help' })
 	end,
 })
 
