@@ -21,7 +21,7 @@ This is a minimalist Neovim configuration written in Lua that uses Neovim's buil
 - `lua/workspaces.lua` implements `SPC TAB` using named tabs, buffer membership, and session snapshots.
 - `lua/workspace_store.lua` stores data-only JSON under `stdpath('state')/workspaces/` and routes lists through `better_select`.
 - Project-local settings use `.nvim-project.json`; recovered unsaved text is protected from auto-save until edited.
-- See `docs/projects-workspaces.md` for all bindings, persistence behavior, and test commands.
+- See `doc/projects-workspaces.md` for all bindings, persistence behavior, and test commands.
 
 ### Plugin Configuration
 - `lua/plugins/init.lua` - Main plugin loader that initializes all plugins

@@ -195,7 +195,7 @@ the picker before changing editor windows:
 
 ```lua
 require('better_select').open {
-    source = { 'README.md', 'init.lua' },
+    source = { 'doc/README.md', 'init.lua' },
     actions = {
         split = function(handle)
             local entry = handle:get_current()
