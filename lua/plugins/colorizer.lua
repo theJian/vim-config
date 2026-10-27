@@ -1,3 +1,3 @@
-vim.pack.load 'https://github.com/norcalli/nvim-colorizer.lua'
+vim.pack.load 'https://github.com/catgoose/nvim-colorizer.lua'
 	.using 'colorizer'
 	.setup()

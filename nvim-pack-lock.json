@@ -45,8 +45,8 @@
       "src": "https://github.com/williamboman/mason.nvim"
     },
     "nvim-colorizer.lua": {
-      "rev": "a065833f35a3a7cc3ef137ac88b5381da2ba302e",
-      "src": "https://github.com/norcalli/nvim-colorizer.lua"
+      "rev": "72a05f62c52241bc7441c820eb53946f92b2e6a4",
+      "src": "https://github.com/catgoose/nvim-colorizer.lua"
     },
     "nvim-dap": {
       "rev": "818cd8787a77a97703eb1d9090543a374f79a9ac",
