@@ -1,4 +1,4 @@
--- Register build hooks before the first vim.pack call, including lockfile installs.
+-- Register build hooks before adding the plugin packages.
 vim.api.nvim_create_autocmd('PackChanged', {
 	callback = function(ev)
 		local name, kind = ev.data.spec.name, ev.data.kind

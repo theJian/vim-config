@@ -1,3 +1,5 @@
+require 'plugins.packages'
+
 vim.cmd.packadd 'nvim.undotree'
 require('colorizer').setup()
 require('nvim-surround').setup()

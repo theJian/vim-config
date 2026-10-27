@@ -51,7 +51,7 @@ api.nvim_create_autocmd('BufEnter', {
 	command = 'startinsert',
 })
 
--- Load plugin configs
+-- Single entry point for plugins; the colorscheme is loaded by ui.lua.
 api.nvim_create_autocmd('VimEnter', {
 	group = api.nvim_create_augroup('Plugins', {}),
 	callback = function()

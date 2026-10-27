@@ -27,6 +27,10 @@ vim.opt.statusline:append '%(∕%Y%)' -- file type
 -- Let lualine manage window bars, including hiding them in terminals.
 vim.opt.winbar = ''
 
+vim.pack.add {
+	'git@github.com:theJian/nvim-moonwalk.git',
+}
+
 -- Colorscheme
 if
 	not pcall(function()
