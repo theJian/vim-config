@@ -2,7 +2,7 @@
 
 This file provides guidance to coding agents working in this repository. Paths below are relative to the repository root.
 
-Keep Markdown documentation in `doc/`, except this `AGENTS.md`, which must remain at the repository root for agent instruction discovery. Write self-contained descriptions of this configuration and use Vim key notation such as `<leader>p` and `<leader><Tab>`; avoid comparisons with other editor configurations.
+Keep module documentation in `doc/`. Keep repository-level documentation such as `README.md` and `AGENTS.md` at the repository root. Write self-contained descriptions of this configuration and use Vim key notation such as `<leader>p` and `<leader><Tab>`; avoid comparisons with other editor configurations.
 
 ## Overview
 
@@ -231,9 +231,9 @@ nvim -u NONE -i NONE -c 'luafile tests/better_select_ui.lua'
 ```text
 .
 ├── AGENTS.md                  # Repository-wide agent instructions
+├── README.md                  # Configuration overview
 ├── init.lua
-├── doc/                       # Other Markdown documentation
-│   ├── README.md
+├── doc/                       # Module documentation
 │   ├── better_select.md
 │   └── projects-workspaces.md
 ├── lsp/                       # Native LSP server configurations
