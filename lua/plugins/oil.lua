@@ -1,4 +1,5 @@
-local oil = require 'oil'
+local oil = vim.pack.load 'https://github.com/stevearc/oil.nvim.git'
+	.using 'oil'
 
 oil.setup {
 	win_options = {

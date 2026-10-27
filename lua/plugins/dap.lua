@@ -1,8 +1,15 @@
-local dap = require 'dap'
-local ui = require 'dapui'
+vim.pack.load 'https://github.com/nvim-neotest/nvim-nio'
+vim.pack.load 'https://github.com/jbyuki/one-small-step-for-vimkind'
 
-require('dapui').setup()
-require('dap-go').setup()
+local dap = vim.pack.load 'https://github.com/mfussenegger/nvim-dap'
+	.using 'dap'
+local ui = vim.pack.load 'https://github.com/rcarriga/nvim-dap-ui'
+	.using 'dapui'
+
+ui.setup()
+vim.pack.load 'https://github.com/leoluz/nvim-dap-go'
+	.using 'dap-go'
+	.setup()
 
 dap.listeners.before.attach.dapui_config = function()
 	ui.open()
@@ -30,7 +37,9 @@ vim.keymap.set('n', '<F4>', dap.step_out, { desc = 'Step out' })
 vim.keymap.set('n', '<F5>', dap.step_back, { desc = 'Step back' })
 vim.keymap.set('n', '<F12>', dap.restart, { desc = 'Restart debugging' })
 
-require('nvim-dap-virtual-text').setup()
+vim.pack.load 'https://github.com/theHamsta/nvim-dap-virtual-text'
+	.using 'nvim-dap-virtual-text'
+	.setup()
 
 -- Elixir
 local elixir_ls_debugger = vim.fn.exepath 'elixir-ls-debugger'

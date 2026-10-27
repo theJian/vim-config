@@ -11,6 +11,7 @@ Keep module and feature documentation in `doc/`. Keep `README.md` and `AGENTS.md
 Read the relevant source before changing behavior or bindings; avoid duplicating option values, keymap inventories, and plugin usage instructions here.
 
 - `doc/better_select.md` - Picker behavior and verification
+- `doc/prelude.md` - Common utilities and fluent package API
 - `doc/projects-workspaces.md` - Project and workspace bindings, settings, persistence, and verification
 
 ## Architecture
@@ -18,6 +19,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 ### Core Structure
 
 - `init.lua` - Loads core modules
+- `lua/prelude.lua` - Common utilities and native package extensions
 - `lua/options.lua` - Editor options
 - `lua/keymaps.lua` - Keyboard mappings and leader setup
 - `lua/autocmds.lua` - Automatic behavior, including auto-save and the plugin entry point
@@ -31,7 +33,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 ### Plugins
 
 - `lua/plugins/init.lua` is the single plugin entry point, called by the `VimEnter` autocmd in `lua/autocmds.lua` when `loadplugins` is enabled. The colorscheme in `lua/ui.lua` is the sole exception.
-- `lua/plugins/packages.lua` defines package specifications and native build hooks. Keep plugin configuration under `lua/plugins/`; fff.nvim and parinfer-rust manage their packages in their own modules there.
+- Declare packages beside their configuration under `lua/plugins/` using `vim.pack.load`, `.build`, and `.using`. Keep simple standalone declarations in `lua/plugins/init.lua`. fff.nvim retains a custom download-or-build hook.
 - `lua/plugins/lsp.lua` defines LSP activation and attachment mappings. Check it alongside `lua/keymaps.lua` when changing bindings.
 - `nvim-pack-lock.json` pins plugin revisions. Missing packages install automatically; native build hooks require Cargo (nightly Rust for blink.pairs).
 
@@ -40,6 +42,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 Run from the repository root. The workspace tests isolate persistence in temporary directories.
 
 ```sh
+nvim --headless -u NONE -i NONE -l tests/prelude.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces_restart.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces_review.lua

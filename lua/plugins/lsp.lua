@@ -1,3 +1,5 @@
+vim.pack.load 'https://github.com/neovim/nvim-lspconfig.git'
+
 vim.lsp.log.set_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
 

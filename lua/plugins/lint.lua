@@ -1,4 +1,7 @@
-require('lint').linters_by_ft = {
+local lint = vim.pack.load 'https://github.com/mfussenegger/nvim-lint'
+	.using 'lint'
+
+lint.linters_by_ft = {
 	lua = { 'luacheck' },
 	python = { 'ruff' },
 	javascript = { 'quick-lint-js', 'eslint_d' },

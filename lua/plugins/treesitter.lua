@@ -1,34 +1,36 @@
-require('nvim-treesitter').install {
-	"c",
-	"lua",
-	"vim",
-	"query",
-	"javascript",
-	"typescript",
-	"json",
-	"tsx",
-	"go",
-	"gomod",
-	"html",
-	"erlang",
-	"elixir",
-	"solidity",
-	"yaml",
-	"css",
-	"bash",
-	"astro",
-	"rust",
-	"python",
-	"git_config",
-	"gitcommit",
-	"gitignore",
-	"git_rebase",
-	"gitattributes",
-	"make",
-	"markdown",
-	"toml",
-	"commonlisp",
-}
+vim.pack.load 'https://github.com/nvim-treesitter/nvim-treesitter'
+	.using 'nvim-treesitter'
+	.install {
+		"c",
+		"lua",
+		"vim",
+		"query",
+		"javascript",
+		"typescript",
+		"json",
+		"tsx",
+		"go",
+		"gomod",
+		"html",
+		"erlang",
+		"elixir",
+		"solidity",
+		"yaml",
+		"css",
+		"bash",
+		"astro",
+		"rust",
+		"python",
+		"git_config",
+		"gitcommit",
+		"gitignore",
+		"git_rebase",
+		"gitattributes",
+		"make",
+		"markdown",
+		"toml",
+		"commonlisp",
+	}
 
 vim.api.nvim_create_autocmd('FileType', {
 	callback = function(args)
@@ -46,11 +48,13 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
-require("treesitter-context").setup{
-	max_lines = 3,
-	min_window_height = 15,
-	multiline_threshold = 2,
-}
+vim.pack.load 'https://github.com/nvim-treesitter/nvim-treesitter-context'
+	.using 'treesitter-context'
+	.setup {
+		max_lines = 3,
+		min_window_height = 15,
+		multiline_threshold = 2,
+	}
 
 	-- textobjects = {
 	-- 	select = {

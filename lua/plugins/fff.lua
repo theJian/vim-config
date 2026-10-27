@@ -10,7 +10,7 @@ vim.api.nvim_create_autocmd('PackChanged', {
 	end,
 })
 
-vim.pack.add { 'https://github.com/dmtrKovalenko/fff.nvim' }
+vim.pack.load 'https://github.com/dmtrKovalenko/fff.nvim'
 
 vim.g.fff = {
 	lazy_sync = true,
