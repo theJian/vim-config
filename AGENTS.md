@@ -33,7 +33,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 ### Plugins
 
 - `lua/plugins/init.lua` is the single plugin entry point, called by the `VimEnter` autocmd in `lua/autocmds.lua` when `loadplugins` is enabled. The colorscheme in `lua/ui.lua` is the sole exception.
-- Declare packages beside their configuration under `lua/plugins/` using `vim.pack.load`, `.build`, and `.using`. Keep simple standalone declarations in `lua/plugins/init.lua`. fff.nvim retains a custom download-or-build hook.
+- Declare packages beside their configuration under `lua/plugins/` using `vim.pack.load`, `.build`, and `.using`. Keep `lua/plugins/init.lua` limited to `require` calls; put standalone declarations in their own plugin modules. fff.nvim retains a custom download-or-build hook.
 - `lua/plugins/lsp.lua` defines LSP activation and attachment mappings. Check it alongside `lua/keymaps.lua` when changing bindings.
 - `nvim-pack-lock.json` pins plugin revisions. Missing packages install automatically; native build hooks require Cargo (nightly Rust for blink.pairs).
 

@@ -41,8 +41,9 @@ remain pending so registering the build again retries them. Delete events do not
 build. Build registrations last for the current Neovim session.
 
 Plugin modules under `lua/plugins/` declare their own packages beside setup,
-with dependencies loaded first. Simple standalone plugins live in the entry
-point, `lua/plugins/init.lua`. Cargo builds for blink.pairs, parinfer-rust, and
+with dependencies loaded first. The entry point, `lua/plugins/init.lua`, contains
+only `require` calls; standalone plugins also have their own modules.
+Cargo builds for blink.pairs, parinfer-rust, and
 vim-markdown-composer use `.build`; parinfer-rust now waits for compilation and
 reports failures. fff.nvim keeps its custom `PackChanged` hook because it calls
 the plugin's Lua download-or-build helper rather than an external command.
