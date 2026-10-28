@@ -1,6 +1,6 @@
 # better_statusline
 
-`lua/better_statusline.lua` supplies the global statusline, per-window bars, and clickable tabline using native Neovim 0.12 statusline formatting. `lua/ui.lua` calls `setup()`; no statusline plugin is required. Highlight links follow the current colorscheme, with quiet dot separators. `WinBar` links to `StatusLine`, and `WinBarNC` links to `StatusLineNC`, so window bars share the corresponding statusline colors and decoration. These links are reapplied after colorscheme changes.
+`lua/better_statusline.lua` supplies the global statusline, per-window bars, and clickable tabline using native Neovim 0.12 statusline formatting. `lua/ui.lua` calls `setup()`; no statusline plugin is required. Highlight links follow the current colorscheme, with quiet dot separators. Window bars use the colorscheme’s `WinBar` and `WinBarNC` highlights without overriding them.
 
 ## Information
 

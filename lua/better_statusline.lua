@@ -46,8 +46,6 @@ local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇',
 local request
 
 local function highlights()
-	api.nvim_set_hl(0, 'WinBar', { link = 'StatusLine' })
-	api.nvim_set_hl(0, 'WinBarNC', { link = 'StatusLineNC' })
 	for name, link in pairs {
 		Mode = 'StatusLine',
 		Error = 'DiagnosticError',
