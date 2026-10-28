@@ -132,6 +132,7 @@ local function diff(name)
 		'--no-ext-diff',
 		'--no-textconv',
 		'-U0',
+		'--inter-hunk-context=0',
 		'--',
 		vim.fn.fnamemodify(name, ':t'),
 	}, {
@@ -363,7 +364,19 @@ function M.setup()
 		end,
 	})
 	on('OptionSet', { pattern = { 'readonly', 'modifiable', 'buftype' }, callback = request })
-	on('User', { pattern = 'GitSignsUpdate', callback = request })
+	on('User', {
+		pattern = 'GitSignsUpdate',
+		callback = function(ev)
+			local buf = ev.data and ev.data.buffer
+			if buf and api.nvim_buf_is_valid(buf) then
+				s.diffs[api.nvim_buf_get_name(buf)] = nil
+			else
+				-- Repository-wide updates have no buffer payload.
+				s.diffs = {}
+			end
+			request()
+		end,
+	})
 	on('User', {
 		pattern = 'FugitiveChanged',
 		callback = function()

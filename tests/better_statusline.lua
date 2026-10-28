@@ -26,6 +26,7 @@ local function git(...)
 end
 local ok, err = xpcall(function()
 	git('init', '-b', 'status-test')
+	git('config', 'diff.interHunkContext', '4')
 	vim.fn.writefile({ 'one', 'two', 'three' }, temp .. '/sample.lua')
 	git('add', '.')
 	git('-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'initial')
@@ -37,6 +38,21 @@ local ok, err = xpcall(function()
 		return status():find('+1', 1, true) and status():find('status-test', 1, true)
 	end))
 	contains(status(), '~1')
+	-- Staging changes the index without a buffer write or entry event.
+	git('add', 'sample.lua')
+	api.nvim_exec_autocmds('User', {
+		pattern = 'GitSignsUpdate',
+		data = { buffer = api.nvim_get_current_buf() },
+	})
+	assert(vim.wait(3000, function()
+		return not status():find('+1', 1, true) and not status():find('~1', 1, true)
+	end), 'staged changes remained in the saved diff cache')
+	git('reset', 'HEAD', '--', 'sample.lua')
+	-- Repository-wide updates can omit the buffer payload.
+	api.nvim_exec_autocmds('User', { pattern = 'GitSignsUpdate' })
+	assert(vim.wait(3000, function()
+		return status():find('+1', 1, true) and status():find('~1', 1, true)
+	end), 'unstaged changes did not return after a repository update')
 	contains(status(), 'NORMAL')
 	contains(status(), os.date '%H:%M')
 	api.nvim_win_set_cursor(0, { 2, 1 })
