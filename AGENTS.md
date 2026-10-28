@@ -10,6 +10,7 @@ Keep module and feature documentation in `doc/`. Keep `README.md` and `AGENTS.md
 
 Read the relevant source before changing behavior or bindings; avoid duplicating option values, keymap inventories, and plugin usage instructions here.
 
+- `doc/better_statusline.md` - Native bars, refresh model, and verification
 - `doc/better_select.md` - Picker behavior and verification
 - `doc/prelude.md` - Common utilities and fluent package API
 - `doc/projects-workspaces.md` - Project and workspace bindings, settings, persistence, and verification
@@ -24,6 +25,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 - `lua/keymaps.lua` - Keyboard mappings and leader setup
 - `lua/autocmds.lua` - Automatic behavior, including auto-save and the plugin entry point
 - `lua/ui.lua` - UI options and colorscheme installation and setup
+- `lua/better_statusline.lua` - Cached native statusline, window bars, and tabline
 - `lua/better_select.lua` - Native ui2 picker
 - `lua/projects.lua` - Project commands
 - `lua/workspaces.lua` - Named tab workspaces and session snapshots
@@ -42,6 +44,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 Run from the repository root. The workspace tests isolate persistence in temporary directories.
 
 ```sh
+nvim --headless -u NONE -i NONE -l tests/better_statusline.lua
 nvim --headless -u NONE -i NONE -l tests/prelude.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces_restart.lua

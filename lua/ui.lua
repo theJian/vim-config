@@ -14,18 +14,7 @@ vim.o.fillchars = 'wbr:░,fold:,diff:'
 vim.o.showmatch = true
 vim.o.matchtime = 3
 
--- Statusline
-vim.o.laststatus = 3 -- always and ONLY the last window
--- vim.opt.statusline = '%(%2*%{fnamemodify(expand("%"),":.")}%a⧹%*%)' -- file path
-vim.opt.statusline:append '%(%R%H%W⧹%) ' -- file info
-vim.opt.statusline:append '%(%{&modified?" ●":""}⧹%)' -- modified flag
-vim.opt.statusline:append '%=' -- switch to the right side
-vim.opt.statusline:append '∕%4l:%-3c' -- cursor position
-vim.opt.statusline:append '∕%<%3p%%' -- scroll position
-vim.opt.statusline:append '%(∕%Y%)' -- file type
-
--- Let lualine manage window bars, including hiding them in terminals.
-vim.opt.winbar = ''
+require('better_statusline').setup()
 
 vim.pack.add {
 	'git@github.com:theJian/nvim-moonwalk.git',

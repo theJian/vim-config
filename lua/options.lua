@@ -74,7 +74,7 @@ vim.o.jumpoptions = 'view'
 -- Default shell
 vim.o.shell = 'fish'
 
--- Control how often lualine updates
+-- Idle delay for CursorHold and swapfile writes
 vim.o.updatetime = 30
 
 vim.opt.spelllang = 'en_us'
