@@ -32,6 +32,10 @@
       "rev": "fc8c36d7e5b96945fbc52af7029facc317a47377",
       "src": "https://github.com/smjonas/live-command.nvim"
     },
+    "lualine.nvim": {
+      "rev": "47f91c416daef12db467145e16bed5bbfe00add8",
+      "src": "https://github.com/nvim-lualine/lualine.nvim"
+    },
     "mason-lspconfig.nvim": {
       "rev": "4cfe411526a7a99c18281135e8b4765ae6330d15",
       "src": "https://github.com/williamboman/mason-lspconfig.nvim"
@@ -73,7 +77,7 @@
       "src": "https://github.com/bfredl/nvim-luadev"
     },
     "nvim-moonwalk": {
-      "rev": "a83feb17df5e999f1c0877cc3c4dd0e505574f67",
+      "rev": "927ebebb4e3ef483d92456595d349cdae3accbe4",
       "src": "git@github.com:theJian/nvim-moonwalk.git"
     },
     "nvim-nio": {
