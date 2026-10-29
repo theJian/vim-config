@@ -25,6 +25,58 @@ local function git(...)
 	return vim.trim(r.stdout)
 end
 local ok, err = xpcall(function()
+	api.nvim_set_hl(0, 'StatusLine', { fg = '#111111', bg = '#eeeeee' })
+	api.nvim_set_hl(0, 'TestModeInsert', { fg = '#0055cc', bold = true })
+	m.setup {
+		mode_colors = {
+			normal = { fg = '#222222' },
+			insert = 'TestModeInsert',
+			visual = { fg = '#aa5500', bg = '#ffddaa' },
+			replace = 'MissingModeGroup',
+		},
+	}
+	local function hl(family)
+		return api.nvim_get_hl(0, { name = 'BetterStatuslineMode_' .. family, link = false })
+	end
+	assert(hl('insert').fg == 0x0055cc and hl('insert').bg == 0xeeeeee and hl('insert').bold)
+	assert(hl('visual').bg == 0xffddaa)
+	assert(hl('select').fg == hl('visual').fg)
+	assert(hl('operator').fg == hl('normal').fg)
+	assert(hl('replace').fg == 0x111111)
+	local get_mode = api.nvim_get_mode
+	for _, case in ipairs {
+		{ 'n', 'normal' },
+		{ 'ic', 'insert' },
+		{ 'V', 'visual' },
+		{ '\22', 'visual' },
+		{ '\19', 'select' },
+		{ 'Rvc', 'replace' },
+		{ 'r?', 'command' },
+		{ 't', 'terminal' },
+		{ 'noV', 'operator' },
+	} do
+		api.nvim_get_mode = function()
+			return { mode = case[1] }
+		end
+		api.nvim_exec_autocmds('ModeChanged', { pattern = 'n:' .. case[1] })
+		settle()
+		contains(m.statusline(), '%#BetterStatuslineMode_' .. case[2] .. '#')
+	end
+	api.nvim_get_mode = get_mode
+	api.nvim_set_hl(0, 'TestModeInsert', { fg = '#0066dd' })
+	api.nvim_set_hl(0, 'StatusLine', { fg = '#111111', bg = '#dddddd' })
+	api.nvim_exec_autocmds('ColorScheme', {})
+	assert(hl('insert').fg == 0x0066dd and hl('insert').bg == 0xdddddd)
+	m.setup()
+	assert(hl('insert').fg == 0x111111)
+	-- Exercise an actual mode transition as well as the family variants above.
+	vim.cmd.normal 'v'
+	settle()
+	contains(m.statusline(), '%#BetterStatuslineMode_visual#')
+	vim.cmd.normal { args = { vim.keycode '<Esc>' }, bang = true }
+	settle()
+	contains(m.statusline(), '%#BetterStatuslineMode_normal#')
+	print 'PASS: mode colors, family fallbacks, transitions, colorscheme reload, reset'
 	git('init', '-b', 'status-test')
 	git('config', 'diff.interHunkContext', '4')
 	vim.fn.writefile({ 'one', 'two', 'three' }, temp .. '/sample.lua')
@@ -44,15 +96,21 @@ local ok, err = xpcall(function()
 		pattern = 'GitSignsUpdate',
 		data = { buffer = api.nvim_get_current_buf() },
 	})
-	assert(vim.wait(3000, function()
-		return not status():find('+1', 1, true) and not status():find('~1', 1, true)
-	end), 'staged changes remained in the saved diff cache')
+	assert(
+		vim.wait(3000, function()
+			return not status():find('+1', 1, true) and not status():find('~1', 1, true)
+		end),
+		'staged changes remained in the saved diff cache'
+	)
 	git('reset', 'HEAD', '--', 'sample.lua')
 	-- Repository-wide updates can omit the buffer payload.
 	api.nvim_exec_autocmds('User', { pattern = 'GitSignsUpdate' })
-	assert(vim.wait(3000, function()
-		return status():find('+1', 1, true) and status():find('~1', 1, true)
-	end), 'unstaged changes did not return after a repository update')
+	assert(
+		vim.wait(3000, function()
+			return status():find('+1', 1, true) and status():find('~1', 1, true)
+		end),
+		'unstaged changes did not return after a repository update'
+	)
 	contains(status(), 'NORMAL')
 	contains(status(), os.date '%H:%M')
 	api.nvim_win_set_cursor(0, { 2, 1 })

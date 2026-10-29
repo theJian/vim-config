@@ -20,7 +20,26 @@ Relevant events coalesce into one refresh after 40 ms. Refreshes rebuild window 
 
 One one-second timer checks for a minute change or outstanding LSP work. Idle ticks do not rebuild or redraw bars. Progress animation advances once per second to keep redraw traffic low. LSP work is tracked by client/token, so overlapping tasks complete independently. Completion markers remain until the client exits. Repeated `setup()` replaces timers/autocommands, and exit closes the timer. Late async results from earlier setups or invalidated diff requests are discarded.
 
-`require('better_statusline').refresh()` requests a coalesced refresh, useful after changing `t:tabname` directly. It does not invalidate Git caches. No configuration framework or compatibility layer for lualine is provided.
+`require('better_statusline').refresh()` requests a coalesced refresh, useful after changing `t:tabname` directly. It does not invalidate Git caches. No compatibility layer for lualine is provided.
+
+## Mode colors
+
+Pass `mode_colors` to `setup()` to customize the mode label. Other components keep their own highlights. Values can be highlight-group names or `nvim_set_hl` attribute tables:
+
+```lua
+require('better_statusline').setup {
+    mode_colors = {
+        normal = 'StatusLine',
+        insert = { fg = '#0d50c5', bold = true },
+        visual = { fg = '#7a5000', bg = '#ffebd1' },
+        replace = 'DiagnosticError',
+    },
+}
+```
+
+Supported families are `normal`, `insert`, `visual` (including line/block), `select`, `replace`, `command` (including prompts), `terminal`, and `operator`. Select defaults to the configured visual color; operator defaults to normal. Other unspecified families use `StatusLine`. Attribute tables and named groups inherit missing attributes from `StatusLine`, preserving its background when only a foreground is supplied. Missing named groups fall back to `StatusLine`.
+
+Colors are prepared on setup and colorscheme changes; the existing coalesced `ModeChanged` refresh chooses a cached highlight without defining highlights during rendering. Calling `setup()` again replaces the configuration; `setup()` without arguments restores defaults. This repository configures Moonwalk's custom `StatusNormal`, `StatusInsert`, `StatusVisual`, `StatusReplace`, `StatusCommand`, and `StatusTerminal` groups in `lua/ui.lua`; these are not standard Neovim groups.
 
 ## Verification
 

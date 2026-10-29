@@ -42,12 +42,32 @@ local modes = {
 	['!'] = 'SHELL',
 	t = 'TERMINAL',
 }
+local mode_families = {
+	n = 'normal',
+	i = 'insert',
+	v = 'visual',
+	V = 'visual',
+	['\22'] = 'visual',
+	s = 'select',
+	S = 'select',
+	['\19'] = 'select',
+	R = 'replace',
+	c = 'command',
+	r = 'command',
+	['!'] = 'terminal',
+	t = 'terminal',
+}
+local families = { 'normal', 'insert', 'visual', 'select', 'replace', 'command', 'terminal', 'operator' }
+local function mode_highlight(mode)
+	local family = mode:sub(1, 2) == 'no' and 'operator' or mode_families[mode:sub(1, 1)] or 'normal'
+	return 'BetterStatuslineMode_' .. family
+end
+
 local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
 local request
 
 local function highlights()
 	for name, link in pairs {
-		Mode = 'StatusLine',
 		Error = 'DiagnosticError',
 		Warn = 'DiagnosticWarn',
 		Info = 'DiagnosticInfo',
@@ -57,6 +77,16 @@ local function highlights()
 		Delete = 'GitSignsDelete',
 	} do
 		api.nvim_set_hl(0, 'BetterStatusline' .. name, { link = link })
+	end
+	local base = api.nvim_get_hl(0, { name = 'StatusLine', link = false })
+	for _, family in ipairs(families) do
+		local color = state.mode_colors[family]
+			or (family == 'select' and state.mode_colors.visual)
+			or (family == 'operator' and state.mode_colors.normal)
+		if type(color) == 'string' then
+			color = api.nvim_get_hl(0, { name = color, link = false, create = false })
+		end
+		api.nvim_set_hl(0, 'BetterStatuslineMode_' .. family, vim.tbl_extend('force', base, color or {}))
 	end
 end
 
@@ -283,7 +313,9 @@ local function refresh()
 	end
 	local parts = {}
 	local mode = api.nvim_get_mode().mode
-	parts[1] = '%#BetterStatuslineMode#'
+	parts[1] = '%#'
+		.. mode_highlight(mode)
+		.. '#'
 		.. (modes[mode] or modes[mode:sub(1, 2)] or modes[mode:sub(1, 1)] or mode)
 		.. '%*'
 	if head ~= '' then
@@ -321,12 +353,21 @@ request = function()
 end
 M.refresh = request
 
-function M.setup()
+---Configure mode-label highlights; values are group names or nvim_set_hl attributes.
+---@param opts? {mode_colors?: table<string, string|table>}
+function M.setup(opts)
+	opts = opts or {}
+	local colors = vim.deepcopy(opts.mode_colors or {})
+	assert(type(colors) == 'table', 'mode_colors must be a table')
+	for family, color in pairs(colors) do
+		assert(vim.list_contains(families, family), 'unknown mode_colors family: ' .. tostring(family))
+		assert(type(color) == 'string' or type(color) == 'table', 'mode color must be a highlight name or table')
+	end
 	if state then
 		state.timer:stop()
 		state.timer:close()
 	end
-	state = { bars = {}, git = {}, diffs = {}, work = {}, frame = 1 }
+	state = { bars = {}, git = {}, diffs = {}, work = {}, frame = 1, mode_colors = colors }
 	local s = state
 	local group = api.nvim_create_augroup('BetterStatusline', { clear = true })
 	local function on(events, opts)

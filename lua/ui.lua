@@ -14,7 +14,16 @@ vim.o.fillchars = 'fold:,diff:'
 vim.o.showmatch = true
 vim.o.matchtime = 3
 
-require('better_statusline').setup()
+require('better_statusline').setup {
+	mode_colors = {
+		normal = 'StatusNormal',
+		insert = 'StatusInsert',
+		visual = 'StatusVisual',
+		replace = 'StatusReplace',
+		command = 'StatusCommand',
+		terminal = 'StatusTerminal',
+	},
+}
 
 vim.pack.add {
 	'git@github.com:theJian/nvim-moonwalk.git',
