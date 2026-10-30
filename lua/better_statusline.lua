@@ -369,7 +369,7 @@ local function refresh()
 	if #diff > 0 then
 		parts[#parts + 1] = table.concat(diff, ' ')
 	end
-	s.status = ' ' .. table.concat(parts, sep) .. '%<%=%3l:%-2c '
+	s.status = ' ' .. table.concat(parts, sep) .. '%<%=Ln %l, Col %c '
 	vim.cmd.redrawstatus()
 	vim.cmd.redrawtabline()
 end

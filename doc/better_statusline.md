@@ -6,7 +6,7 @@
 
 The bars display the following information:
 
-- Global statusline: editor mode, Git branch (short commit ID when detached), saved-file added/changed/removed line counts, and cursor line and byte column.
+- Global statusline: editor mode, Git branch (short commit ID when detached), saved-file added/changed/removed line counts, and cursor line and byte column displayed as `Ln 42, Col 8`.
 - Window bars: relative filename, `⁕` for modified, a lock for readonly or nonmodifiable buffers, diagnostic counts (`●` error, `▲` warning, `□` info, `◊` hint), space-separated attached LSP names grouped inside `‹…›`, a text shimmer on busy servers, and filetype. Inactive windows retain their own information. Unnamed buffers display `- NO NAME -`; terminal windows have no bar.
 - Tabline: tab number, name, and `[+]` when any displayed buffer in the tab is modified. Names honor `t:tabname`, otherwise use the selected buffer's basename (with help, terminal, and Fugitive labels). Native tab targets support mouse switching. The tabline appears with two or more tabs; native truncation favors the active tab on narrow screens.
 

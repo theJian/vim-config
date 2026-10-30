@@ -113,7 +113,7 @@ local ok, err = xpcall(function()
 	)
 	contains(status(), 'NORMAL')
 	api.nvim_win_set_cursor(0, { 2, 1 })
-	contains(status(), '2:2')
+	contains(status(), 'Ln 2, Col 2')
 	local first = api.nvim_get_current_win()
 	local buf = api.nvim_get_current_buf()
 	vim.bo.modified, vim.bo.readonly = true, true
