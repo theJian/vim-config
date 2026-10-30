@@ -112,7 +112,6 @@ local ok, err = xpcall(function()
 		'unstaged changes did not return after a repository update'
 	)
 	contains(status(), 'NORMAL')
-	contains(status(), os.date '%H:%M')
 	api.nvim_win_set_cursor(0, { 2, 1 })
 	contains(status(), '2:2')
 	local first = api.nvim_get_current_win()

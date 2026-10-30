@@ -331,7 +331,7 @@ local function refresh()
 	if #diff > 0 then
 		parts[#parts + 1] = table.concat(diff, ' ')
 	end
-	s.status = ' ' .. table.concat(parts, sep) .. '%<%=%3l:%-2c' .. sep .. '🕰 ' .. os.date '%H:%M' .. ' '
+	s.status = ' ' .. table.concat(parts, sep) .. '%<%=%3l:%-2c '
 	vim.cmd.redrawstatus()
 	vim.cmd.redrawtabline()
 end
@@ -457,7 +457,6 @@ function M.setup(opts)
 			end)
 		end,
 	})
-	local minute = os.date '%H:%M'
 	s.timer = vim.uv.new_timer()
 	s.timer:start(
 		1000,
@@ -466,7 +465,6 @@ function M.setup(opts)
 			if state ~= s then
 				return
 			end
-			local current = os.date '%H:%M'
 			local busy = false
 			for id, work in pairs(s.work) do
 				if not vim.lsp.get_client_by_id(id) then
@@ -477,9 +475,6 @@ function M.setup(opts)
 			end
 			if busy then
 				s.frame = s.frame % #spinner + 1
-			end
-			if busy or minute ~= current then
-				minute = current
 				request()
 			end
 		end)

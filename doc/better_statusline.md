@@ -4,9 +4,9 @@
 
 ## Information
 
-The replacement preserves the information configured in the former lualine setup:
+The bars display the following information:
 
-- Global statusline: editor mode, Git branch (short commit ID when detached), saved-file added/changed/removed line counts, cursor line and byte column, and local time in hours/minutes.
+- Global statusline: editor mode, Git branch (short commit ID when detached), saved-file added/changed/removed line counts, and cursor line and byte column.
 - Window bars: relative filename, `●` for modified, a lock for readonly or nonmodifiable buffers, all four diagnostic severity counts, attached LSP names joined with `+`, progress spinner/completion check, and filetype. Inactive windows retain their own information. Unnamed buffers display `- NO NAME -`; terminal windows have no bar.
 - Tabline: tab number, name, and `[+]` when any displayed buffer in the tab is modified. Names honor `t:tabname`, otherwise use the selected buffer's basename (with help, terminal, and Fugitive labels). Native tab targets support mouse switching. The tabline appears with two or more tabs; native truncation favors the active tab on narrow screens.
 
@@ -18,7 +18,7 @@ Diff counts deliberately match lualine's default: saved worktree content compare
 
 Relevant events coalesce into one refresh after 40 ms. Refreshes rebuild window and tab metadata, so their cost scales with open windows/tabs and attached clients. This work still runs on Neovim's main loop; it is not a claim of zero latency under arbitrary workloads. Git processes are asynchronous with timeouts; diff stdout is consumed incrementally and only hunk counts are retained. Saved-file diff caches refresh on buffer entry, write, focus return, Gitsigns updates, and Fugitive changes. Branch fallback queries are throttled to at most one per directory per two seconds during refreshes.
 
-One one-second timer checks for a minute change or outstanding LSP work. Idle ticks do not rebuild or redraw bars. Progress animation advances once per second to keep redraw traffic low. LSP work is tracked by client/token, so overlapping tasks complete independently. Completion markers remain until the client exits. Repeated `setup()` replaces timers/autocommands, and exit closes the timer. Late async results from earlier setups or invalidated diff requests are discarded.
+One timer checks for outstanding LSP work every 200 ms after an initial one-second delay. Idle ticks do not rebuild or redraw bars. Progress animation advances while LSP work is active. LSP work is tracked by client/token, so overlapping tasks complete independently. Completion markers remain until the client exits. Repeated `setup()` replaces timers/autocommands, and exit closes the timer. Late async results from earlier setups or invalidated diff requests are discarded.
 
 `require('better_statusline').refresh()` requests a coalesced refresh, useful after changing `t:tabname` directly. It does not invalidate Git caches. No compatibility layer for lualine is provided.
 
