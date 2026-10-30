@@ -1,7 +1,7 @@
 local M = {}
 local api = vim.api
 local state
-local sep = '  ·  '
+local sep = '  '
 local function escape(text)
 	return tostring(text):gsub('[\r\n]', ' '):gsub('%%', '%%%%')
 end
@@ -218,11 +218,11 @@ local function lsp(buf)
 		if not seen[client.name] then
 			seen[client.name] = true
 			local work = state.work[client.id]
-			local mark = work and (next(work) and spinner[state.frame] or '✓') or ''
-			parts[#parts + 1] = escape(client.name) .. (mark ~= '' and ' ' .. mark or '')
+			local mark = work and next(work) and spinner[state.frame] or ''
+			parts[#parts + 1] = escape(client.name) .. mark
 		end
 	end
-	return #parts > 0 and ' ' .. table.concat(parts, '╱') or ''
+	return #parts > 0 and '+' .. table.concat(parts, ' +') or ''
 end
 
 local function bar(win, buf)
@@ -236,10 +236,10 @@ local function bar(win, buf)
 			return vim.fn.fnamemodify(name, ':~:.')
 		end)
 	local left = escape(path)
-		.. (bo.modified and ' ●' or '')
+		.. (bo.modified and ' ⁕' or '')
 		.. ((bo.readonly or not bo.modifiable) and ' 󰌾' or '')
 	local right, counts = {}, vim.diagnostic.count(buf)
-	for i, item in ipairs { { 'Error', '●' }, { 'Warn', '●' }, { 'Info', '○' }, { 'Hint', '⊙' } } do
+	for i, item in ipairs { { 'Error', '●' }, { 'Warn', '▲' }, { 'Info', '□' }, { 'Hint', '☆' } } do
 		if (counts[i] or 0) > 0 then
 			right[#right + 1] = '%#BetterStatusline' .. item[1] .. '#' .. item[2] .. ' ' .. counts[i] .. '%*'
 		end
