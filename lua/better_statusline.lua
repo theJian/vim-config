@@ -63,7 +63,7 @@ local function mode_highlight(mode)
 	return 'BetterStatuslineMode_' .. family
 end
 
-local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+local spinner = { '|', '/', '-', '\\' }
 local request
 
 local function highlights()
@@ -222,7 +222,7 @@ local function lsp(buf)
 			parts[#parts + 1] = escape(client.name) .. (mark ~= '' and ' ' .. mark or '')
 		end
 	end
-	return #parts > 0 and ' ' .. table.concat(parts, '+') or ''
+	return #parts > 0 and ' ' .. table.concat(parts, '╱') or ''
 end
 
 local function bar(win, buf)
@@ -461,7 +461,7 @@ function M.setup(opts)
 	s.timer = vim.uv.new_timer()
 	s.timer:start(
 		1000,
-		1000,
+		200,
 		vim.schedule_wrap(function()
 			if state ~= s then
 				return
