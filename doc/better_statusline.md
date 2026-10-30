@@ -1,14 +1,16 @@
 # better_statusline
 
-`lua/better_statusline.lua` supplies the global statusline, per-window bars, and clickable tabline using native Neovim 0.12 statusline formatting. `lua/ui.lua` calls `setup()`; no statusline plugin is required. Highlight links follow the current colorscheme, with quiet dot separators. Window bars use the colorscheme’s `WinBar` and `WinBarNC` highlights without overriding them.
+`lua/better_statusline.lua` supplies the global statusline, per-window bars, and clickable tabline using native Neovim 0.12 statusline formatting. `lua/ui.lua` calls `setup()`; no statusline plugin is required. Highlight links follow the current colorscheme, with double-space separators. Window bars use the colorscheme’s `WinBar` and `WinBarNC` highlights without overriding them.
 
 ## Information
 
 The bars display the following information:
 
 - Global statusline: editor mode, Git branch (short commit ID when detached), saved-file added/changed/removed line counts, and cursor line and byte column.
-- Window bars: relative filename, `●` for modified, a lock for readonly or nonmodifiable buffers, all four diagnostic severity counts, attached LSP names joined with `+`, progress spinner/completion check, and filetype. Inactive windows retain their own information. Unnamed buffers display `- NO NAME -`; terminal windows have no bar.
+- Window bars: relative filename, `⁕` for modified, a lock for readonly or nonmodifiable buffers, diagnostic counts (`●` error, `▲` warning, `□` info, `◊` hint), space-separated attached LSP names grouped inside `‹…›`, a text shimmer on busy servers, and filetype. Inactive windows retain their own information. Unnamed buffers display `- NO NAME -`; terminal windows have no bar.
 - Tabline: tab number, name, and `[+]` when any displayed buffer in the tab is modified. Names honor `t:tabname`, otherwise use the selected buffer's basename (with help, terminal, and Fugitive labels). Native tab targets support mouse switching. The tabline appears with two or more tabs; native truncation favors the active tab on narrow screens.
+
+Diagnostic icons use standard Unicode geometric shapes and need no Nerd Font. The Git branch and readonly icons still require Nerd Font.
 
 Diff counts deliberately match lualine's default: saved worktree content compared with the index. Unsaved edits and staged-only changes do not contribute. Git commands run without a shell, external diff helpers, or textconv. Gitsigns supplies branch data when available; asynchronous Git discovery provides a fallback, including worktrees and detached HEADs. Non-repositories simply omit Git information.
 
@@ -18,7 +20,7 @@ Diff counts deliberately match lualine's default: saved worktree content compare
 
 Relevant events coalesce into one refresh after 40 ms. Refreshes rebuild window and tab metadata, so their cost scales with open windows/tabs and attached clients. This work still runs on Neovim's main loop; it is not a claim of zero latency under arbitrary workloads. Git processes are asynchronous with timeouts; diff stdout is consumed incrementally and only hunk counts are retained. Saved-file diff caches refresh on buffer entry, write, focus return, Gitsigns updates, and Fugitive changes. Branch fallback queries are throttled to at most one per directory per two seconds during refreshes.
 
-One timer checks for outstanding LSP work every 200 ms after an initial one-second delay. Idle ticks do not rebuild or redraw bars. Progress animation advances while LSP work is active. LSP work is tracked by client/token, so overlapping tasks complete independently. Completion markers remain until the client exits. Repeated `setup()` replaces timers/autocommands, and exit closes the timer. Late async results from earlier setups or invalidated diff requests are discarded.
+One timer checks for outstanding LSP work every 200 ms after an initial one-second delay. Idle ticks do not rebuild or redraw bars. Progress animation advances while LSP work is active. A bright band sweeps across each busy server name without changing text or width. Three shades are derived from WinBar and WinBarNC foreground/background colors on setup and colorscheme changes; the brightest uses the normal foreground. Missing colors fall back to Normal; unknown terminal colors or reversed highlights retain the base appearance. LSP work is tracked by client/token, so overlapping tasks complete independently. Repeated `setup()` replaces timers/autocommands, and exit closes the timer. Late async results from earlier setups or invalidated diff requests are discarded.
 
 `require('better_statusline').refresh()` requests a coalesced refresh, useful after changing `t:tabname` directly. It does not invalidate Git caches. No compatibility layer for lualine is provided.
 

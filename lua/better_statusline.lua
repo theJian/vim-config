@@ -63,8 +63,16 @@ local function mode_highlight(mode)
 	return 'BetterStatuslineMode_' .. family
 end
 
-local spinner = { '|', '/', '-', '\\' }
 local request
+
+local function blend(fg, bg, amount)
+	local result = 0
+	for _, shift in ipairs { 0, 8, 16 } do
+		local f, b = math.floor(fg / 2 ^ shift) % 256, math.floor(bg / 2 ^ shift) % 256
+		result = result + math.floor(b + (f - b) * amount + 0.5) * 2 ^ shift
+	end
+	return result
+end
 
 local function highlights()
 	for name, link in pairs {
@@ -77,6 +85,19 @@ local function highlights()
 		Delete = 'GitSignsDelete',
 	} do
 		api.nvim_set_hl(0, 'BetterStatusline' .. name, { link = link })
+	end
+	local normal = api.nvim_get_hl(0, { name = 'Normal', link = false })
+	for _, name in ipairs { 'WinBar', 'WinBarNC' } do
+		local base = api.nvim_get_hl(0, { name = name, link = false })
+		local fg, bg = base.fg or normal.fg, base.bg or normal.bg
+		for level, amount in ipairs { 0.45, 0.7, 1 } do
+			local color = vim.deepcopy(base)
+			-- Unknown terminal colors cannot be blended reliably.
+			if fg and bg and not base.reverse then
+				color.fg = blend(fg, bg, amount)
+			end
+			api.nvim_set_hl(0, 'BetterStatuslineShimmer' .. name .. level, color)
+		end
 	end
 	local base = api.nvim_get_hl(0, { name = 'StatusLine', link = false })
 	for _, family in ipairs(families) do
@@ -212,17 +233,34 @@ local function diff(name)
 	return entry
 end
 
-local function lsp(buf)
-	local parts, seen = {}, {}
+local function shimmer(name, win)
+	local chars = vim.fn.split(name, '\\zs')
+	local center = (state.frame - 1) % (#chars + 4) - 1
+	local group = win == api.nvim_get_current_win() and 'WinBar' or 'WinBarNC'
+	local parts = {}
+	for i, char in ipairs(chars) do
+		local distance = math.abs(i - center)
+		local level = distance == 0 and 3 or distance == 1 and 2 or 1
+		parts[#parts + 1] = '%#BetterStatuslineShimmer' .. group .. level .. '#' .. escape(char)
+	end
+	return table.concat(parts) .. '%*'
+end
+
+local function lsp(buf, win)
+	local names, busy, seen = {}, {}, {}
 	for _, client in ipairs(vim.lsp.get_clients { bufnr = buf }) do
 		if not seen[client.name] then
 			seen[client.name] = true
-			local work = state.work[client.id]
-			local mark = work and next(work) and spinner[state.frame] or ''
-			parts[#parts + 1] = escape(client.name) .. mark
+			names[#names + 1] = client.name
 		end
+		local work = state.work[client.id]
+		busy[client.name] = busy[client.name] or (work and next(work) ~= nil)
 	end
-	return #parts > 0 and '+' .. table.concat(parts, ' +') or ''
+	local parts = {}
+	for _, name in ipairs(names) do
+		parts[#parts + 1] = busy[name] and shimmer(name, win) or escape(name)
+	end
+	return #parts > 0 and '‹' .. table.concat(parts, ' ') .. '›' or ''
 end
 
 local function bar(win, buf)
@@ -239,12 +277,12 @@ local function bar(win, buf)
 		.. (bo.modified and ' ⁕' or '')
 		.. ((bo.readonly or not bo.modifiable) and ' 󰌾' or '')
 	local right, counts = {}, vim.diagnostic.count(buf)
-	for i, item in ipairs { { 'Error', '●' }, { 'Warn', '▲' }, { 'Info', '□' }, { 'Hint', '☆' } } do
+	for i, item in ipairs { { 'Error', '●' }, { 'Warn', '▲' }, { 'Info', '□' }, { 'Hint', '◊' } } do
 		if (counts[i] or 0) > 0 then
 			right[#right + 1] = '%#BetterStatusline' .. item[1] .. '#' .. item[2] .. ' ' .. counts[i] .. '%*'
 		end
 	end
-	local clients = lsp(buf)
+	local clients = lsp(buf, win)
 	if clients ~= '' then
 		right[#right + 1] = clients
 	end
@@ -474,7 +512,7 @@ function M.setup(opts)
 				end
 			end
 			if busy then
-				s.frame = s.frame % #spinner + 1
+				s.frame = s.frame + 1
 				request()
 			end
 		end)

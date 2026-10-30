@@ -125,15 +125,15 @@ local ok, err = xpcall(function()
 		{ lnum = 1, col = 0, message = 'hint', severity = 4 },
 	})
 	settle()
-	contains(bar(first), 'sample.lua ● 󰌾')
-	for _, symbol in ipairs { '● 1', '○ 1', '⊙ 1', 'lua' } do
+	contains(bar(first), 'sample.lua ⁕ 󰌾')
+	for _, symbol in ipairs { '● 1', '▲ 1', '□ 1', '◊ 1', 'lua' } do
 		contains(bar(first), symbol)
 	end
 	vim.cmd.vnew()
 	api.nvim_buf_set_name(0, temp .. '/100%#Error#你好.lua')
 	settle()
 	contains(bar(api.nvim_get_current_win()), '100%#Error#你好.lua')
-	contains(bar(first), 'sample.lua ● 󰌾')
+	contains(bar(first), 'sample.lua ⁕ 󰌾')
 	vim.cmd.tabnew()
 	vim.t.tabname = 'custom%tab'
 	m.refresh()
@@ -146,9 +146,20 @@ local ok, err = xpcall(function()
 	settle()
 	assert(vim.wo.winbar == '')
 	vim.cmd.enew()
+	api.nvim_set_hl(0, 'WinBar', { fg = '#ffffff', bg = '#000000' })
+	api.nvim_set_hl(0, 'WinBarNC', { fg = '#000000', bg = '#ffffff' })
+	api.nvim_exec_autocmds('ColorScheme', {})
+	local dim = api.nvim_get_hl(0, { name = 'BetterStatuslineShimmerWinBar1', link = false })
+	assert(dim.fg == 0x737373 and dim.bg == 0)
+	local bright = api.nvim_get_hl(0, { name = 'BetterStatuslineShimmerWinBarNC3', link = false })
+	assert(bright.fg == 0 and bright.bg == 0xffffff)
+	local lookup = vim.lsp.get_client_by_id
+	vim.lsp.get_client_by_id = function(id)
+		return id == 999 and { id = id } or lookup(id)
+	end
 	local clients = vim.lsp.get_clients
 	vim.lsp.get_clients = function()
-		return { { id = 999, name = 'test-lsp' } }
+		return { { id = 999, name = 'test-lsp' }, { id = 998, name = '静%ls' } }
 	end
 	local function progress(kind, token)
 		api.nvim_exec_autocmds(
@@ -160,11 +171,16 @@ local ok, err = xpcall(function()
 	progress('begin', 'a')
 	progress('begin', 'b')
 	progress('end', 'a')
-	contains(bar(api.nvim_get_current_win()), 'test-lsp ')
-	assert(not bar(api.nvim_get_current_win()):find('test-lsp ✓', 1, true))
+	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')
+	contains(m.winbar(), 'BetterStatuslineShimmerWinBar')
+	local before = m.winbar()
+	assert(vim.wait(1500, function() return m.winbar() ~= before end, 20))
+	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')
 	progress('end', 'b')
-	contains(bar(api.nvim_get_current_win()), 'test-lsp ✓')
+	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')
+	assert(not m.winbar():find('BetterStatuslineShimmer', 1, true))
 	vim.lsp.get_clients = clients
+	vim.lsp.get_client_by_id = lookup
 	-- Cached renderers must not query services, spawn commands, or inspect files.
 	local saved = { vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages }
 	local function forbidden()
