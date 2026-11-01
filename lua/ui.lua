@@ -79,6 +79,15 @@ vim.o.pumheight = 5
 require('vim._core.ui2').enable({
 	enable = true,
 	msg = {
-		target = 'msg'
-	}
+		target = 'msg',
+		targets = {
+			list_cmd = 'pager',
+			lua_print = 'pager',
+			lua_error = 'pager',
+			rpc_error = 'pager',
+			shell_out = 'pager',
+			shell_err = 'pager',
+			verbose = 'pager',
+		},
+	},
 })
