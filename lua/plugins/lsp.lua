@@ -3,7 +3,7 @@ vim.pack.load 'https://github.com/neovim/nvim-lspconfig.git'
 vim.lsp.log.set_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
 
-vim.lsp.enable 'lua_ls'
+vim.lsp.enable 'emmylua_ls'
 vim.lsp.enable 'rust_analyzer'
 vim.lsp.enable 'bacon_ls'
 vim.lsp.enable 'bashls'
