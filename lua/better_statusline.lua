@@ -621,7 +621,7 @@ function M.setup(opts)
 	vim.o.laststatus, vim.o.showtabline = 3, 1
 	vim.o.statusline = "%!v:lua.require'better_statusline'.statusline()"
 	vim.o.tabline = "%!v:lua.require'better_statusline'.tabline()"
-	-- No TextChanged hook: modified state has its own event, and Git counts saved files.
+	-- Text changes refresh modified markers; Git counts still use saved files.
 	on_event({
 		'BufEnter',
 		'BufWinEnter',
@@ -630,7 +630,9 @@ function M.setup(opts)
 		'TabEnter',
 		'TabClosed',
 		'BufFilePost',
-		'BufModifiedSet',
+		'TextChanged',
+		'TextChangedI',
+		'TextChangedP',
 		'BufWritePost',
 		'FileType',
 		'DiagnosticChanged',
@@ -649,7 +651,7 @@ function M.setup(opts)
 			request_refresh()
 		end,
 	})
-	on_event('OptionSet', { pattern = { 'readonly', 'modifiable', 'buftype' }, callback = request_refresh })
+	on_event('OptionSet', { pattern = { 'modified', 'readonly', 'modifiable', 'buftype' }, callback = request_refresh })
 	-- Invalidate on Gitsigns updates too: staging changes the diff without writing the buffer.
 	on_event('User', {
 		pattern = 'GitSignsUpdate',
