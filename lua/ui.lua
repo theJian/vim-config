@@ -8,7 +8,7 @@ vim.o.list = true
 vim.o.listchars = 'leadtab:┊ ,tab:  ,trail:∙,extends:…,nbsp:∙,precedes:…'
 
 -- Alternative chars for special lines, separator, etc.
-vim.o.fillchars = 'fold:,diff:'
+vim.o.fillchars = 'fold:🮦,diff:'
 
 -- Matches highlight delay
 vim.o.showmatch = true
