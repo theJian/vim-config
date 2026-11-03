@@ -1,3 +1,8 @@
+-- Configure native LSP servers and buffer attachment behavior. Loaded through
+-- plugins/init.lua after prelude installs the fluent vim.pack API; nvim-lspconfig
+-- supplies server defaults alongside local lsp/*.lua configs. Server executables
+-- must be installed separately. LspAttach installs buffer mappings once and requests
+-- reference highlights on normal-mode idle, discarding responses after context changes.
 vim.pack.load 'https://github.com/neovim/nvim-lspconfig.git'
 
 vim.lsp.log.set_level 'WARN'
@@ -69,18 +74,62 @@ vim.api.nvim_create_autocmd('LspAttach', {
 			vim.b[ev.buf].keymaps_set = true
 		end
 
+		local highlight_method = vim.lsp.protocol.Methods.textDocument_documentHighlight
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-			vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-				buffer = ev.buf,
-				callback = vim.lsp.buf.document_highlight,
+		if client and client:supports_method(highlight_method) and not vim.b[ev.buf].reference_highlights_set then
+			local bufnr = ev.buf
+			-- A generation rejects stale responses even after cursor or mode returns to its original state.
+			local generation = 0
+			vim.api.nvim_create_autocmd('CursorHold', {
+				buffer = bufnr,
+				callback = function()
+					if
+						vim.api.nvim_get_mode().mode ~= 'n'
+						or #vim.lsp.get_clients { bufnr = bufnr, method = highlight_method } == 0
+					then
+						return
+					end
+					generation = generation + 1
+					local request_generation = generation
+					local win = vim.api.nvim_get_current_win()
+					local cursor = vim.api.nvim_win_get_cursor(win)
+					local changedtick = vim.api.nvim_buf_get_changedtick(bufnr)
+					vim.lsp.buf_request(bufnr, highlight_method, function(request_client)
+						return vim.lsp.util.make_position_params(win, request_client.offset_encoding)
+					end, function(err, result, ctx)
+						if
+							err
+							or not result
+							or generation ~= request_generation
+							or vim.api.nvim_get_mode().mode ~= 'n'
+							or not vim.api.nvim_buf_is_valid(bufnr)
+							or vim.api.nvim_get_current_buf() ~= bufnr
+							or vim.api.nvim_get_current_win() ~= win
+							or not vim.deep_equal(vim.api.nvim_win_get_cursor(win), cursor)
+							or vim.api.nvim_buf_get_changedtick(bufnr) ~= changedtick
+						then
+							return
+						end
+						local response_client = vim.lsp.get_client_by_id(ctx.client_id)
+						if response_client and vim.lsp.buf_is_attached(bufnr, ctx.client_id) then
+							vim.lsp.util.buf_highlight_references(bufnr, result, response_client.offset_encoding)
+						end
+					end)
+				end,
 			})
-		end
 
-		vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-			buffer = ev.buf,
-			callback = vim.lsp.buf.clear_references,
-		})
+			vim.api.nvim_create_autocmd(
+				{ 'CursorMoved', 'ModeChanged', 'BufLeave', 'WinLeave', 'TextChanged', 'TextChangedI' },
+				{
+					buffer = bufnr,
+					callback = function()
+						generation = generation + 1
+						vim.lsp.util.buf_clear_references(bufnr)
+					end,
+				}
+			)
+			vim.b[ev.buf].reference_highlights_set = true
+		end
 
 		-- if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
 		-- 	vim.lsp.inlay_hint.enable(true)

@@ -1,4 +1,7 @@
-return {
+-- Configure EmmyLua for this Neovim configuration project.
+-- Loaded by 'exrc' after this file is trusted with :trust.
+vim.lsp.config('emmylua_ls', {
+	---@type lspconfig.settings.emmylua_ls
 	settings = {
 		emmylua = {
 			runtime = {
@@ -15,4 +18,4 @@ return {
 			},
 		},
 	},
-}
+})

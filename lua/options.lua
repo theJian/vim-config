@@ -1,6 +1,9 @@
 -- Mouse
 vim.o.mouse = 'nc'
 
+-- Load trusted project-local configuration.
+vim.o.exrc = true
+
 -- Compatible options
 vim.opt.cpoptions:append 'n'
 vim.opt.cpoptions:append 'y'
