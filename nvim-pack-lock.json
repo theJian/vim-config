@@ -1,15 +1,15 @@
 {
   "plugins": {
     "LuaSnip": {
-      "rev": "3732756842a2f7e0e76a7b0487e9692072857277",
+      "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
     "blink.pairs": {
-      "rev": "65978aadaf9b7d6cae59c1c51cf2b366b370546e",
+      "rev": "ef8fc29c8afa0fc1d0eb611a1a76fd87f0951f6e",
       "src": "https://github.com/saghen/blink.pairs"
     },
     "fff.nvim": {
-      "rev": "1bcbce2bc67d1eca5a6b2f540b5c0bf8a3fdeb2c",
+      "rev": "3004e2d61a69e8c0f9d90b958d21fee3f75fe63e",
       "src": "https://github.com/dmtrKovalenko/fff.nvim"
     },
     "formatter.nvim": {
@@ -45,7 +45,7 @@
       "src": "https://github.com/catgoose/nvim-colorizer.lua"
     },
     "nvim-dap": {
-      "rev": "818cd8787a77a97703eb1d9090543a374f79a9ac",
+      "rev": "cfa2d58f4537aca6ca83e2de1a0d9f1491121264",
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-dap-go": {
@@ -53,7 +53,7 @@
       "src": "https://github.com/leoluz/nvim-dap-go"
     },
     "nvim-dap-ui": {
-      "rev": "cf91d5e2d07c72903d052f5207511bf7ecdb7122",
+      "rev": "cc9dd33aade7f20bae414d0cba163bc60d4d4b43",
       "src": "https://github.com/rcarriga/nvim-dap-ui"
     },
     "nvim-dap-virtual-text": {
@@ -77,7 +77,7 @@
       "src": "git@github.com:theJian/nvim-moonwalk.git"
     },
     "nvim-nio": {
-      "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
+      "rev": "edcc181a875301dd21840189aa2f2f9ad69fc172",
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
     "nvim-paredit": {
@@ -93,7 +93,7 @@
       "src": "https://github.com/kylechui/nvim-surround.git"
     },
     "nvim-treesitter": {
-      "rev": "0195cd62fa89950f34c0e0d648ea7897ab85d4d3",
+      "rev": "610734c5d3e59761d5f79318d120633374537fa5",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-context": {
@@ -101,19 +101,19 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
     },
     "oil.nvim": {
-      "rev": "bbfa7cba85967dc9dbfe0ca486fd4b17084bf846",
+      "rev": "d3733d933833a0e59b813ecec99341527adf0c28",
       "src": "https://github.com/stevearc/oil.nvim.git"
     },
     "one-small-step-for-vimkind": {
-      "rev": "87eeca2bd4d90a94eed1ef0dbc66885117e7bacb",
+      "rev": "1af6ffb9b5229a856e8090fa2f690e0931a5aace",
       "src": "https://github.com/jbyuki/one-small-step-for-vimkind"
     },
     "parinfer-rust": {
-      "rev": "7f13acea20f03228f72156cec4fa4e49f0d5d1e5",
+      "rev": "0d334950099cd30a8e1ca520026f8da9ea1382fa",
       "src": "https://github.com/eraserhd/parinfer-rust"
     },
     "vim-fugitive": {
-      "rev": "61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4",
+      "rev": "3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0",
       "src": "https://github.com/tpope/vim-fugitive.git"
     },
     "vim-markdown-composer": {
