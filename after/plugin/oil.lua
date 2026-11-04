@@ -1,5 +1,4 @@
-local oil = vim.pack.load 'https://github.com/stevearc/oil.nvim.git'
-	.using 'oil'
+local oil = vim.pack.use { 'oil', from = 'https://github.com/stevearc/oil.nvim.git' }
 
 oil.setup {
 	win_options = {

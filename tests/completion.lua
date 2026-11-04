@@ -18,8 +18,10 @@ end
 
 local function load_completion()
 	pcall(vim.keymap.del, 'i', '<CR>')
-	package.loaded['plugins.completion'] = nil
-	return require 'plugins.completion'
+	pcall(vim.keymap.del, 'i', '<Right>')
+	local completion = dofile(vim.fn.getcwd() .. '/after/plugin/completion.lua')
+	vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+	return completion
 end
 
 local function mapping(lhs, expr)
@@ -37,8 +39,8 @@ local function override(target, replacements, callback)
 	end
 
 	local ok, result = pcall(callback)
-	for name, original in pairs(originals) do
-		target[name] = original
+	for name in pairs(replacements) do
+		target[name] = originals[name]
 	end
 	assert(ok, result)
 	return result
@@ -126,8 +128,8 @@ test('preserves existing enter behavior when no completion item is selected', fu
 		return '<C-]><CR>'
 	end, { expr = true, desc = 'Test Enter fallback' })
 
-	package.loaded['plugins.completion'] = nil
-	require 'plugins.completion'
+	dofile(vim.fn.getcwd() .. '/after/plugin/completion.lua')
+	vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
 	local enter = mapping '<CR>'
 
 	override(vim.fn, {
@@ -149,6 +151,93 @@ test('preserves existing enter behavior when no completion item is selected', fu
 		assert(enter() == '<C-]><CR>')
 	end)
 	assert(fallback_calls == 2)
+end)
+
+for _, order in ipairs { { 'completion', 'pairs' }, { 'pairs', 'completion' } } do
+	test('composes at VimEnter in ' .. table.concat(order, '-then-') .. ' order', function()
+		pcall(vim.keymap.del, 'i', '<CR>')
+		pcall(vim.keymap.del, 'i', '<Right>')
+		local fallback_calls = 0
+		local blink = {
+			setup = function()
+				vim.keymap.set('i', '<CR>', function()
+					fallback_calls = fallback_calls + 1
+					return '<C-]><CR>'
+				end, { expr = true, silent = true })
+			end,
+		}
+		local function source(name)
+			dofile(vim.fn.getcwd() .. '/after/plugin/' .. name .. '.lua')
+		end
+		override(vim.pack, {
+			use = function(spec)
+				assert(spec[1] == 'blink.pairs')
+				return blink
+			end,
+		}, function()
+			source(order[1])
+			source(order[2])
+			local blink_enter = mapping '<CR>'
+			assert(vim.fn.maparg('<Right>', 'i') == '', 'Right must wait for VimEnter')
+			assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 1)
+			vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+			local enter = mapping '<CR>'
+			local right = mapping '<Right>'
+			assert(enter ~= blink_enter, 'VimEnter must wrap the completed Blink mapping')
+			assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 0)
+			vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+			assert(mapping '<CR>' == enter and mapping '<Right>' == right, 'the hook must run only once')
+			for _, state in ipairs {
+				{ popup = 0, selected = -1, expected = '<C-]><CR>' },
+				{ popup = 1, selected = -1, expected = '<C-]><CR>' },
+				{ popup = 1, selected = 0, expected = '<C-y>' },
+			} do
+				override(vim.fn, {
+					pumvisible = function()
+						return state.popup
+					end,
+					complete_info = function()
+						assert(state.popup == 1, 'no popup must bypass complete_info')
+						return { selected = state.selected }
+					end,
+				}, function()
+					assert(enter() == state.expected)
+				end)
+			end
+			assert(fallback_calls == 2, 'each fallback must run once; acceptance must bypass it')
+		end)
+	end)
+end
+
+test('captures an Enter mapping installed after completion setup', function()
+	pcall(vim.keymap.del, 'i', '<CR>')
+	dofile(vim.fn.getcwd() .. '/after/plugin/completion.lua')
+	local fallback_calls = 0
+	vim.keymap.set('i', '<CR>', function()
+		fallback_calls = fallback_calls + 1
+		return '<C-]><CR>'
+	end, { expr = true })
+	vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+	local enter = mapping '<CR>'
+	override(vim.fn, { pumvisible = function() return 0 end }, function()
+		assert(enter() == '<C-]><CR>')
+	end)
+	override(vim.fn, {
+		pumvisible = function() return 1 end,
+		complete_info = function() return { selected = 0 } end,
+	}, function()
+		assert(enter() == '<C-y>')
+	end)
+	assert(fallback_calls == 1, 'selected completion must bypass the late fallback')
+end)
+
+test('returns an existing expression RHS unchanged as fallback', function()
+	vim.keymap.set('i', '<CR>', 'ExistingEnter()', { expr = true })
+	dofile(vim.fn.getcwd() .. '/after/plugin/completion.lua')
+	vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+	override(vim.fn, { pumvisible = function() return 0 end }, function()
+		assert(mapping('<CR>')() == 'ExistingEnter()')
+	end)
 end)
 
 test('accepts only a selected completion candidate', function()
@@ -296,6 +385,7 @@ test('previews and accepts includes without duplicating the existing delimiter',
 		local client = {
 			id = 42,
 			offset_encoding = 'utf-16',
+			capabilities = {},
 			server_capabilities = { completionProvider = {} },
 			supports_method = function(_, method)
 				return method == 'textDocument/completion'
@@ -303,6 +393,9 @@ test('previews and accepts includes without duplicating the existing delimiter',
 			request = function(_, _, _, callback)
 				callback(nil, { item })
 				return true, 1
+			end,
+			_get_registrations = function()
+				return {}
 			end,
 			cancel_request = function() end,
 		}

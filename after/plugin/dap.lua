@@ -1,16 +1,9 @@
-vim.pack.load 'https://github.com/nvim-neotest/nvim-nio'
-vim.pack.load 'https://github.com/jbyuki/one-small-step-for-vimkind'
+vim.pack.add { 'https://github.com/nvim-neotest/nvim-nio' }
+vim.pack.add { 'https://github.com/jbyuki/one-small-step-for-vimkind' }
 
-local dap = vim.pack.load 'https://github.com/mfussenegger/nvim-dap'
-	.using 'dap'
-local ui = vim.pack.load 'https://github.com/rcarriga/nvim-dap-ui'
-	.using 'dapui'
-
+local dap = vim.pack.use { 'dap', from = 'https://github.com/mfussenegger/nvim-dap' }
+local ui = vim.pack.use { 'dapui', from = 'https://github.com/rcarriga/nvim-dap-ui' }
 ui.setup()
-vim.pack.load 'https://github.com/leoluz/nvim-dap-go'
-	.using 'dap-go'
-	.setup()
-
 dap.listeners.before.attach.dapui_config = function()
 	ui.open()
 end
@@ -23,6 +16,7 @@ end
 dap.listeners.before.event_exited.dapui_config = function()
 	ui.close()
 end
+vim.pack.use { 'dap-go', from = 'https://github.com/leoluz/nvim-dap-go' }.setup()
 
 -- Keymaps
 vim.keymap.set('n', '<space><C-b>', dap.toggle_breakpoint, { desc = 'Toggle breakpoint' })
@@ -37,9 +31,7 @@ vim.keymap.set('n', '<F4>', dap.step_out, { desc = 'Step out' })
 vim.keymap.set('n', '<F5>', dap.step_back, { desc = 'Step back' })
 vim.keymap.set('n', '<F12>', dap.restart, { desc = 'Restart debugging' })
 
-vim.pack.load 'https://github.com/theHamsta/nvim-dap-virtual-text'
-	.using 'nvim-dap-virtual-text'
-	.setup()
+vim.pack.use { 'nvim-dap-virtual-text', from = 'https://github.com/theHamsta/nvim-dap-virtual-text' }.setup()
 
 -- Elixir
 local elixir_ls_debugger = vim.fn.exepath 'elixir-ls-debugger'

@@ -12,7 +12,8 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 
 - `doc/better_statusline.md` - Native bars, refresh model, and verification
 - `doc/better_select.md` - Picker behavior and verification
-- `doc/prelude.md` - Common utilities and fluent package API
+- `doc/prelude.md` - Common utilities and table package API
+- `doc/completion.md` - Native completion and pairing mapping composition
 - `doc/projects-workspaces.md` - Project and workspace bindings, settings, persistence, and verification
 
 ## Architecture
@@ -23,7 +24,8 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 - `lua/prelude.lua` - Common utilities and native package extensions
 - `lua/options.lua` - Editor options
 - `lua/keymaps.lua` - Keyboard mappings and leader setup
-- `lua/autocmds.lua` - Automatic behavior, including auto-save and the plugin entry point
+- `lua/autocmds.lua` - Automatic behavior, including auto-save
+- `after/plugin/*.lua` - Native plugin configuration scripts
 - `lua/ui.lua` - UI options and colorscheme installation and setup
 - `lua/better_statusline.lua` - Cached native statusline, window bars, and tabline
 - `lua/better_select.lua` - Native ui2 picker
@@ -34,9 +36,9 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 
 ### Plugins
 
-- `lua/plugins/init.lua` is the single plugin entry point, called by the `VimEnter` autocmd in `lua/autocmds.lua` when `loadplugins` is enabled. The colorscheme in `lua/ui.lua` is the sole exception.
-- Declare packages beside their configuration under `lua/plugins/` using `vim.pack.load`, `.build`, and `.using`. Keep `lua/plugins/init.lua` limited to `require` calls; put standalone declarations in their own plugin modules. fff.nvim retains a custom download-or-build hook.
-- `lua/plugins/lsp.lua` defines LSP activation and attachment mappings. Check it alongside `lua/keymaps.lua` when changing bindings.
+- Neovim loads `after/plugin/*.lua` directly during native plugin startup. Native `--noplugin` skips these scripts. The colorscheme in `lua/ui.lua` is the sole exception.
+- Declare packages beside their configuration under `after/plugin/` using `vim.pack.use { 'module', from = URL, build = argv }.setup {}` with optional `build` and native `load`/`confirm` options. The declaration adds the package, completes required builds, and returns the required module; assign it to a local when needed by later callbacks. Omit the module for script-only packages that need a build. There is no `config` callback. Native `vim.pack.add` remains available for script-only packages or deferred Lua modules. Put standalone declarations in their own plugin scripts. fff.nvim retains a custom download-or-build hook.
+- `after/plugin/lsp.lua` defines LSP activation and attachment mappings. Check it alongside `lua/keymaps.lua` when changing bindings.
 - `nvim-pack-lock.json` pins plugin revisions. Missing packages install automatically; native build hooks require Cargo (nightly Rust for blink.pairs).
 
 ## Verification

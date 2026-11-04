@@ -51,17 +51,6 @@ api.nvim_create_autocmd('BufEnter', {
 	command = 'startinsert',
 })
 
--- Single entry point for plugins; the colorscheme is loaded by ui.lua.
-api.nvim_create_autocmd('VimEnter', {
-	group = api.nvim_create_augroup('Plugins', {}),
-	callback = function()
-		if api.nvim_get_option_value('loadplugins', {}) then
-			require 'plugins'
-		end
-	end,
-	once = true,
-})
-
 -- Reload file if it has been changed outside of Vim
 api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
 	group = api.nvim_create_augroup('ReloadContent', {}),

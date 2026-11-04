@@ -1,3 +1,7 @@
+-- Configure native completion during plugin startup. VimEnter composes Enter
+-- and Right with startup expression mappings after pairing setup has finished.
+-- LspAttach enables completion for supported clients; the returned attach(client,
+-- bufnr) function also supports isolated tests without starting a language server.
 local M = {}
 
 vim.opt.completeopt = { 'fuzzy', 'menuone', 'noselect', 'popup' }
@@ -25,7 +29,7 @@ vim.api.nvim_create_autocmd('OptionSet', {
 
 local function key_fallback(lhs)
 	local mapping = vim.fn.maparg(lhs, 'i', false, true)
-	if mapping.expr == 1 then
+	if mapping.buffer == 0 and mapping.expr == 1 then
 		if type(mapping.callback) == 'function' then
 			return mapping.callback
 		end
@@ -39,16 +43,6 @@ local function key_fallback(lhs)
 		return lhs
 	end
 end
-
-local function confirm_completion(fallback)
-	if vim.fn.pumvisible() ~= 1 or vim.fn.complete_info().selected == -1 then
-		return fallback()
-	end
-	return '<C-y>'
-end
-
-local enter_fallback = key_fallback '<CR>'
-local right_fallback = key_fallback '<Right>'
 
 local closing_chars = {
 	['"'] = true,
@@ -114,13 +108,24 @@ vim.keymap.set({ 'i', 's' }, '<S-Tab>', function()
 	return '<S-Tab>'
 end, { desc = 'Select previous completion or snippet tabstop', expr = true, silent = true })
 
-vim.keymap.set('i', '<CR>', function()
-	return confirm_completion(enter_fallback)
-end, { desc = 'Accept selected completion', expr = true, silent = true })
-
-vim.keymap.set('i', '<Right>', function()
-	return confirm_completion(right_fallback)
-end, { desc = 'Accept selected completion', expr = true, silent = true })
+-- Blink setup unconditionally replaces insert-mode Enter. Capture its completed
+-- startup mapping at VimEnter so either script order preserves pairing fallback.
+vim.api.nvim_create_autocmd('VimEnter', {
+	group = completion_group,
+	once = true,
+	desc = 'Compose completion acceptance with startup mappings',
+	callback = function()
+		for _, lhs in ipairs { '<CR>', '<Right>' } do
+			local fallback = key_fallback(lhs)
+			vim.keymap.set('i', lhs, function()
+				if vim.fn.pumvisible() == 1 and vim.fn.complete_info().selected ~= -1 then
+					return '<C-y>'
+				end
+				return fallback()
+			end, { desc = 'Accept selected completion', expr = true, silent = true })
+		end
+	end,
+})
 
 vim.keymap.set('i', '<C-Space>', function()
 	vim.lsp.completion.get()

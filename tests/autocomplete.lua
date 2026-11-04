@@ -1,12 +1,14 @@
 -- Run with: nvim --headless -n -u NONE -i NONE -c 'luafile tests/autocomplete.lua'
 package.path = vim.fn.getcwd() .. '/lua/?.lua;' .. package.path
 
-local completion = require 'plugins.completion'
+local completion = dofile(vim.fn.getcwd() .. '/after/plugin/completion.lua')
+vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
 local requests = 0
 local client = {
 	id = 42,
 	requests = {},
 	offset_encoding = 'utf-16',
+	capabilities = {},
 	server_capabilities = { completionProvider = { triggerCharacters = { '.' } } },
 	supports_method = function(_, method)
 		return method == 'textDocument/completion'
@@ -17,6 +19,9 @@ local client = {
 			callback(nil, { { label = 'applelsp' } })
 		end, 30)
 		return true, requests
+	end,
+	_get_registrations = function()
+		return {}
 	end,
 	cancel_request = function() end,
 }

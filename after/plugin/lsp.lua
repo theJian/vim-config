@@ -1,9 +1,9 @@
--- Configure native LSP servers and buffer attachment behavior. Loaded through
--- plugins/init.lua after prelude installs the fluent vim.pack API; nvim-lspconfig
+-- Configure native LSP servers and buffer attachment behavior during native
+-- plugin startup after prelude installs the table-based vim.pack API; nvim-lspconfig
 -- supplies server defaults alongside local lsp/*.lua configs. Server executables
 -- must be installed separately. LspAttach installs buffer mappings once and requests
 -- reference highlights on normal-mode idle, discarding responses after context changes.
-vim.pack.load 'https://github.com/neovim/nvim-lspconfig.git'
+vim.pack.add { 'https://github.com/neovim/nvim-lspconfig.git' }
 
 vim.lsp.log.set_level 'WARN'
 require('vim.lsp.log').set_format_func(vim.inspect)
@@ -20,6 +20,9 @@ vim.lsp.enable 'pyrefly'
 vim.lsp.enable 'ruff'
 vim.lsp.enable 'fennel_ls'
 vim.lsp.enable 'quick_lint_js'
+vim.lsp.enable 'c3_lsp'
+vim.lsp.enable 'ols'
+
 
 vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(ev)

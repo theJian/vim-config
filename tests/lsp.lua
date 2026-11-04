@@ -5,11 +5,11 @@ package.path = vim.fn.getcwd() .. '/lua/?.lua;' .. package.path
 
 local highlight_method = vim.lsp.protocol.Methods.textDocument_documentHighlight
 local native_handler = vim.lsp.handlers[highlight_method]
-local pack_load, enable = vim.pack.load, vim.lsp.enable
-vim.pack.load = function() end
+local pack_add, enable = vim.pack.add, vim.lsp.enable
+vim.pack.add = function() end
 vim.lsp.enable = function() end
-require 'plugins.lsp'
-vim.pack.load, vim.lsp.enable = pack_load, enable
+dofile(vim.fn.getcwd() .. '/after/plugin/lsp.lua')
+vim.pack.add, vim.lsp.enable = pack_add, enable
 assert(vim.lsp.handlers[highlight_method] == native_handler, 'must preserve the global highlight handler')
 
 local failures = {}

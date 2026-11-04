@@ -1,5 +1,4 @@
-local lint = vim.pack.load 'https://github.com/mfussenegger/nvim-lint'
-	.using 'lint'
+local lint = vim.pack.use { 'lint', from = 'https://github.com/mfussenegger/nvim-lint' }
 
 lint.linters_by_ft = {
 	lua = { 'luacheck' },
