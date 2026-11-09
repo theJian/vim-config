@@ -1,6 +1,15 @@
 [package]
-name = "vim-config"
+name = "ffi"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "ffi"
+crate-type = ["cdylib"]
+
 [dependencies]
+git2 = "0.21.0"
+
+# Avoid Rust's Mach-O stripping alignment bug on macOS 27 (rust-lang/rust#157750).
+[profile.release]
+strip = "none"

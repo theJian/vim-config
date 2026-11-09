@@ -14,6 +14,7 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 - `doc/better_select.md` - Picker behavior and verification
 - `doc/prelude.md` - Common utilities and table package API
 - `doc/completion.md` - Native completion and pairing mapping composition
+- `doc/ffi.md` - Rust library, Lua module API, build, and verification
 - `doc/projects-workspaces.md` - Project and workspace bindings, settings, persistence, and verification
 
 ## Architecture
@@ -43,9 +44,12 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 
 ## Verification
 
-Run from the repository root. The workspace tests isolate persistence in temporary directories.
+Run from the repository root. Build the Rust library before running the statusline
+and native Git tests. The workspace tests isolate persistence in temporary directories.
 
 ```sh
+cargo build --release
+nvim --headless -u NONE -i NONE -l tests/ffi_git.lua
 nvim --headless -u NONE -i NONE -l tests/better_statusline.lua
 nvim --headless -u NONE -i NONE -l tests/prelude.lua
 nvim --headless -u NONE -i NONE -l tests/workspaces.lua

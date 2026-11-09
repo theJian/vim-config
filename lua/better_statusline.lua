@@ -2,46 +2,23 @@
 ---@brief [[
 ---Display editor information in Neovim's native statusline, window bars, and tabline.
 ---
----- Statusline: current mode, Git branch, the current file's saved added/changed/removed
----  line counts, and cursor position.
----- Window bars: filename, modified/readonly markers, diagnostics, language server
----  names, and filetype for each window.
----- Tabline: clickable tab names, with a marker for tabs containing modified buffers.
+---Requires Neovim 0.12+ and the Rust library: run `cargo build --release` before
+---importing this module. Call setup() once to install all three bars. This repository
+---already calls setup() in lua/ui.lua; edit that call to customize it.
 ---
----Requires Neovim 0.12+. Call setup() once to install all three bars; no separate
----statusline plugin is needed. Terminal windows have no winbar, and the tabline
----appears only when multiple tabs are open. Tab names honor vim.t.tabname; otherwise
----they describe the tab's selected buffer. A tab's modified marker reflects only its
----displayed buffers, not hidden buffers.
----
----Git line counts compare the current file's saved content with the index, excluding
----unsaved edits, staged-only changes, and untracked files. Detached checkouts show a
----commit ID. Git must be on PATH for lookups; unavailable Git information is omitted.
----Gitsigns is optional:
----its branch data is reused when available, and diff colors depend on its highlight
----groups. Icons require a compatible font.
----
----Editor events update cached bar strings; redraws read those strings instead of
----repeating data collection. Git results arrive asynchronously, so their display may
----lag behind an event. Cursor positions update through Neovim's native formatting.
----Language server names shimmer while the server reports unfinished progress.
+---Editor events queue updates to cached bar strings; redraws read those strings.
+---Git results arrive asynchronously, so their display may lag behind an event.
 ---Call refresh() after changing metadata directly, such as a custom tab name.
 ---
----This repository already calls setup() in lua/ui.lua; edit that call to customize it.
 ---For standalone use: >lua
 ---  require('better_statusline').setup()
 ---<
----setup() configures the render callbacks automatically. Most callers only need
----setup() and, for manual metadata changes, refresh(). See doc/better_statusline.md
----for configuration, update behavior, and verification instructions.
+---See doc/better_statusline.md for displayed information, configuration, update
+---behavior, and verification instructions.
 ---@brief ]]
 local M = {}
 local api = vim.api
-
----@class BetterStatuslineDiff
----@field added? integer
----@field changed? integer
----@field removed? integer
+local native_git = require 'ffi.git'
 
 ---@class BetterStatuslineBranch
 ---@field text string Branch name or detached commit ID.
@@ -53,7 +30,6 @@ local api = vim.api
 ---@field winbars table<integer, string> Keyed by window ID.
 ---@field tabline? string
 ---@field branches table<string, BetterStatuslineBranch?> Keyed by directory.
----@field diffs table<string, BetterStatuslineDiff?> Keyed by file path; empty entries cache pending or failed lookups.
 ---@field progress_tokens table<integer, table<string|integer, boolean>> Token sets keyed by client ID.
 ---@field frame integer
 ---@field mode_colors table<string, string|table> Highlight group names or attribute overrides by mode family.
@@ -190,9 +166,6 @@ local function setup_highlights()
 		Warn = 'DiagnosticWarn',
 		Info = 'DiagnosticInfo',
 		Hint = 'DiagnosticHint',
-		Add = 'GitSignsAdd',
-		Change = 'GitSignsChange',
-		Delete = 'GitSignsDelete',
 	} do
 		api.nvim_set_hl(0, 'BetterStatusline' .. name, { link = link })
 	end
@@ -235,123 +208,22 @@ local function cached_branch(dir)
 	end
 	if not entry.pending and now - entry.last_request_ms > 2000 then
 		entry.pending, entry.last_request_ms = true, now
-		---@param result vim.SystemCompleted
-		local function publish_branch(result)
-			vim.schedule(function()
-				if state ~= setup_state then
-					return
-				end
-				entry.pending = false
-				local text = result.code == 0 and tostring(vim.trim(result.stdout or '')) or ''
-				if entry.text ~= text then
-					entry.text = text
-					request_refresh()
-				end
-			end)
-		end
-		local ok = pcall(
-			vim.system,
-			{ 'git', '-C', dir, 'rev-parse', '--abbrev-ref', 'HEAD' },
-			{ text = true, timeout = 1500 },
-			function(result)
-				-- A detached checkout reports HEAD instead of a branch name. Resolve
-				-- an abbreviated commit ID so the displayed label remains useful.
-				if result.code == 0 and vim.trim(result.stdout or '') == 'HEAD' then
-					vim.system(
-						{ 'git', '-C', dir, 'rev-parse', '--short=6', 'HEAD' },
-						{ text = true, timeout = 1500 },
-						publish_branch
-					)
-				else
-					publish_branch(result)
-				end
+		local queued, err = native_git.branch(dir, function(text)
+			if state ~= setup_state then
+				return
 			end
-		)
-		if not ok then
 			entry.pending = false
+			if entry.text ~= text then
+				entry.text = text
+				request_refresh()
+			end
+		end)
+		if not queued then
+			entry.pending = false
+			error(err)
 		end
 	end
 	return entry.text
-end
-
----Return cached saved-file changes against the index, excluding unsaved and staged-only edits.
----@param path string Current buffer's file path.
----@return BetterStatuslineDiff counts Empty while pending, on failure, or for unnamed/special buffers.
-local function cached_diff(path)
-	local setup_state = assert(state)
-	if path == '' or vim.bo.buftype ~= '' then
-		return {}
-	end
-	local entry = setup_state.diffs[path]
-	if entry then
-		return entry
-	end
-	-- Failed lookups stay cached until invalidation, avoiding repeated retries outside repositories.
-	entry = {}
-	setup_state.diffs[path] = entry
-	local counts = { added = 0, changed = 0, removed = 0 }
-	local partial_line = ''
-	-- Literal paths protect filenames containing Git patterns. Disable output customization
-	-- so hunk headers remain parseable, and context so separate edits are not merged.
-	pcall(vim.system, {
-		'git',
-		'-C',
-		vim.fn.fnamemodify(path, ':h'),
-		'--no-pager',
-		'--literal-pathspecs',
-		'diff',
-		'--no-color',
-		'--no-ext-diff',
-		'--no-textconv',
-		'-U0',
-		'--inter-hunk-context=0',
-		'--',
-		vim.fn.fnamemodify(path, ':t'),
-	}, {
-		timeout = 2000,
-		stdout = function(_, chunk)
-			if not chunk then
-				return
-			end
-			local text = partial_line .. chunk
-			local offset = 1
-			while true do
-				local newline = text:find('\n', offset, true)
-				if not newline then
-					break
-				end
-				local header = text:sub(offset, math.min(newline - 1, offset + 128))
-				local old_start, old_count, new_start, new_count = header:match '^@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@'
-				offset = newline + 1
-				if old_start and new_start then
-					-- Git reports additions/deletions, not replacements. Pair them as changed lines:
-					-- @@ -10,3 +10,5 @@ becomes 3 changed + 2 added. Omitted counts mean one.
-					local removed = floor(tonumber(old_count) or 1)
-					local added = floor(tonumber(new_count) or 1)
-					local changed = math.min(removed, added)
-					counts.changed = counts.changed + changed
-					counts.added = counts.added + added - changed
-					counts.removed = counts.removed + removed - changed
-				end
-			end
-			-- Bound retained output: oversized source lines cannot be hunk headers.
-			-- Keep a non-header marker until the newline so a suffix is not parsed as a header.
-			partial_line = #text - offset > 512 and 'ignored' or text:sub(offset)
-		end,
-	}, function(result)
-		vim.schedule(function()
-			if state ~= setup_state or setup_state.diffs[path] ~= entry then
-				return
-			end
-			if result.code == 0 then
-				for key, value in pairs(counts) do
-					entry[key] = value
-				end
-			end
-			request_refresh()
-		end)
-	end)
-	return entry
 end
 
 ---Format a name at the current shimmer frame without changing its display width.
@@ -487,15 +359,10 @@ local function build_tabline()
 end
 
 local function build_statusline()
-	-- Reuse Gitsigns metadata when available to avoid a redundant Git lookup.
 	local buf = api.nvim_get_current_buf()
-	local gitsigns_status = vim.b[buf].gitsigns_status_dict or {}
-	local head = gitsigns_status.head or vim.b[buf].gitsigns_head
-	if not head or head == '' then
-		local name = api.nvim_buf_get_name(buf)
-		local dir = vim.bo[buf].buftype == '' and name ~= '' and vim.fn.fnamemodify(name, ':h') or vim.fn.getcwd()
-		head = cached_branch(dir)
-	end
+	local name = api.nvim_buf_get_name(buf)
+	local dir = vim.bo[buf].buftype == '' and name ~= '' and vim.fn.fnamemodify(name, ':h') or vim.fn.getcwd()
+	local head = cached_branch(dir)
 	local parts = {}
 	local mode = api.nvim_get_mode().mode
 	parts[1] = '%#'
@@ -505,18 +372,6 @@ local function build_statusline()
 		.. '%*'
 	if head ~= '' then
 		parts[#parts + 1] = '󿂠 ' .. escape_text(head)
-	end
-	local changes = cached_diff(api.nvim_buf_get_name(buf))
-	local diff_parts = {}
-	for _, item in ipairs { { 'added', '+', 'Add' }, { 'changed', '~', 'Change' }, { 'removed', '-', 'Delete' } } do
-		local kind, sign, group = unpack(item)
-		local count = changes[kind] or 0
-		if count > 0 then
-			diff_parts[#diff_parts + 1] = '%#BetterStatusline' .. group .. '#' .. sign .. count .. '%*'
-		end
-	end
-	if #diff_parts > 0 then
-		parts[#parts + 1] = table.concat(diff_parts, ' ')
 	end
 	-- Keep %l and %c unevaluated so Neovim updates the cursor position even in a cached string.
 	return ' ' .. table.concat(parts, separator) .. '%<%=󿂡 %l, 󿂣 %c '
@@ -552,7 +407,8 @@ end
 ---Request a display update after changing metadata outside the usual editor events.
 ---Returns immediately; requests made while an update is pending share that update.
 ---Does nothing before setup(). Git caches are not invalidated, so this is not a
----forced Git rescan. Normal editor and plugin events handle Git invalidation.
+---forced Git rescan. Ordinary editor events request throttled Git lookups;
+---FugitiveChanged bypasses that throttle.
 ---
 ---Example: >lua
 ---  vim.t.tabname = 'Review'
@@ -603,7 +459,6 @@ function M.setup(opts)
 	state = {
 		winbars = {},
 		branches = {},
-		diffs = {},
 		progress_tokens = {},
 		frame = 1,
 		mode_colors = colors,
@@ -621,7 +476,7 @@ function M.setup(opts)
 	vim.o.laststatus, vim.o.showtabline = 3, 1
 	vim.o.statusline = "%!v:lua.require'better_statusline'.statusline()"
 	vim.o.tabline = "%!v:lua.require'better_statusline'.tabline()"
-	-- Text changes refresh modified markers; Git counts still use saved files.
+	-- Text changes refresh modified markers in window bars and tabs.
 	on_event({
 		'BufEnter',
 		'BufWinEnter',
@@ -644,32 +499,11 @@ function M.setup(opts)
 		'TermOpen',
 		'VimResized',
 	}, { callback = request_refresh })
-	-- Invalidate on entry and focus as well as writes, since files may change outside Neovim.
-	on_event({ 'BufEnter', 'BufWritePost', 'FocusGained' }, {
-		callback = function(ev)
-			setup_state.diffs[api.nvim_buf_get_name(ev.buf)] = nil
-			request_refresh()
-		end,
-	})
 	on_event('OptionSet', { pattern = { 'modified', 'readonly', 'modifiable', 'buftype' }, callback = request_refresh })
-	-- Invalidate on Gitsigns updates too: staging changes the diff without writing the buffer.
-	on_event('User', {
-		pattern = 'GitSignsUpdate',
-		callback = function(ev)
-			local buf = ev.data and ev.data.buffer
-			if buf and api.nvim_buf_is_valid(buf) then
-				setup_state.diffs[api.nvim_buf_get_name(buf)] = nil
-			else
-				setup_state.diffs = {}
-			end
-			request_refresh()
-		end,
-	})
 	on_event('User', {
 		pattern = 'FugitiveChanged',
 		callback = function()
-			-- Invalidate both caches because Fugitive commands can stage files or switch branches.
-			setup_state.diffs = {}
+			-- Fugitive commands can switch branches before the throttle expires.
 			for _, entry in pairs(setup_state.branches) do
 				entry.last_request_ms = -math.huge
 			end

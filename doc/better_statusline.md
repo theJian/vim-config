@@ -6,13 +6,17 @@
 
 The bars display the following information:
 
-- Global statusline: editor mode, Git branch (short commit ID when detached), the current file's saved added/changed/removed line counts, and cursor line and byte column.
+- Global statusline: editor mode, Git branch (short commit ID when detached), and cursor line and byte column.
 - Window bars: relative filename, modified and readonly/nonmodifiable markers, diagnostic counts by severity, attached LSP names, a text shimmer on busy servers, and filetype. Inactive windows retain their own information. Unnamed buffers receive a placeholder label; terminal windows have no bar.
 - Tabline: tab number, name, and a modified marker when any displayed buffer in the tab is modified. Names honor `t:tabname`, otherwise use the selected buffer's basename (with special labels for help and terminal buffers). Native tab targets support mouse switching. The tabline appears with two or more tabs; native truncation favors the active tab on narrow screens.
 
 Diagnostic icons use standard Unicode geometric shapes and need no Nerd Font. Other icons require a compatible font.
 
-Diff counts compare saved worktree content with the index. Unsaved edits, staged-only changes, and untracked files do not contribute. Gitsigns supplies branch data when available; asynchronous Git discovery provides a fallback, including worktrees and detached HEADs. Git must be on PATH for lookups; unavailable Git information is omitted. Gitsigns is optional for data, but change-count colors link to `GitSignsAdd`, `GitSignsChange`, and `GitSignsDelete`. Without those groups, their intended colors may be absent.
+Branch discovery uses the required Rust library through
+`ffi.git`, including worktrees and detached HEADs. Build it with
+`cargo build --release` before importing the statusline; a missing library raises
+an error. Statusline lookups do not spawn Git commands. Unavailable repository data
+is omitted.
 
 ## Public API
 
@@ -46,10 +50,10 @@ if no valid target is available; terminals and uncached windows return empty str
 ## Automatic updates
 
 Editor events combine into deferred updates, while redraws use cached strings.
-Cursor positions remain current through Neovim's native formatting. Git queries run
-asynchronously, so branch and change counts may appear shortly after other content.
-Saved-file counts are refreshed on buffer entry, write, focus return, and supported
-Git plugin events. Branch lookups are throttled to avoid starting Git on every event.
+Cursor positions remain current through Neovim's native formatting. Branch queries run
+asynchronously, so branch labels may appear shortly after other content. Ordinary
+editor events request throttled branch lookups to avoid queueing work on every event.
+`FugitiveChanged` bypasses the throttle after Fugitive commands.
 
 Language server names animate while the server reports unfinished work. Idle servers
 do not trigger animation redraws. See `refresh()` above for direct metadata changes.
@@ -80,6 +84,7 @@ colors so it can also be used with other themes.
 Run from the repository root:
 
 ```sh
+cargo build --release
 nvim --headless -u NONE -i NONE -l tests/better_statusline.lua
 ```
 

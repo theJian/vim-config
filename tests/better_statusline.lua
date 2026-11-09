@@ -1,3 +1,6 @@
+-- Check native bar rendering, asynchronous Git updates, LSP progress, and repeated
+-- setup without loading configured plugins. Git fixtures stay in a temporary directory.
+-- Run after cargo build --release with nvim --headless -u NONE -i NONE -l tests/better_statusline.lua.
 vim.opt.rtp:prepend(vim.fn.getcwd())
 local api = vim.api
 local m = require 'better_statusline'
@@ -78,39 +81,19 @@ local ok, err = xpcall(function()
 	contains(m.statusline(), '%#BetterStatuslineMode_normal#')
 	print 'PASS: mode colors, family fallbacks, transitions, colorscheme reload, reset'
 	git('init', '-b', 'status-test')
-	git('config', 'diff.interHunkContext', '4')
 	vim.fn.writefile({ 'one', 'two', 'three' }, temp .. '/sample.lua')
 	git('add', '.')
 	git('-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-m', 'initial')
 	vim.fn.writefile({ 'ONE', 'two', 'three', 'four' }, temp .. '/sample.lua')
 	vim.cmd.edit(temp .. '/sample.lua')
 	vim.bo.filetype = 'lua'
+	vim.b.gitsigns_head = 'stale-plugin-branch'
+	vim.b.gitsigns_status_dict = { head = 'stale-plugin-branch' }
 	m.setup()
 	assert(vim.wait(3000, function()
-		return status():find('+1', 1, true) and status():find('status-test', 1, true)
+		return status():find('status-test', 1, true) ~= nil
 	end))
-	contains(status(), '~1')
-	-- Staging changes the index without a buffer write or entry event.
-	git('add', 'sample.lua')
-	api.nvim_exec_autocmds('User', {
-		pattern = 'GitSignsUpdate',
-		data = { buffer = api.nvim_get_current_buf() },
-	})
-	assert(
-		vim.wait(3000, function()
-			return not status():find('+1', 1, true) and not status():find('~1', 1, true)
-		end),
-		'staged changes remained in the saved diff cache'
-	)
-	git('reset', 'HEAD', '--', 'sample.lua')
-	-- Repository-wide updates can omit the buffer payload.
-	api.nvim_exec_autocmds('User', { pattern = 'GitSignsUpdate' })
-	assert(
-		vim.wait(3000, function()
-			return status():find('+1', 1, true) and status():find('~1', 1, true)
-		end),
-		'unstaged changes did not return after a repository update'
-	)
+	assert(not status():find('+1', 1, true) and not status():find('~1', 1, true), 'file diff counts are displayed')
 	contains(status(), 'NORMAL')
 	api.nvim_win_set_cursor(0, { 2, 1 })
 	contains(status(), '󿂡 2, 󿂣 2')
@@ -174,7 +157,9 @@ local ok, err = xpcall(function()
 	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')
 	contains(m.winbar(), 'BetterStatuslineShimmerWinBar')
 	local before = m.winbar()
-	assert(vim.wait(1500, function() return m.winbar() ~= before end, 20))
+	assert(vim.wait(1500, function()
+		return m.winbar() ~= before
+	end, 20))
 	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')
 	progress('end', 'b')
 	contains(bar(api.nvim_get_current_win()), '‹test-lsp 静%ls›')

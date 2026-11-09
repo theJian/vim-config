@@ -5,13 +5,5 @@ pack
 packman.lua
 __pycache__
 nvim.log
-zig-out/
-.zig-cache/
-zig-out/
-zig-pkg/
-*.o
-
-
-# Added by cargo
 
 /target
