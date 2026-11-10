@@ -9,7 +9,7 @@ vim.api.nvim_create_autocmd('FileType', {
 	group = vim.api.nvim_create_augroup('HelpKeymaps', { clear = true }),
 	pattern = 'help',
 	callback = function(args)
-		keymap.set('n', 'q', '<Cmd>close<CR>', { buffer = args.buf, desc = 'Close help', unique = true })
+		keymap.set('n', 'q', '<Cmd>close<CR>', { buffer = args.buf, desc = 'Close help' })
 	end,
 })
 
