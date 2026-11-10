@@ -75,7 +75,9 @@ vim.o.undofile = true
 vim.o.jumpoptions = 'view'
 
 -- Default shell
-vim.o.shell = 'fish'
+if vim.fn.executable 'fish' == 1 then
+	vim.o.shell = 'fish'
+end
 
 -- Idle delay for CursorHold and swapfile writes
 vim.o.updatetime = 30

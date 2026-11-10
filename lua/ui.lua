@@ -26,7 +26,7 @@ require('better_statusline').setup {
 }
 
 vim.pack.add {
-	'git@github.com:theJian/nvim-moonwalk.git',
+	'https://github.com/theJian/nvim-moonwalk.git',
 }
 
 -- Colorscheme

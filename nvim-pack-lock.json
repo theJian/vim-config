@@ -4,6 +4,10 @@
       "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
       "src": "https://github.com/L3MON4D3/LuaSnip"
     },
+    "blink.lib": {
+      "rev": "7126c87f2c2fc1287145d66dd952956e7e90aff7",
+      "src": "https://github.com/saghen/blink.lib"
+    },
     "blink.pairs": {
       "rev": "ef8fc29c8afa0fc1d0eb611a1a76fd87f0951f6e",
       "src": "https://github.com/saghen/blink.pairs"
@@ -74,7 +78,7 @@
     },
     "nvim-moonwalk": {
       "rev": "e98ab32b70df04bd5a7dbfe1098f0983fe2d092f",
-      "src": "git@github.com:theJian/nvim-moonwalk.git"
+      "src": "https://github.com/theJian/nvim-moonwalk.git"
     },
     "nvim-nio": {
       "rev": "edcc181a875301dd21840189aa2f2f9ad69fc172",

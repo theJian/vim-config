@@ -159,6 +159,9 @@ for _, order in ipairs { { 'completion', 'pairs' }, { 'pairs', 'completion' } } 
 		pcall(vim.keymap.del, 'i', '<Right>')
 		local fallback_calls = 0
 		local blink = {
+			build = function()
+				return { wait = function() end }
+			end,
 			setup = function()
 				vim.keymap.set('i', '<CR>', function()
 					fallback_calls = fallback_calls + 1
@@ -170,41 +173,45 @@ for _, order in ipairs { { 'completion', 'pairs' }, { 'pairs', 'completion' } } 
 			dofile(vim.fn.getcwd() .. '/after/plugin/' .. name .. '.lua')
 		end
 		override(vim.pack, {
-			use = function(spec)
-				assert(spec[1] == 'blink.pairs')
-				return blink
+			add = function(spec)
+				assert(
+					spec[1] == 'https://github.com/saghen/blink.lib'
+						or spec[1] == 'https://github.com/saghen/blink.pairs'
+				)
 			end,
 		}, function()
-			source(order[1])
-			source(order[2])
-			local blink_enter = mapping '<CR>'
-			assert(vim.fn.maparg('<Right>', 'i') == '', 'Right must wait for VimEnter')
-			assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 1)
-			vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
-			local enter = mapping '<CR>'
-			local right = mapping '<Right>'
-			assert(enter ~= blink_enter, 'VimEnter must wrap the completed Blink mapping')
-			assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 0)
-			vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
-			assert(mapping '<CR>' == enter and mapping '<Right>' == right, 'the hook must run only once')
-			for _, state in ipairs {
-				{ popup = 0, selected = -1, expected = '<C-]><CR>' },
-				{ popup = 1, selected = -1, expected = '<C-]><CR>' },
-				{ popup = 1, selected = 0, expected = '<C-y>' },
-			} do
-				override(vim.fn, {
-					pumvisible = function()
-						return state.popup
-					end,
-					complete_info = function()
-						assert(state.popup == 1, 'no popup must bypass complete_info')
-						return { selected = state.selected }
-					end,
-				}, function()
-					assert(enter() == state.expected)
-				end)
-			end
-			assert(fallback_calls == 2, 'each fallback must run once; acceptance must bypass it')
+			override(package.loaded, { ['blink.pairs'] = blink }, function()
+				source(order[1])
+				source(order[2])
+				local blink_enter = mapping '<CR>'
+				assert(vim.fn.maparg('<Right>', 'i') == '', 'Right must wait for VimEnter')
+				assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 1)
+				vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+				local enter = mapping '<CR>'
+				local right = mapping '<Right>'
+				assert(enter ~= blink_enter, 'VimEnter must wrap the completed Blink mapping')
+				assert(#vim.api.nvim_get_autocmds { event = 'VimEnter', group = 'NativeCompletion' } == 0)
+				vim.api.nvim_exec_autocmds('VimEnter', { group = 'NativeCompletion' })
+				assert(mapping '<CR>' == enter and mapping '<Right>' == right, 'the hook must run only once')
+				for _, state in ipairs {
+					{ popup = 0, selected = -1, expected = '<C-]><CR>' },
+					{ popup = 1, selected = -1, expected = '<C-]><CR>' },
+					{ popup = 1, selected = 0, expected = '<C-y>' },
+				} do
+					override(vim.fn, {
+						pumvisible = function()
+							return state.popup
+						end,
+						complete_info = function()
+							assert(state.popup == 1, 'no popup must bypass complete_info')
+							return { selected = state.selected }
+						end,
+					}, function()
+						assert(enter() == state.expected)
+					end)
+				end
+				assert(fallback_calls == 2, 'each fallback must run once; acceptance must bypass it')
+			end)
 		end)
 	end)
 end
