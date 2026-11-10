@@ -1,0 +1,397 @@
+*better_select.txt*  Picking Lua values
+
+PICKING LUA VALUES				    *better-start-nvim-select*
+
+A single-file Neovim picker for arbitrary Lua values. Search lists with fuzzy
+matching, query live providers, mark multiple items, show previews, and send
+results to quickfix. Selection callbacks receive the original values and their
+source indices.
+
+Part of |better-start-nvim|.
+
+CONTENTS
+
+    Setup and bindings		|better-start-nvim-select-setup|
+    Quick start			|better-start-nvim-select-quickstart|
+    Source providers		|better-start-nvim-select-providers|
+    Repository controls		|better-start-nvim-select-controls|
+    Configuration		|better-start-nvim-select-configuration|
+    Callbacks and extensions	|better-start-nvim-select-callbacks|
+    Handle API			|better-start-nvim-select-handle|
+    Standard selection interface  |better-start-nvim-select-ui-select|
+    Development			|better-start-nvim-select-verification|
+
+==============================================================================
+SETUP AND BINDINGS			      *better-start-nvim-select-setup*
+
+This repository enables ui2 in `lua/ui.lua` and assigns picker controls in
+`lua/keymaps.lua`. Its bindings are listed in
+|better-start-nvim-select-controls|.
+
+For standalone use, copy `lua/better_select.lua` into your configuration's
+`lua/` directory. Enable ui2 before opening a picker and supply your own
+physical keys. The module creates only buffer-local
+`<Plug>(acme-better-select-ACTION)` actions; `on_open(search)` is where you
+connect keys to them. This minimal setup adds movement, acceptance, and
+cancellation:
+
+>lua
+    require('vim._core.ui2').enable({})
+    require('better_select').setup {
+	on_open = function(search)
+	    local keys = {
+		['<Down>'] = 'down',
+		['<Up>'] = 'up',
+		['<CR>'] = 'accept',
+		['<Esc>'] = 'cancel',
+	    }
+	    for key, action in pairs(keys) do
+		local plug = '<Plug>(acme-better-select-' .. action .. ')'
+		vim.keymap.set('i', key, plug, { buffer = search.buf })
+		search.view.restore[#search.view.restore + 1] = function()
+		    vim.keymap.del('i', key, { buffer = search.buf })
+		end
+	    end
+	end,
+    }
+<
+
+Use this example where these keys have no existing buffer-local mappings in
+the ui2 command buffer. The cleanup removes the aliases when the picker
+closes; global mappings are shadowed only while the picker is open. The
+repository's binding setup additionally detects buffer-local conflicts and
+reports an error.
+
+The picker requires Neovim 0.12 or newer and has no plugin dependencies. ui2
+is experimental; changes to its internal APIs may require picker updates.
+
+==============================================================================
+QUICK START				 *better-start-nvim-select-quickstart*
+
+>lua
+    local select = require 'better_select'
+
+    select.open {
+	prompt = 'Environment',
+	source = { 'development', 'staging', 'production' },
+	on_choice = function(value, index)
+	    vim.notify(('Selected %s at index %d'):format(value, index))
+	end,
+    }
+<
+
+For records, supply `format_item` to choose the text to display and search:
+
+>lua
+    require('better_select').open {
+	prompt = 'Project',
+	source = {
+	    { name = 'Website', path = '~/projects/website' },
+	    { name = 'Tools', path = '~/projects/tools' },
+	},
+	format_item = function(project) return project.name end,
+	on_choice = function(project)
+	    vim.api.nvim_set_current_dir(vim.fn.expand(project.path))
+	end,
+    }
+<
+
+Values retain their identity, including tables and metatables. Strings,
+numbers, and booleans are supported; labels default to `tostring`. Control
+characters in labels and prompts are escaped so each occupies one row.
+
+Static lists are fuzzy-filtered locally. Equal scores preserve source order.
+Prefix a query with `/pattern/` to restrict matches by a Lua pattern before
+fuzzy filtering: `/^src/handler` searches for `handler` in labels beginning
+with `src`.
+
+==============================================================================
+SOURCE PROVIDERS			  *better-start-nvim-select-providers*
+
+A function source receives `(query, emit, ctx)`. It may return a list
+immediately, return a cancellation function for asynchronous work, or return
+`nil` and call `emit(items, err?)` later. Each emission replaces the complete
+result list.
+
+Providers use live mode by default: prompt changes request new results, and
+the picker preserves the provider's result order. Requests are debounced by 30
+ms; the initial request runs immediately. Old requests are cancelled when
+possible, and late results are ignored after a newer request or closure.
+
+Use `live = false` to load a provider once and fuzzy-filter its values
+locally. The provider receives an empty query in this mode. Call
+`handle:refresh()` to reload it.
+
+>lua
+    require('better_select').open {
+	prompt = 'Buffer',
+	live = false,
+	source = function()
+	    return vim.tbl_filter(function(buf)
+		return vim.bo[buf].buflisted
+	    end, vim.api.nvim_list_bufs())
+	end,
+	format_item = function(buf) return vim.api.nvim_buf_get_name(buf) end,
+	preview_item = function(buf) return { buf = buf } end,
+	on_choice = function(buf) vim.api.nvim_set_current_buf(buf) end,
+    }
+<
+
+An asynchronous provider can stop external work when its request becomes
+obsolete:
+
+>lua
+    require('better_select').open {
+	prompt = 'Tracked file',
+	debounce = 50,
+	source = function(query, emit, ctx)
+	    local argv = { 'git', 'ls-files' }
+	    local job = vim.system(argv, { text = true }, function(result)
+		vim.schedule(function()
+		    if ctx.cancelled() then return end
+		    if result.code ~= 0 then
+			emit(nil, result.stderr)
+			return
+		    end
+		    local paths = vim.split(result.stdout, '\n', {
+			trimempty = true,
+		    })
+		    local matches = query == '' and paths
+			or vim.fn.matchfuzzy(paths, query)
+		    emit(matches)
+		end)
+	    end)
+	    return function() job:kill(15) end
+	end,
+	on_choice = function(path)
+	    vim.api.nvim_cmd({ cmd = 'edit', args = { path } }, {})
+	end,
+    }
+<
+
+`emit` schedules result handling on Neovim's main loop. Schedule any other
+Neovim API calls yourself when working in a fast event. `ctx.search` is the
+picker handle; `ctx.cancelled()` tells the provider whether its request is
+obsolete.
+
+Marks survive local filtering, including when marked values become hidden.
+Replacing results clears marks and selection. Changing a live query clears old
+results immediately so a stale value cannot be accepted. Switching between
+live and local modes preserves the query; local mode filters the latest loaded
+list.
+
+==============================================================================
+REPOSITORY CONTROLS			   *better-start-nvim-select-controls*
+
+    Key     Action	    Behavior ~
+    <Up>    up		    Move selection up
+    <Down>  down	    Move selection down
+    <CR>    accept	    Accept the selected value
+    <Esc>   cancel	    Cancel
+    <Tab>   mark	    Toggle the selected value's mark
+    <C-g>   toggle_live     Switch a provider between live and local modes
+    <C-l>   toggle_preview  Toggle the preview supplied by preview_item
+    <C-q>   set_quickfix    Send marks, or all matches, using to_quickfix
+    <C-s>   split	    Run the custom split callback
+    <C-v>   vsplit	    Run the custom vsplit callback
+    <C-t>   tabnew	    Run the custom tabnew callback
+
+The split, vsplit, and tabnew actions require matching callbacks in the
+actions table; see |better-start-nvim-select-callbacks|. Use the action names
+above with handle:action(). Plug mapping names replace underscores with
+hyphens, as described in |better-start-nvim-select-configuration|.
+
+Only one picker is active at a time. Opening another cancels the current
+picker. Leaving insert mode or the picker window also cancels it. Accepting an
+empty list keeps the picker open. Editor options and buffer-local mappings are
+restored before choice and cancellation callbacks run.
+
+==============================================================================
+CONFIGURATION			      *better-start-nvim-select-configuration*
+
+setup({options})			    *better-start-nvim-select-setup()*
+    Configure presentation and callback defaults used by later open() calls,
+    such as opts, win, on_open, and format_item. Set source and live on each
+    open() call; setup() does not supply defaults for those two fields.
+
+open({options})				     *better-start-nvim-select-open()*
+    Open a picker and return its handle. The required source is a list or
+    provider function. Set live per call; when omitted, it defaults to true
+    for a provider and false for a list. Other options override setup()
+    defaults. Opening a picker cancels the previous one. See
+    |better-start-nvim-select-handle|.
+
+current()				  *better-start-nvim-select-current()*
+    Return the active handle, or nil when no picker is open.
+
+Use `on_open(search)` for picker-local bindings; see
+|better-start-nvim-select-setup| for a standalone example. Action names in
+`<Plug>` mappings use hyphens, for example
+`<Plug>(acme-better-select-toggle-live)`. Names passed to `handle:action()`
+use underscores, such as `toggle_live`. Custom `actions` also receive `<Plug>`
+mappings.
+
+>lua
+    require('better_select').setup {
+	opts = {
+	    preselect = true,
+	    bottom = true,
+	    shrink = true,
+	    prompt_prefix = '›',
+	    prompt_title = true,
+	    pointer = '»',
+	    marker = '│',
+	    info_list = { 'list' },
+	},
+	win = { height = 0.4, hide_statusline = false },
+    }
+<
+
+`win.height` is a fraction of editor height when at most 1, otherwise a row
+count. The picker reserves one row for the prompt and limits its height to the
+editor. Set `bottom = false` for a top prompt, `shrink = false` for a fixed
+list height, or `preselect = false` to start without a selection. `info_list`
+supports `list` for the match/source counts and `index` for the selected
+match's position. `default_text` on `open` supplies the initial query.
+
+Highlight groups are `BetterSelectNormal`, `BetterSelectPrompt`,
+`BetterSelectSel`, `BetterSelectPointer`, `BetterSelectMatch`,
+`BetterSelectMatchSel`, `BetterSelectInfo`, `BetterSelectMark`, and
+`BetterSelectMarkLine`. Defaults are reapplied on colorscheme changes without
+overriding user-defined groups.
+
+==============================================================================
+CALLBACKS AND EXTENSIONS		  *better-start-nvim-select-callbacks*
+
+`format_item(value, index)`
+    Return the display/search label as a string
+
+`on_choice(value, index, marked, handle)`
+    Receive the original value, 1-based source index, and marked values in
+    source order
+
+`on_cancel(handle)`
+    Run once when the picker is cancelled
+
+`preview_item(value, index, handle)`
+    Return `{ buf = buffer, pos = { line, col }, pos_end = { line, col } }` or
+    `nil`; positions are optional, lines are 1-based, and columns are 0-based
+    byte offsets
+
+`get_icon(entry)`
+    Return an icon and its highlight group
+
+`hl_item(entry)`
+    Return `{ { { start_byte, end_byte_exclusive }, group }, ... }` for label
+    highlights
+
+`to_quickfix(value, index)`
+    Return a Neovim quickfix entry
+
+`sorter(entries, query)`
+    Return ordered `{ source_index, character_positions, score }` matches;
+    positions are 0-based character offsets
+
+`win.preview_opts(view)`
+    Return floating-window overrides for the preview
+
+Entries passed to icon, highlight, and sorter hooks contain `{ id =
+source_index, v = original_value, text = formatted_label }`.
+`require('better_select').sorter` exposes the default pattern/fuzzy sorter.
+See |better-start-nvim-select-providers| for provider behavior.
+Preview buffers belong to the caller; the picker only manages their windows.
+
+Custom actions receive the handle and can override built-in action names.
+Close the picker before changing editor windows:
+
+>lua
+    require('better_select').open {
+	source = { 'README.md', 'init.lua' },
+	actions = {
+	    split = function(handle)
+		local entry = handle:get_current()
+		if not entry then return end
+		handle:close()
+		vim.api.nvim_cmd({ cmd = 'split', args = { entry.v } }, {})
+	    end,
+	},
+    }
+<
+
+==============================================================================
+HANDLE API				     *better-start-nvim-select-handle*
+
+open() returns a handle. Call its methods with colon syntax:
+
+handle:set_query({query})	 *better-start-nvim-select-handle.set_query()*
+    Set the query and update results
+
+handle:refresh({immediate?})	   *better-start-nvim-select-handle.refresh()*
+    Request provider results again; true skips debouncing. Applies to
+    function sources.
+
+handle:get_current({index?})   *better-start-nvim-select-handle.get_current()*
+    Return the selected entry, or an entry at a given 1-based source
+    index. Return nil if no such entry exists. Entries have the fields
+    described in |better-start-nvim-select-callbacks|.
+
+handle:get_marked()		*better-start-nvim-select-handle.get_marked()*
+    Return marked original values in source order
+
+handle:action({name})		    *better-start-nvim-select-handle.action()*
+    Run a built-in or custom action. See |better-start-nvim-select-controls|
+    for action names.
+
+handle:toggle_live()	       *better-start-nvim-select-handle.toggle_live()*
+    Switch a function source between live and local modes
+
+handle:set_quickfix()	      *better-start-nvim-select-handle.set_quickfix()*
+    Convert marked values, or all matches, using to_quickfix, then close
+    the picker and open quickfix. Without to_quickfix, leave the picker open.
+
+handle:accept()			    *better-start-nvim-select-handle.accept()*
+    Close and schedule on_choice if an entry is selected. With no
+    selection, keep the picker open.
+
+handle:cancel()			    *better-start-nvim-select-handle.cancel()*
+    Close and schedule on_cancel once.
+
+handle:close()			     *better-start-nvim-select-handle.close()*
+    Close without invoking choice or cancellation callbacks.
+
+==============================================================================
+STANDARD SELECTION INTERFACE		  *better-start-nvim-select-ui-select*
+
+select({items}, {options}, {on_choice})    *better-start-nvim-select-select()*
+
+To use the picker for `vim.ui.select`, opt in explicitly:
+
+>lua
+    vim.ui.select = require('better_select').select
+<
+
+The adapter preserves the standard `(value, index)` callback, including `(nil,
+nil)` on cancellation. It can also be called directly as
+`require('better_select').select(items, options, on_choice)`.
+
+==============================================================================
+DEVELOPMENT			       *better-start-nvim-select-verification*
+
+Run the integration suite from a directory containing `lua/better_select.lua`
+and `tests/`:
+
+>sh
+    nvim --headless -u NONE -i NONE -l tests/better_select.lua
+<
+
+Run the attached UI checks in a terminal; Neovim exits automatically
+afterward:
+
+>sh
+    nvim -u NONE -i NONE -c 'luafile tests/better_select_ui.lua'
+<
+
+------------------------------------------------------------------------------
+See also: |better-start-nvim|
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

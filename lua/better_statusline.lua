@@ -13,8 +13,8 @@
 ---For standalone use: >lua
 ---  require('better_statusline').setup()
 ---<
----See doc/better_statusline.md for displayed information, configuration, update
----behavior, and verification instructions.
+---See |better-start-nvim-statusline| for displayed information, configuration,
+---update behavior, and verification instructions.
 ---@brief ]]
 local M = {}
 local api = vim.api

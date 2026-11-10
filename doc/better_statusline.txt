@@ -1,0 +1,149 @@
+*better_statusline.txt*  Native statusline and bars
+
+NATIVE STATUSLINE AND BARS			*better-start-nvim-statusline*
+
+`lua/better_statusline.lua` supplies the global statusline, per-window bars,
+and clickable tabline using native Neovim 0.12 statusline formatting. This
+configuration already calls setup() in `lua/ui.lua`; edit that existing call
+to customize mode colors. No separate statusline plugin is required.
+
+Part of |better-start-nvim|.
+
+CONTENTS
+
+    Information			|better-start-nvim-statusline-information|
+    Public API			|better-start-nvim-statusline-api|
+    Automatic updates		|better-start-nvim-statusline-updates|
+    Mode colors			|better-start-nvim-statusline-colors|
+    Verification		|better-start-nvim-statusline-verification|
+
+==============================================================================
+INFORMATION			    *better-start-nvim-statusline-information*
+
+The bars display the following information:
+
+- Global statusline: editor mode, Git branch (short commit ID when detached),
+  and cursor line and byte column.
+- Window bars: relative filename, modified and readonly/nonmodifiable markers,
+  diagnostic counts by severity, attached LSP names, a text shimmer on busy
+  servers, and filetype. Inactive windows retain their own information.
+  Unnamed buffers receive a placeholder label; terminal windows have no bar.
+- Tabline: tab number, name, and a modified marker when any displayed buffer
+  in the tab is modified. Names honor `t:tabname`, otherwise use the selected
+  buffer's basename (with special labels for help and terminal buffers).
+  Native tab targets support mouse switching. The tabline appears with two or
+  more tabs; native truncation favors the active tab on narrow screens.
+
+Diagnostic icons use standard Unicode geometric shapes and need no Nerd Font.
+Other icons require a compatible font.
+
+Branch discovery uses the required Rust library through `ffi.git`, including
+worktrees and detached HEADs. Build it with `cargo build --release` before
+importing the statusline; a missing library raises an error. Statusline
+lookups do not spawn Git commands. Unavailable repository data is omitted.
+
+==============================================================================
+PUBLIC API				    *better-start-nvim-statusline-api*
+
+For standalone use, initialize the module once in your Neovim configuration:
+
+>lua
+    local bars = require('better_statusline')
+    bars.setup() -- Install all bars with default mode colors.
+
+    vim.t.tabname = 'Review'
+    bars.refresh() -- Queue an update after a direct metadata change.
+<
+
+setup({opts?})				*better-start-nvim-statusline-setup()*
+
+Takes an optional `mode_colors` table; see
+|better-start-nvim-statusline-colors|. It replaces the statusline and tabline
+options and manages non-floating windows' winbars, including windows opened
+later. It sets a global statusline and shows tabs only when multiple tabs
+exist. Avoid combining it with another module that manages the same options.
+Repeated calls replace the previous configuration and clear the caches;
+calling `setup()` without options restores default mode colors. Invalid mode
+family names or values other than strings/tables raise an error before
+replacement.
+
+refresh()			      *better-start-nvim-statusline-refresh()*
+
+Returns immediately and combines pending requests into one update.
+It is a no-op before setup and does not force a Git rescan or invalidate Git
+caches.
+
+statusline()			   *better-start-nvim-statusline-statusline()*
+winbar()			       *better-start-nvim-statusline-winbar()*
+tabline()			      *better-start-nvim-statusline-tabline()*
+
+These render callbacks are installed by setup(); you normally do not call them
+yourself. They return native Neovim format strings, not plain text, and do not
+refresh their caches. All return empty strings before setup. winbar() selects
+Neovim's render target, falling back to the current window if no valid target
+is available; terminals and uncached windows return empty strings.
+
+==============================================================================
+AUTOMATIC UPDATES			*better-start-nvim-statusline-updates*
+
+Editor events combine into deferred updates, while redraws use cached strings.
+Cursor positions remain current through Neovim's native formatting. Branch
+queries run asynchronously, so branch labels may appear shortly after other
+content. Ordinary editor events request throttled branch lookups to avoid
+queueing work on every event.
+
+Language server names animate while the server reports unfinished work. Idle
+servers do not trigger animation redraws. After direct metadata changes, use
+|better-start-nvim-statusline-refresh()|.
+
+==============================================================================
+MODE COLORS				 *better-start-nvim-statusline-colors*
+
+Edit `mode_colors` in the existing `lua/ui.lua` setup call to customize the
+mode label. Other components keep their own highlights. Values can be
+highlight-group names or `nvim_set_hl` attribute tables:
+
+>lua
+    require('better_statusline').setup {
+	mode_colors = {
+	    normal = 'StatusLine',
+	    insert = { fg = '#0d50c5', bold = true },
+	    visual = { fg = '#7a5000', bg = '#ffebd1' },
+	    replace = 'DiagnosticError',
+	},
+    }
+<
+
+Supported families are `normal`, `insert`, `visual` (including line/block),
+`select`, `replace`, `command` (including prompts), `terminal`, and
+`operator`. Select defaults to the configured visual color; operator defaults
+to normal. Other unspecified families use `StatusLine`. Attribute tables and
+named groups inherit missing attributes from `StatusLine`, preserving its
+background when only a foreground is supplied. Missing named groups fall back
+to `StatusLine`.
+
+Highlight links and mode colors follow colorscheme changes. Window bars use
+the colorscheme's WinBar and WinBarNC highlights without overriding them.
+
+==============================================================================
+VERIFICATION			   *better-start-nvim-statusline-verification*
+
+Run from the repository root:
+
+>sh
+    cargo build --release
+    nvim --headless -u NONE -i NONE -l tests/better_statusline.lua
+<
+
+The test uses a disposable Git repository and checks rendering, Git updates,
+LSP progress, and repeated setup. It also verifies that cached render
+callbacks do not perform expensive data collection.
+
+For a visual check, open splits and tabs, edit a file, switch modes, and
+resize the terminal. With a language server attached, check diagnostics and
+progress animation.
+
+------------------------------------------------------------------------------
+See also: |better-start-nvim|
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

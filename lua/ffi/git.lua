@@ -6,7 +6,8 @@
 ---
 ---To use the Rust implementation, build it with `cargo build --release` before
 ---importing this module. Importing requires Neovim with LuaJIT FFI and raises an
----error if the library cannot be loaded. See doc/ffi.md for the library override.
+---error if the library cannot be loaded. See |better-start-nvim-ffi-build| for
+---the library override.
 ---@brief ]]
 local M = {}
 local loader = require 'ffi.loader'

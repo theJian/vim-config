@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "better-start-nvim"
+version = "0.1.0"
+dependencies = [
+ "git2",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -25,13 +32,6 @@ name = "cfg-if"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
-
-[[package]]
-name = "ffi"
-version = "0.1.0"
-dependencies = [
- "git2",
-]
 
 [[package]]
 name = "find-msvc-tools"

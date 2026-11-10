@@ -1,0 +1,130 @@
+*better-start-nvim.txt*  Better Start Nvim
+
+BETTER START NVIM					   *better-start-nvim*
+
+Better Start Nvim is a Lua configuration for Neovim 0.12+ with native package
+builds, pickers, status bars, and project workspaces. Start with
+|better-start-nvim-install|, then read |better-start-nvim-first-use| before
+editing files. The guides below explain individual features and their APIs.
+
+Follow a help link with <C-]> and return with |:pop|. Open this page with:
+>vim
+    :help better-start-nvim
+<
+==============================================================================
+INSTALLATION					 *better-start-nvim-install*
+
+Prerequisites ~
+
+Install Neovim 0.12+ with LuaJIT FFI, Git, a C build toolchain, and Rust with
+Cargo to build the native library used by the statusline.
+
+Separate configuration ~
+
+After cloning this repository, run the following from its root in a POSIX
+shell. Keep the checkout in place: the configuration path will point to it.
+Choose another app name if better-start-nvim is already in use. The test
+must succeed before creating the link; an existing path needs your attention.
+>sh
+    config="${XDG_CONFIG_HOME:-$HOME/.config}/better-start-nvim"
+    test ! -e "$config" && test ! -L "$config" &&
+      mkdir -p "$(dirname "$config")" && ln -s "$PWD" "$config"
+<
+This uses separate configuration, plugin, cache, and state paths from your
+normal nvim app. Prefix every launch with NVIM_APPNAME=better-start-nvim to
+select it. Your existing ~/.config/nvim configuration stays in place.
+
+Build before launching ~
+
+The statusline imports the Rust library during startup, so build it before
+the first full launch. From the repository root:
+>sh
+    cargo build --release
+    NVIM_APPNAME=better-start-nvim nvim
+<
+The native library build is described in |better-start-nvim-ffi-build|.
+Normal startup generates the help index, so :help better-start-nvim works
+directly.
+
+The current checkout also loads configured packages, so first launch may
+prompt for confirmation and download them.
+
+To read help before a full launch, run this from the repository root:
+>sh
+    NVIM_APPNAME=better-start-nvim nvim -u NONE -i NONE \
+      -c 'helptags doc' -c 'help better-start-nvim'
+<
+This generates tags manually because -u NONE skips init.lua. It uses the
+standard : command key and closes help with :quit. See
+|better-start-nvim-help| for other checkouts.
+
+==============================================================================
+FIRST USE					 *better-start-nvim-first-use*
+
+Keys and help ~
+
+In the full configuration, ; opens the command line in Normal and Visual
+mode; : repeats the last character search. Command examples such as
+:help better-start-nvim show the Ex prompt: press ;, type help
+better-start-nvim, then press <CR>. <leader> is <Space>, so <leader>pa means
+Space, p, a. In help, follow links with <C-]>, return with :pop, and close the
+help window with q.
+
+Automatic saving ~
+
+Ordinary named, writable file buffers save automatically when you leave
+Insert mode or change text in Normal mode. If an available Tree-sitter
+parser reports syntax errors, auto-save waits; without a parser it saves.
+You can still save explicitly with :write. Recovered workspace edits wait
+until your next edit before auto-saving; see
+|better-start-nvim-projects-persistence|.
+
+Customize editor options in lua/options.lua, bindings in lua/keymaps.lua,
+appearance in lua/ui.lua, and automatic saving in lua/autocmds.lua. Native
+LSP server settings are in lsp/.
+
+Projects and workspaces ~
+
+Start with <leader>pa to add a project directory, then <leader>pp to switch
+to it and pick a file. Use <leader>pf to find another file in that project
+and <leader><Tab>. to pick an open workspace. Type to filter a picker, use
+<Up>/<Down> to choose a result, <CR> to accept, or <Esc> to cancel. Continue
+with |better-start-nvim-projects-workspaces| for commands and saved sessions.
+
+==============================================================================
+GUIDES						    *better-start-nvim-guides*
+
+Projects and workspaces		|better-start-nvim-projects-workspaces|
+    Find project files, run project commands, and save named tab workspaces.
+
+Picker				|better-start-nvim-select|
+    Search Lua values, use live providers, and configure picker callbacks.
+
+Statusline and bars		|better-start-nvim-statusline|
+    Read editor and window information, customize colors, and refresh caches.
+
+Package declarations		|better-start-nvim-prelude|
+    Declare packages with vim.pack.use and run install or update builds.
+
+Rust native modules		|better-start-nvim-ffi|
+    Build the shared library and request asynchronous Git branch information.
+
+==============================================================================
+HELP INSTALLATION				      *better-start-nvim-help*
+
+Normal startup generates or refreshes doc/tags under stdpath('config')
+before loading other configuration modules. It checks help-file and directory
+timestamps to pick up edits, additions, renames, and removals. The generated
+index is local and ignored by Git. Open :help better-start-nvim directly
+after startup.
+
+With -u NONE, init.lua does not run. For a standalone checkout, add its
+absolute path to 'runtimepath' and generate tags manually:
+>vim
+    :set runtimepath^=/path/to/better-start-nvim
+    :helptags /path/to/better-start-nvim/doc
+    :help better-start-nvim
+<
+This reads the documentation directly without loading the configuration.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
