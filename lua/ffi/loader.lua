@@ -5,8 +5,8 @@
 ---C declarations to let libuv workers load their own handles in separate Lua states.
 ---
 ---Build the library with `cargo build --release` before calling load(), which
----requires LuaJIT FFI. Because the first result is cached, restart Neovim after
----building or replacing the library.
+---requires LuaJIT FFI. The first result is cached. If load() has already run,
+---restart Neovim after building or replacing the library.
 ---@brief ]]
 local M = {}
 local root = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':p:h:h:h')
@@ -27,7 +27,7 @@ local handle, failure
 
 ---Load the library at path and check its ffi_git_branch symbol on the first call.
 ---Return the handle, or nil and a diagnostic on failure. Both outcomes are cached,
----so later calls do not retry. Requires LuaJIT FFI; never builds the library.
+---so later calls do not retry. Requires LuaJIT FFI.
 ---@return ffi.namespace*? library
 ---@return string? error
 function M.load()

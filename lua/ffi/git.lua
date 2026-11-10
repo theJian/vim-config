@@ -17,6 +17,7 @@ local max_capacity = 65536
 
 -- libuv workers have separate Lua states; pass declarations and copied values.
 local function worker(library, cdef, directory, capacity, limit)
+	local buffer_too_small = -2
 	local ok, name, diagnostic = pcall(function()
 		local ffi = require 'ffi'
 		ffi.cdef(cdef)
@@ -26,7 +27,7 @@ local function worker(library, cdef, directory, capacity, limit)
 			local size = lib.ffi_git_branch(directory, out, capacity)
 			if size >= 0 then
 				return ffi.string(out, size)
-			elseif size ~= -2 then
+			elseif size ~= buffer_too_small then
 				return '', 'Git branch lookup failed (native status ' .. tonumber(size) .. ')'
 			end
 			capacity = capacity * 2
