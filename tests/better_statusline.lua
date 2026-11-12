@@ -93,7 +93,86 @@ local ok, err = xpcall(function()
 	assert(vim.wait(3000, function()
 		return status():find('status-test', 1, true) ~= nil
 	end))
-	assert(not status():find('+1', 1, true) and not status():find('~1', 1, true), 'file diff counts are displayed')
+	contains(status(), 'status-test  +1')
+	for _, symbol in ipairs { '?', '↑', '↓', '↔' } do
+		assert(not status():find(symbol, 1, true), 'zero count displayed: ' .. symbol)
+	end
+	local function git_update(expected, event)
+		if event then
+			api.nvim_exec_autocmds(event, {})
+		else
+			api.nvim_exec_autocmds('User', { pattern = 'FugitiveChanged' })
+		end
+		assert(
+			vim.wait(3000, function()
+				return status():find(expected, 1, true) ~= nil
+			end),
+			expected .. ' missing from ' .. status()
+		)
+	end
+	vim.fn.mkdir(temp .. '/new/nested', 'p')
+	vim.fn.writefile({ 'new' }, temp .. '/new/a.txt')
+	vim.fn.writefile({ 'new' }, temp .. '/new/nested/b.txt')
+	git_update 'status-test  +1 ?2'
+	contains(m.statusline(), '%#BetterStatuslineGitTracked#+1%*')
+	contains(m.statusline(), '%#BetterStatuslineGitUntracked#?2%*')
+	local base = api.nvim_get_hl(0, { name = 'StatusLine', link = false })
+	for _, name in ipairs { 'Tracked', 'Untracked', 'Upstream', 'Conflict' } do
+		local color = api.nvim_get_hl(0, { name = 'BetterStatuslineGit' .. name, link = false })
+		assert(color.bg == base.bg, 'Git color must preserve the statusline background')
+	end
+	git('config', 'user.name', 'Test')
+	git('config', 'user.email', 'test@example.com')
+	git('add', '.')
+	git('commit', '-m', 'save all changes')
+	git_update('status-test ', 'FocusGained')
+	assert(
+		vim.wait(3000, function()
+			return not status():find('+', 1, true) and not status():find('?', 1, true)
+		end),
+		'clean repository retained file counts'
+	)
+	-- A save invalidates the cache even inside the ordinary Git throttle.
+	api.nvim_buf_set_lines(0, 0, 1, false, { 'saved in Neovim' })
+	vim.cmd.write()
+	assert(
+		vim.wait(3000, function()
+			return status():find('status-test  +1', 1, true) ~= nil
+		end),
+		'write did not refresh Git counts'
+	)
+	git('commit', '-am', 'Neovim save')
+	git('branch', 'upstream')
+	git('branch', '--set-upstream-to=upstream')
+	vim.fn.writefile({ 'local', 'two', 'three' }, temp .. '/sample.lua')
+	git('commit', '-am', 'local change')
+	git_update 'status-test  ↑1'
+	git('checkout', 'upstream')
+	vim.fn.writefile({ 'upstream', 'two', 'three' }, temp .. '/sample.lua')
+	git('commit', '-am', 'upstream change')
+	git('checkout', 'status-test')
+	git_update('status-test  ↑1 ↓1', 'FocusGained')
+	local merge = vim.system({ 'git', '-C', temp, 'merge', 'upstream' }, { text = true }):wait()
+	assert(merge.code == 1, merge.stderr)
+	git_update 'status-test  ↑1 ↓1 ↔1'
+	assert(not status():find('+1', 1, true), 'conflict also counted as a tracked change')
+	contains(m.statusline(), '%#BetterStatuslineGitConflict#↔1%*')
+	git('merge', '--abort')
+	git('reset', '--hard', 'upstream')
+	git('checkout', '-b', 'status%#Error#')
+	git_update 'status%#Error#'
+	contains(m.statusline(), 'status%%#Error#')
+	git('checkout', 'status-test')
+	git_update 'status-test '
+	assert(
+		vim.wait(3000, function()
+			return not status():find('↑', 1, true)
+				and not status():find('↓', 1, true)
+				and not status():find('↔', 1, true)
+		end),
+		'clean synchronized repository retained counts'
+	)
+	vim.cmd.edit { bang = true }
 	contains(status(), 'NORMAL')
 	api.nvim_win_set_cursor(0, { 2, 1 })
 	contains(status(), '󿂡 2, 󿂣 2')
@@ -167,12 +246,14 @@ local ok, err = xpcall(function()
 	vim.lsp.get_clients = clients
 	vim.lsp.get_client_by_id = lookup
 	-- Cached renderers must not query services, spawn commands, or inspect files.
-	local saved = { vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages }
+	local native_git = require 'ffi.git'
+	local saved = { vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages, native_git.status }
 	local function forbidden()
 		error 'expensive work during rendering'
 	end
 	vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages =
 		forbidden, forbidden, forbidden, forbidden
+	native_git.status = forbidden
 	local start = vim.uv.hrtime()
 	for _ = 1, 10000 do
 		m.statusline()
@@ -180,7 +261,7 @@ local ok, err = xpcall(function()
 		m.tabline()
 	end
 	local elapsed = (vim.uv.hrtime() - start) / 1e6
-	vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages = unpack(saved)
+	vim.system, vim.diagnostic.count, vim.lsp.get_clients, api.nvim_list_tabpages, native_git.status = unpack(saved)
 	print(('PASS: 10,000 cached render triplets in %.2f ms'):format(elapsed))
 	m.setup()
 	settle()

@@ -23,7 +23,8 @@ INFORMATION			    *better-start-nvim-statusline-information*
 The bars display the following information:
 
 - Global statusline: editor mode, Git branch (short commit ID when detached),
-  and cursor line and byte column.
+  repository file counts and upstream commit counts, and cursor line and byte
+  column.
 - Window bars: relative filename, modified and readonly/nonmodifiable markers,
   diagnostic counts by severity, attached LSP names, a text shimmer on busy
   servers, and filetype. Inactive windows retain their own information.
@@ -37,10 +38,28 @@ The bars display the following information:
 Diagnostic icons use standard Unicode geometric shapes and need no Nerd Font.
 Other icons require a compatible font.
 
-Branch discovery uses the required Rust library through `ffi.git`, including
-worktrees and detached HEADs. Build it with `cargo build --release` before
-importing the statusline; a missing library raises an error. Statusline
-lookups do not spawn Git commands. Unavailable repository data is omitted.
+Git indicators follow the branch, in this order:
+>
+    NORMAL  <branch icon> main  +3 ?2 ↑2 ↓1 ↔1
+<
+    +3    Three changed tracked files, staged or unstaged.
+    ?2    Two untracked files, excluding ignored files.
+    ↑2    Two commits ahead of the locally known upstream.
+    ↓1    One commit behind the locally known upstream.
+    ↔1    One conflicted file, excluded from the + count.
+
+Each changed file is counted once, even with both staged and unstaged changes.
+Counts cover the whole repository containing the current file, including
+individual untracked files inside new directories. Special and unnamed buffers
+use the current directory's repository. Only saved changes count; unsaved edits
+keep their separate filename marker. Zero counts are hidden. Ahead/behind are
+omitted without a usable upstream; no network fetch is performed.
+
+Git discovery uses the required Rust library through `ffi.git`, including
+worktrees, unborn branches, and detached HEADs. Build it with
+`cargo build --release` before importing the statusline; a missing library
+raises an error. Statusline lookups do not spawn Git commands. Unavailable
+repository data is omitted.
 
 ==============================================================================
 PUBLIC API				    *better-start-nvim-statusline-api*
@@ -87,10 +106,11 @@ is available; terminals and uncached windows return empty strings.
 AUTOMATIC UPDATES			*better-start-nvim-statusline-updates*
 
 Editor events combine into deferred updates, while redraws use cached strings.
-Cursor positions remain current through Neovim's native formatting. Branch
-queries run asynchronously, so branch labels may appear shortly after other
-content. Ordinary editor events request throttled branch lookups to avoid
-queueing work on every event.
+Cursor positions remain current through Neovim's native formatting. Git
+queries run asynchronously, so branches and counts may appear shortly after
+other content. Ordinary editor events request Git lookups at most once per
+two seconds per directory. Saves, focus gains, and Git change notifications
+bypass this throttle, so counts update after writes and external Git commands.
 
 Language server names animate while the server reports unfinished work. Idle
 servers do not trigger animation redraws. After direct metadata changes, use
@@ -125,6 +145,12 @@ to `StatusLine`.
 Highlight links and mode colors follow colorscheme changes. Window bars use
 the colorscheme's WinBar and WinBarNC highlights without overriding them.
 
+Git counts preserve the StatusLine background and inherit foreground colors:
+`BetterStatuslineGitTracked` from Added, `BetterStatuslineGitUntracked` from
+DiagnosticWarn, `BetterStatuslineGitUpstream` from Comment, and
+`BetterStatuslineGitConflict` from DiagnosticError. They refresh on colorscheme
+changes.
+
 ==============================================================================
 VERIFICATION			   *better-start-nvim-statusline-verification*
 
@@ -135,9 +161,10 @@ Run from the repository root:
     nvim --headless -u NONE -i NONE -l tests/better_statusline.lua
 <
 
-The test uses a disposable Git repository and checks rendering, Git updates,
-LSP progress, and repeated setup. It also verifies that cached render
-callbacks do not perform expensive data collection.
+The test uses a disposable Git repository and checks rendering, tracked and
+untracked counts, upstream divergence, conflicts, save/focus refreshes, LSP
+progress, and repeated setup. It also verifies that cached render callbacks
+do not perform expensive data collection.
 
 For a visual check, open splits and tabs, edit a file, switch modes, and
 resize the terminal. With a language server attached, check diagnostics and

@@ -20,8 +20,8 @@ local M = {}
 local api = vim.api
 local native_git = require 'ffi.git'
 
----@class BetterStatuslineBranch
----@field text string Branch name or detached commit ID.
+---@class BetterStatuslineGit
+---@field text string Formatted branch and repository status.
 ---@field last_request_ms number Timestamp from vim.uv.now().
 ---@field pending? boolean
 
@@ -29,7 +29,7 @@ local native_git = require 'ffi.git'
 ---@field statusline? string
 ---@field winbars table<integer, string> Keyed by window ID.
 ---@field tabline? string
----@field branches table<string, BetterStatuslineBranch?> Keyed by directory.
+---@field repositories table<string, BetterStatuslineGit?> Keyed by directory.
 ---@field progress_tokens table<integer, table<string|integer, boolean>> Token sets keyed by client ID.
 ---@field frame integer
 ---@field mode_colors table<string, string|table> Highlight group names or attribute overrides by mode family.
@@ -184,6 +184,15 @@ local function setup_highlights()
 		end
 	end
 	local base = api.nvim_get_hl(0, { name = 'StatusLine', link = false })
+	for name, source in pairs {
+		Tracked = 'Added',
+		Untracked = 'DiagnosticWarn',
+		Upstream = 'Comment',
+		Conflict = 'DiagnosticError',
+	} do
+		local color = api.nvim_get_hl(0, { name = source, link = false })
+		api.nvim_set_hl(0, 'BetterStatuslineGit' .. name, vim.tbl_extend('force', base, { fg = color.fg }))
+	end
 	for _, family in ipairs(valid_families) do
 		local color = current.mode_colors[family]
 			or (family == 'select' and current.mode_colors.visual)
@@ -195,25 +204,50 @@ local function setup_highlights()
 	end
 end
 
----Return cached branch text without waiting for Git; throttle asynchronous lookups when stale.
+local git_indicators = {
+	{ 'tracked', '+', 'Tracked' },
+	{ 'untracked', '?', 'Untracked' },
+	{ 'ahead', '↑', 'Upstream' },
+	{ 'behind', '↓', 'Upstream' },
+	{ 'conflicts', '↔', 'Conflict' },
+}
+
+---@param result? FfiGitStatus
+---@return string
+local function format_git(result)
+	if not result then
+		return ''
+	end
+	local counts = {}
+	for _, indicator in ipairs(git_indicators) do
+		local field, symbol, group = unpack(indicator)
+		if result[field] > 0 then
+			counts[#counts + 1] = '%#BetterStatuslineGit' .. group .. '#' .. symbol .. result[field] .. '%*'
+		end
+	end
+	return '󿂠 ' .. escape_text(result.branch) .. (#counts > 0 and separator .. table.concat(counts, ' ') or '')
+end
+
+---Return cached Git text without waiting; throttle asynchronous lookups when stale.
 ---@param dir string
----@return string text Cached branch or detached commit ID; empty until known.
-local function cached_branch(dir)
+---@return string text Formatted branch and counts; empty until known.
+local function cached_git(dir)
 	local setup_state = assert(state)
-	local entry = setup_state.branches[dir]
+	local entry = setup_state.repositories[dir]
 	local now = vim.uv.now()
 	if not entry then
 		entry = { text = '', last_request_ms = -math.huge }
-		setup_state.branches[dir] = entry
+		setup_state.repositories[dir] = entry
 	end
 	if not entry.pending and now - entry.last_request_ms > 2000 then
 		entry.pending, entry.last_request_ms = true, now
-		local queued, err = native_git.branch(dir, function(text)
+		local queued, err = native_git.status(dir, function(result)
 			if state ~= setup_state then
 				return
 			end
 			entry.pending = false
-			if entry.text ~= text then
+			local text = format_git(result)
+			if entry.text ~= text or entry.last_request_ms == -math.huge then
 				entry.text = text
 				request_refresh()
 			end
@@ -362,7 +396,7 @@ local function build_statusline()
 	local buf = api.nvim_get_current_buf()
 	local name = api.nvim_buf_get_name(buf)
 	local dir = vim.bo[buf].buftype == '' and name ~= '' and vim.fn.fnamemodify(name, ':h') or vim.fn.getcwd()
-	local head = cached_branch(dir)
+	local git = cached_git(dir)
 	local parts = {}
 	local mode = api.nvim_get_mode().mode
 	parts[1] = '%#'
@@ -370,8 +404,8 @@ local function build_statusline()
 		.. '#'
 		.. (mode_labels[mode] or mode_labels[mode:sub(1, 2)] or mode_labels[mode:sub(1, 1)] or mode)
 		.. '%*'
-	if head ~= '' then
-		parts[#parts + 1] = '󿂠 ' .. escape_text(head)
+	if git ~= '' then
+		parts[#parts + 1] = git
 	end
 	-- Keep %l and %c unevaluated so Neovim updates the cursor position even in a cached string.
 	return ' ' .. table.concat(parts, separator) .. '%<%=󿂡 %l, 󿂣 %c '
@@ -408,7 +442,7 @@ end
 ---Returns immediately; requests made while an update is pending share that update.
 ---Does nothing before setup(). Git caches are not invalidated, so this is not a
 ---forced Git rescan. Ordinary editor events request throttled Git lookups;
----FugitiveChanged bypasses that throttle.
+---writes, focus gains, and FugitiveChanged bypass that throttle.
 ---
 ---Example: >lua
 ---  vim.t.tabname = 'Review'
@@ -458,7 +492,7 @@ function M.setup(opts)
 	local timer = assert(vim.uv.new_timer())
 	state = {
 		winbars = {},
-		branches = {},
+		repositories = {},
 		progress_tokens = {},
 		frame = 1,
 		mode_colors = colors,
@@ -488,27 +522,27 @@ function M.setup(opts)
 		'TextChanged',
 		'TextChangedI',
 		'TextChangedP',
-		'BufWritePost',
 		'FileType',
 		'DiagnosticChanged',
 		'LspAttach',
 		'LspDetach',
 		'ModeChanged',
 		'DirChanged',
-		'FocusGained',
 		'TermOpen',
 		'VimResized',
 	}, { callback = request_refresh })
+	local function invalidate_git()
+		-- Rescan after saves or external Git operations even inside the throttle.
+		for _, entry in pairs(setup_state.repositories) do
+			entry.last_request_ms = -math.huge
+		end
+		request_refresh()
+	end
+	on_event({ 'BufWritePost', 'FocusGained' }, { callback = invalidate_git })
 	on_event('OptionSet', { pattern = { 'modified', 'readonly', 'modifiable', 'buftype' }, callback = request_refresh })
 	on_event('User', {
 		pattern = 'FugitiveChanged',
-		callback = function()
-			-- Fugitive commands can switch branches before the throttle expires.
-			for _, entry in pairs(setup_state.branches) do
-				entry.last_request_ms = -math.huge
-			end
-			request_refresh()
-		end,
+		callback = invalidate_git,
 	})
 	on_event('ColorScheme', {
 		callback = function()

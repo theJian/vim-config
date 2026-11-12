@@ -107,7 +107,7 @@ Package declarations		|better-start-nvim-prelude|
     Declare packages with vim.pack.use and run install or update builds.
 
 Rust native modules		|better-start-nvim-ffi|
-    Build the shared library and request asynchronous Git branch information.
+    Build the shared library and request asynchronous Git branch and status data.
 
 ==============================================================================
 HELP INSTALLATION				      *better-start-nvim-help*

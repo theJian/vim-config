@@ -2,10 +2,10 @@
 
 RUST NATIVE MODULES				       *better-start-nvim-ffi*
 
-`ffi.git` retrieves Git branch names asynchronously so Neovim can continue
-working during repository discovery. Call branch(dir, callback) to run a
-lookup in a worker and receive its result on Neovim's main loop. Build the
-required Rust library before importing the module; see
+`ffi.git` retrieves Git branches and repository status asynchronously so Neovim
+can continue working during repository discovery. Call status(dir, callback)
+to run a lookup in a worker and receive its result on Neovim's main loop.
+Build the required Rust library before importing the module; see
 |better-start-nvim-ffi-build|.
 
 Part of |better-start-nvim|.
@@ -13,7 +13,8 @@ Part of |better-start-nvim|.
 CONTENTS
 
     Build and try		|better-start-nvim-ffi-build|
-    Lua API			|better-start-nvim-ffi-branch|
+    Branch API			|better-start-nvim-ffi-branch|
+    Status API			|better-start-nvim-ffi-status|
     Boundary and integration	|better-start-nvim-ffi-boundary|
     C ABI			|better-start-nvim-ffi-abi|
     Statusline integration	|better-start-nvim-ffi-statusline|
@@ -42,7 +43,7 @@ failure tracked in rust-lang/rust#157750:
 https://github.com/rust-lang/rust/issues/157750
 
 ==============================================================================
-LUA API						*better-start-nvim-ffi-branch*
+BRANCH API					*better-start-nvim-ffi-branch*
 
 branch({dir}, {callback})		  *better-start-nvim-ffi.git.branch()*
 
@@ -80,14 +81,52 @@ worker.
 Filesystem paths preserve raw bytes on Unix; other targets accept UTF-8 paths.
 
 ==============================================================================
+STATUS API					*better-start-nvim-ffi-status*
+
+status({dir}, {callback})		  *better-start-nvim-ffi.git.status()*
+
+>lua
+    local function report(status, lookup_error)
+      if not status then
+	vim.notify(lookup_error, vim.log.levels.WARN)
+	return
+      end
+      vim.notify(status.branch .. ' +' .. status.tracked)
+    end
+    local queued, err = require('ffi.git').status(vim.fn.getcwd(), report)
+    if not queued then
+      vim.notify(err, vim.log.levels.WARN)
+    end
+<
+
+Uses branch()'s discovery, argument validation, queueing, and main-loop callback
+rules. On success, the callback receives a table with these fields:
+
+    branch      Branch name or detached commit ID; includes unborn branches.
+    tracked     Changed tracked files, staged or unstaged, excluding conflicts.
+    untracked   Untracked files, excluding ignored files.
+    ahead       Commits ahead of the locally known upstream.
+    behind      Commits behind the locally known upstream.
+    conflicts   Conflicted files, counted separately from tracked changes.
+
+File counts cover the entire repository, including individual untracked files
+inside new directories. Each changed file is counted once, including files
+with both staged and unstaged changes. A staged deletion with a recreated file
+at the same path counts as one tracked change. Counts reflect saved changes.
+Ahead/behind are zero without a usable upstream, including detached and unborn
+HEADs. This call never fetches remotes or spawns Git commands.
+
+Lookup failures invoke the callback with nil and a diagnostic.
+
+==============================================================================
 BOUNDARY AND INTEGRATION		      *better-start-nvim-ffi-boundary*
 
 `src/git.rs` uses git2 for repository discovery. `src/lib.rs` translates its
 results into the C ABI. `lua/ffi/loader.lua` resolves the library and checks
-the Git branch symbol; `lua/ffi/git.lua` manages request buffers and libuv
-worker scheduling for the asynchronous Lua API. The loader retains the library
-handle for the module's lifetime. Workers load their own handles. Rebuild the
-library after changing native code or its Lua calling contract.
+the Git branch and status symbols; `lua/ffi/git.lua` manages request buffers and
+libuv worker scheduling for the asynchronous Lua API. The loader retains the
+library handle for the module's lifetime. Workers load their own handles.
+Rebuild the library after changing native code or its Lua calling contract.
 
 ==============================================================================
 C ABI						   *better-start-nvim-ffi-abi*
@@ -111,12 +150,30 @@ Lua retries small buffers up to 64 KiB. Diagnostic strings currently
 distinguish load/queue failures and native status codes, not individual
 libgit2 errors.
 
+ffi_git_status()			  *better-start-nvim-ffi_git_status()*
+>c
+    typedef struct {
+        size_t tracked;
+        size_t untracked;
+        size_t ahead;
+        size_t behind;
+        size_t conflicts;
+    } FfiGitCounts;
+    int32_t ffi_git_status(const char *path, char *out, size_t capacity,
+                          FfiGitCounts *counts);
+<
+Uses ffi_git_branch()'s path, branch buffer, and return-code rules. counts must
+point to writable, aligned storage for one FfiGitCounts. All three regions must
+remain valid and non-overlapping throughout the call. A successful call writes
+both the NUL-terminated branch text and all counts. Null pointers are rejected;
+failed calls leave outputs unchanged. Discard both outputs on failure.
+
 ==============================================================================
 STATUSLINE INTEGRATION			    *better-start-nvim-ffi-statusline*
 
-`lua/better_statusline.lua` uses `ffi.git` for branch requests. It caches
-branch results and bar strings, so redraws use cached data while lookups run
-in workers. A missing library fails at import, and rejected worker requests
+`lua/better_statusline.lua` uses `ffi.git.status` for branch and count requests.
+It caches Git results and bar strings, so redraws use cached data while lookups
+run in workers. A missing library fails at import, and rejected worker requests
 raise errors. See |better-start-nvim-statusline| for displayed information and
 refresh behavior.
 
@@ -133,8 +190,10 @@ VERIFICATION				  *better-start-nvim-ffi-verification*
 
 The native test creates disposable repositories and exercises worker
 callbacks, nested discovery, linked worktrees, unborn and detached HEAD,
-Unicode names, concurrent requests, caller-owned buffer limits, invalid
-arguments, and a missing library. Git is required for these test fixtures.
+Unicode names, staged and unstaged changes, nested untracked and ignored files,
+renames, deletions, upstream divergence, conflicts, concurrent requests,
+caller-owned buffer limits, invalid arguments, and a missing library. Git is
+required for these test fixtures.
 Offline Cargo commands require dependencies to be cached already.
 
 ------------------------------------------------------------------------------

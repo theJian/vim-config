@@ -21,11 +21,19 @@ M.path = vim.env.NVIM_NATIVE_LIBRARY or (root .. '/target/release/' .. filename)
 ---their separate LuaJIT states.
 ---@type string
 M.cdef = [[
+	typedef struct {
+		size_t tracked;
+		size_t untracked;
+		size_t ahead;
+		size_t behind;
+		size_t conflicts;
+	} FfiGitCounts;
 	int32_t ffi_git_branch(const char *path, char *out, size_t capacity);
+	int32_t ffi_git_status(const char *path, char *out, size_t capacity, FfiGitCounts *counts);
 ]]
 local handle, failure
 
----Load the library at path and check its ffi_git_branch symbol on the first call.
+---Load the library at path and check its Git symbols on the first call.
 ---Return the handle, or nil and a diagnostic on failure. Both outcomes are cached,
 ---so later calls do not retry. Requires LuaJIT FFI.
 ---@return ffi.namespace*? library
@@ -39,6 +47,7 @@ function M.load()
 		ffi.cdef(M.cdef)
 		local lib = ffi.load(M.path)
 		assert(lib.ffi_git_branch, 'native library is missing the Git branch symbol')
+		assert(lib.ffi_git_status, 'native library is missing the Git status symbol')
 		return lib
 	end)
 	if ok then

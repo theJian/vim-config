@@ -1,5 +1,5 @@
 //! This library provides Rust Git discovery to Neovim through LuaJIT FFI.
-//! Lua callers use `require('ffi.git').branch(dir, callback)` to run lookups in
+//! Lua callers use `require('ffi.git').status(dir, callback)` to run lookups in
 //! workers. The wrapper owns the C ABI buffers, so Rust allocations stay inside
 //! the library.
 //!
@@ -7,6 +7,8 @@
 //! restart Neovim after building or replacing the library.
 
 mod git;
+
+pub use git::GitCounts;
 
 use std::ffi::{CStr, c_char};
 use std::panic::catch_unwind;
@@ -67,6 +69,48 @@ pub unsafe extern "C" fn ffi_git_branch(
         unsafe {
             std::ptr::copy_nonoverlapping(name.as_ptr(), out.cast::<u8>(), name.len());
             out.add(name.len()).write(0);
+        }
+        name.len() as i32
+    })
+    .unwrap_or(PANICKED)
+}
+
+/// Writes the branch name and repository-wide file/upstream counts. Return codes
+/// and branch buffer rules match `ffi_git_branch`. Unborn branches are supported.
+/// Ahead/behind are zero without a usable upstream; this never fetches remotes.
+/// Both outputs are written only on success and must be discarded on failure.
+///
+/// # Safety
+/// `path`, `out`, and `capacity` follow `ffi_git_branch`'s requirements.
+/// `counts` must point to writable, aligned storage for one `GitCounts`.
+/// All three regions must be non-overlapping and valid throughout the call.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn ffi_git_status(
+    path: *const c_char,
+    out: *mut c_char,
+    capacity: usize,
+    counts: *mut GitCounts,
+) -> i32 {
+    if path.is_null() || out.is_null() || counts.is_null() {
+        return LOOKUP_FAILED;
+    }
+    catch_unwind(|| {
+        let path = unsafe { CStr::from_ptr(path) };
+        let path = match filesystem_path(path) {
+            Ok(path) => path,
+            Err(_) => return LOOKUP_FAILED,
+        };
+        let (name, status) = match git::status(path) {
+            Ok(status) => status,
+            Err(_) => return LOOKUP_FAILED,
+        };
+        if name.len() >= capacity || name.len() > i32::MAX as usize {
+            return BUFFER_TOO_SMALL;
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(name.as_ptr(), out.cast::<u8>(), name.len());
+            out.add(name.len()).write(0);
+            counts.write(status);
         }
         name.len() as i32
     })
