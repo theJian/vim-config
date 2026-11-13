@@ -214,6 +214,13 @@ local ok, err = pcall(function()
 	test('slow input matches native behavior with hints disabled', function()
 		local cases = {
 			{ before = '3', prefix = '<F6>', after = 'x.', rhs = 'x' },
+			{ before = '"="HELLO"<CR>', prefix = '<F6>', after = 'x', rhs = 'p' },
+			{
+				before = '"=execute("let g:expr_calls += 1") . "HELLO"<CR>',
+				prefix = '<F6>',
+				after = 'x',
+				rhs = 'p',
+			},
 			{ before = '"a2', prefix = '<F6>', after = 'y', rhs = 'yy' },
 			{ before = 'Vj', prefix = '<F6>', after = 'y', rhs = 'y', mode = 'x' },
 			{ before = 'V', prefix = '<F6>', after = '<Esc>', rhs = 'y', mode = 'x' },
@@ -235,6 +242,7 @@ local ok, err = pcall(function()
 					vim.api.nvim_buf_set_lines(0,0,-1,false,{'abcdef','ghijkl','mnopqr','stuvwx'})
 					vim.api.nvim_win_set_cursor(0,{1,0})
 					vim.fn.setreg('a','')
+					vim.g.expr_calls=0
 					if case.rhs then
 						local suffix=(case.rhs=='yy' or case.rhs=='y') and 'y' or 'x'
 						vim.keymap.set(case.mode or 'n','<F6>'..suffix,case.rhs,{buffer=true,desc='Comparison'})
@@ -251,7 +259,7 @@ local ok, err = pcall(function()
 				input(case.after, 120)
 				snapshots[#snapshots + 1] = lua [[
 					return {vim.api.nvim_buf_get_lines(0,0,-1,false),vim.api.nvim_win_get_cursor(0),
-						vim.fn.getreg('a'),vim.api.nvim_get_mode().mode}
+						vim.fn.getreg('a'),vim.api.nvim_get_mode().mode,vim.g.expr_calls}
 				]]
 			end
 			assert(vim.deep_equal(snapshots[1], snapshots[2]), vim.inspect { case = case, snapshots = snapshots })

@@ -316,7 +316,11 @@ replay = function(active)
 	detach(active.buf, active.mode, tokens(active.prefix)[1])
 	state.replaying = true
 	local context = (active.register ~= '"' and '"' .. active.register or '')
-		.. (active.count > 0 and tostring(active.count) or '')
+	-- An empty expression prompt reuses the expression already entered by the user.
+	if active.register == '=' then
+		context = context .. raw '<CR>'
+	end
+	context = context .. (active.count > 0 and tostring(active.count) or '')
 	-- SafeState reinstalls triggers only after Neovim finishes resolving the input.
 	api.nvim_feedkeys((active.temporary and raw '<C-o>' or '') .. context .. active.prefix, 'mi', false)
 end
