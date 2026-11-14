@@ -103,6 +103,9 @@ Picker				|better-start-nvim-select|
 Statusline and bars		|better-start-nvim-statusline|
     Read editor and window information, customize colors, and refresh caches.
 
+Keybinding hints		|better-start-nvim-which-key|
+    Discover mapped prefixes in Normal and Visual mode without dependencies.
+
 Package declarations		|better-start-nvim-prelude|
     Declare packages with vim.pack.use and run install or update builds.
 

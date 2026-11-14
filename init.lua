@@ -32,3 +32,12 @@ require 'keymaps'
 require('workspaces').setup()
 require('projects').setup()
 require 'autocmds'
+
+require('which_key').setup {
+	groups = {
+		['<leader>p'] = 'Projects',
+		['<leader><Tab>'] = 'Workspaces',
+		['<leader>w'] = 'Windows',
+		['<leader>b'] = 'Buffers',
+	},
+}
