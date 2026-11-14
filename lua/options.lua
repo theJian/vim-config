@@ -86,6 +86,3 @@ vim.opt.spelllang = 'en_us'
 
 -- Disable showing mode like -- INSERT -- or -- VISUAL --
 vim.o.showmode = false
-
--- Resolve ambiguous mappings and show prefix hints after a short pause.
-vim.o.timeoutlen = 400

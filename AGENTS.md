@@ -23,7 +23,6 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 - `doc/better-start-nvim.txt` - Help index and installation
 - `doc/better_statusline.txt` - Native bars, refresh model, and verification
 - `doc/better_select.txt` - Picker behavior and verification
-- `doc/which-key.txt` - Native prefix hints, input semantics, and verification
 - `doc/prelude.txt` - Common utilities and table package API
 - `doc/ffi.txt` - Rust library, Lua module API, build, and verification
 - `doc/projects-workspaces.txt` - Project and workspace bindings, settings, persistence, and verification
@@ -41,7 +40,6 @@ Read the relevant source before changing behavior or bindings; avoid duplicating
 - `lua/ui.lua` - UI options and colorscheme installation and setup
 - `lua/better_statusline.lua` - Cached native statusline, window bars, and tabline
 - `lua/better_select.lua` - Native ui2 picker
-- `lua/which_key.lua` - Native Normal/Visual prefix hints
 - `lua/projects.lua` - Project commands
 - `lua/workspaces.lua` - Named tab workspaces and session snapshots
 - `lua/workspace_store.lua` - JSON persistence and selection lists
@@ -71,9 +69,6 @@ nvim --headless -u NONE -i NONE -l tests/better_select.lua
 nvim --headless -u NONE -i NONE -l tests/completion.lua
 nvim --headless -u NONE -i NONE -l tests/pairs.lua
 nvim --headless -u NONE -i NONE -l tests/fff.lua
-nvim --headless -u NONE -i NONE -l tests/which_key.lua
-nvim --headless -u NONE -i NONE -l tests/which_key_ui.lua
-nvim --headless -u NONE -i NONE -l tests/which_key_bench.lua
 ```
 
 Run keyboard/UI tests in an attached terminal:
