@@ -6,6 +6,8 @@ Better Start Nvim is a minimalist Lua configuration for Neovim 0.12+ using built
 Its long-term goal is reusable boilerplate with no third-party Neovim plugin
 dependencies. The current checkout still loads configured packages.
 
+Use native Lua loops for iteration. Avoid `vim.iter` until its upstream bug is fixed.
+
 ## Documentation
 
 Keep module and feature documentation in `doc/` as native Vim help (`.txt`).

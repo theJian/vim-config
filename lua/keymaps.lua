@@ -163,9 +163,14 @@ require('better_select').setup {
 		for key, action in pairs(picker_mappings) do
 			local plug = '<Plug>(acme-better-select-' .. action:gsub('_', '-') .. ')'
 			-- <unique> also checks global maps; picker-local keys intentionally shadow them.
-			local global = vim.iter(vim.api.nvim_get_keymap('i')):find(function(map)
-				return vim.keycode(map.lhs) == vim.keycode(key)
-			end)
+			local global
+			local lhs = vim.keycode(key)
+			for _, map in ipairs(vim.api.nvim_get_keymap('i')) do
+				if vim.keycode(map.lhs) == lhs then
+					global = map
+					break
+				end
+			end
 			if global then
 				keymap.del('i', key)
 			end

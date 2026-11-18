@@ -389,27 +389,30 @@ end
 
 -- matchfuzzypos returns character offsets; the view converts them to byte ranges.
 function M.sorter(entries, query)
-	local items = vim.iter(entries)
+	local items = entries
 	local pattern = query:match '^/([^/]*)/'
 	if pattern then
-		items:filter(function(entry)
-			return entry.text:match(pattern) ~= nil
-		end)
+		items = {}
+		for _, entry in ipairs(entries) do
+			if entry.text:match(pattern) then
+				items[#items + 1] = entry
+			end
+		end
 		query = query:gsub('^/[^/]*/', '')
 	end
+
+	local matches = {}
 	if query == '' then
-		return items
-			:map(function(entry)
-				return { entry.id, {}, 0 }
-			end)
-			:totable()
+		for i, entry in ipairs(items) do
+			matches[i] = { entry.id, {}, 0 }
+		end
+	else
+		local result = vim.fn.matchfuzzypos(items, query, { key = 'text' })
+		for i, entry in ipairs(result[1]) do
+			matches[i] = { entry.id, result[2][i], result[3][i] }
+		end
 	end
-	local result = vim.fn.matchfuzzypos(items:totable(), query, { key = 'text' })
-	return vim.iter(ipairs(result[1]))
-		:map(function(i, entry)
-			return { entry.id, result[2][i], result[3][i] }
-		end)
-		:totable()
+	return matches
 end
 
 function BetterSelect:report_error(err)
@@ -429,14 +432,13 @@ end
 
 -- Marked values stay in source order, including values hidden by fuzzy filtering.
 function BetterSelect:get_marked()
-	return vim.iter(self.items)
-		:filter(function(entry)
-			return self.marked[entry.id]
-		end)
-		:map(function(entry)
-			return entry.v
-		end)
-		:totable()
+	local values = {}
+	for _, entry in ipairs(self.items) do
+		if self.marked[entry.id] then
+			values[#values + 1] = entry.v
+		end
+	end
+	return values
 end
 
 function BetterSelect:update_matches()
@@ -629,24 +631,25 @@ function BetterSelect:set_quickfix()
 	if not self.to_quickfix then
 		return
 	end
-	local has_marks = next(self.marked) ~= nil
-	local selected
-
-	if has_marks then
-		selected = vim.iter(self.items):filter(function(entry)
-			return self.marked[entry.id]
-		end)
-	else
-		selected = vim.iter(self.matches):map(function(match)
-			return self.items[match[1]]
-		end)
+	local entries = {}
+	local function add_entry(entry)
+		entries[#entries + 1] = self.to_quickfix(entry.v, entry.id)
 	end
 
-	local entries = selected
-		:map(function(entry)
-			return self.to_quickfix(entry.v, entry.id)
-		end)
-		:totable()
+	if next(self.marked) then
+		for _, entry in ipairs(self.items) do
+			if self.marked[entry.id] then
+				add_entry(entry)
+			end
+		end
+	else
+		for _, match in ipairs(self.matches) do
+			local entry = self.items[match[1]]
+			if entry then
+				add_entry(entry)
+			end
+		end
+	end
 	self:close()
 	vim.schedule(function()
 		vim.fn.setqflist({}, ' ', { title = self.prompt, items = entries })
