@@ -29,7 +29,9 @@ local ns = api.nvim_create_namespace 'native-which-key'
 local replay
 
 local function raw(lhs)
-	return vim.keycode(lhs)
+	-- getcharstr() and keytrans() use literal UTF-8. vim.keycode() escapes
+	-- each 0x80 byte as K_SPECIAL KS_SPECIAL KE_FILLER for the typeahead buffer.
+	return (vim.keycode(lhs):gsub('\128\254X', '\128'))
 end
 
 -- A modifier prefix and its following key are one token, as are UTF-8 characters.
@@ -322,7 +324,8 @@ replay = function(active)
 	end
 	context = context .. (active.count > 0 and tostring(active.count) or '')
 	-- SafeState reinstalls triggers only after Neovim finishes resolving the input.
-	api.nvim_feedkeys((active.temporary and raw '<C-o>' or '') .. context .. active.prefix, 'mi', false)
+	local encoded_prefix = vim.keycode(fn.keytrans(active.prefix))
+	api.nvim_feedkeys((active.temporary and raw '<C-o>' or '') .. context .. encoded_prefix, 'mi', false)
 end
 
 -- Handle a prefix in Vim key notation (e.g. '<leader>p'), waiting for continuation

@@ -282,6 +282,29 @@ local ok, err = pcall(function()
 		end
 	end)
 
+	test('Unicode keys containing 0x80 survive trigger removal and replay', function()
+		lua [[
+			vim.g.hit = 0
+			for _, lhs in ipairs({'一a', '一𐀀'}) do
+				vim.keymap.set('n', lhs, function()
+					vim.g.hit = vim.g.hit + 1
+					vim.g.last_mapping = lhs
+				end, { buffer = true, desc = lhs })
+			end
+			require('which_key').refresh()
+			require('which_key').disable()
+			assert(vim.fn.maparg('一', 'n') == '', 'Unicode trigger survived disable')
+			setup_wk()
+		]]
+		for count, suffix in ipairs { 'a', '𐀀' } do
+			input('一', 120)
+			has('一' .. suffix)
+			input(suffix)
+			assert(not popup() and lua 'return vim.g.hit' == count)
+			assert(lua 'return vim.g.last_mapping' == '一' .. suffix)
+		end
+	end)
+
 	test('paging, conflicting paging keys, narrow UI and resize', function()
 		lua [[
 			for i=33,126 do
