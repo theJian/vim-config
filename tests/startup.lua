@@ -9,6 +9,8 @@ vim.api.nvim_create_autocmd('VimEnter', {
 				assert(not package.loaded.lualine)
 				assert(vim.o.statusline:find('better_statusline', 1, true))
 				assert(package.loaded.workspaces and package.loaded.projects)
+				assert(package.loaded.which_key and vim.o.timeoutlen == 400)
+				assert(vim.fn.maparg('<leader>', 'n', false, true).desc == 'Which-key prefix')
 				assert(vim.fn.maparg('<leader>pp', 'n', false, true).desc == 'Switch project')
 				assert(vim.fn.maparg('<leader><Tab>.', 'n', false, true).desc == 'Switch workspace')
 				assert(not package.loaded['blink.cmp'])
